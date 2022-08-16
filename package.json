@@ -45,6 +45,7 @@
   "devDependencies": {
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
+    "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.9.3",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",
