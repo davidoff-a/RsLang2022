@@ -6,7 +6,7 @@
 // import Link from "@mui/material/Link";
 // import ProTip from "./ProTip";
 import "./App.scss";
-import Main from "./sprint/Main";
+import Main from "./Games/sprint/Main";
 // function Copyright() {
 //   return (
 //     <Typography variant="body2" color="text.secondary" align="center">

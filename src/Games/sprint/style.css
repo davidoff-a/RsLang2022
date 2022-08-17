@@ -9,10 +9,23 @@
     align-items: center;
 }
 
-.card-item {
+.sprint-card-item {
+    position: relative;
     width: 600px;
     height: 500px;
     background-color: #ffffff;
     color: #333333;
     border-radius: 30px;
+}
+
+.sprint-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    fill: #333333;
+    cursor: pointer;
+}
+
+.sprint-close-btn:hover {
+    fill: #5c5b5b;
 }

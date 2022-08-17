@@ -1,5 +1,5 @@
 import React from 'react';
-import Card from './components/Card';
+import Card from './GameComponents/Card';
 import './style.css';
 
 export default function Main() {
