@@ -2,7 +2,7 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
 import Logo from "./headerComponents/Logo";
-import UserMenu from "./headerComponents/userMenu";
+import { UserMenu } from "./headerComponents/userMenu";
 import MainMenu from "./headerComponents/MainMenu";
 
 

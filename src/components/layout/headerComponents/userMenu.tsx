@@ -10,8 +10,9 @@ import Box from "@mui/material/Box";
 import {MouseEvent, useContext, useState} from "react";
 import {useTheme} from "@mui/material/styles";
 import {ColorModeContext} from "../../../app/App";
+import RegForm from "./RegForm";
 
-export default function UserMenu () {
+export function UserMenu () {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(
     null
   );
@@ -23,6 +24,14 @@ export default function UserMenu () {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  const handleOpen = () => setOpen(true);
+  
+  const handleUserMenuItem = (e:MouseEvent) =>{
+    const target = e.target as HTMLElement;
+    <RegForm handleOpen={handleOpen}/>
+    
+    handleCloseUserMenu();
+  }
   
   const settings = ["Profile", "Dashboard", "Logout"];
   const theme = useTheme();
@@ -42,7 +51,7 @@ export default function UserMenu () {
     </IconButton>
     <Tooltip title="Open settings">
       <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-        <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+        <Avatar alt="avatar" src="/static/images/avatar/2.jpg" />
       </IconButton>
     </Tooltip>
     <Menu
@@ -61,8 +70,8 @@ export default function UserMenu () {
       open={Boolean(anchorElUser)}
       onClose={handleCloseUserMenu}
     >
-      {settings.map((setting) => (
-        <MenuItem key={setting} onClick={handleCloseUserMenu}>
+      {settings.map((setting, index) => (
+        <MenuItem key={index} data-item = {setting} onClick={handleUserMenuItem}>
           <Typography textAlign="center">{setting}</Typography>
         </MenuItem>
       ))}
