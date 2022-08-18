@@ -18,6 +18,7 @@ import { getTheme } from "../shared/getTheme";
 
 
 import "./App.scss";
+import Main from "../Games/sprint/Main";
 
 
 export const ColorModeContext = createContext({
@@ -54,6 +55,7 @@ export default function App() {
             <Route path="about" element={<AboutPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
+          <Main />
           <Footer></Footer>
         </ThemeProvider>
       </ColorModeContext.Provider>
