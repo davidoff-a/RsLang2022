@@ -5,6 +5,8 @@ import Logo from "./headerComponents/Logo";
 import { UserMenu } from "./headerComponents/userMenu";
 import MainMenu from "./headerComponents/MainMenu";
 
+import "./_header.scss";
+
 
 const Header = () =>{
 
@@ -15,6 +17,7 @@ const Header = () =>{
           <Logo/>
           <MainMenu/>
           <UserMenu/>
+            className="header-logo"
         </Toolbar>
       </Container>
     </AppBar>
