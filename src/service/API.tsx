@@ -1,3 +1,22 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
+interface IWord {
+  id: string;
+  group: number;
+  page: number;
+  word: string;
+  image: string;
+  audio: string;
+  audioMeaning: string;
+  audioExample: string;
+  textMeaning: string;
+  textExample: string;
+  transcription: string;
+  wordTranslate: string;
+  textMeaningTranslate: string;
+  textExampleTranslate: string;
+}
+
 class Query {
   constructor(private readonly basicURL: string){}
   async getWords() {
@@ -6,19 +25,36 @@ class Query {
         'Content-Type': 'application/json'
       }});
   }
+
+  async getWordsPage(
+    group: number,
+    page: number,
+  ): Promise<IWord[]> {
+    try {
+      const data = await fetch(
+        `${this.basicURL}words?group=${group}&page=${page}`,
+      );
+      return await data.json() as IWord[];
+    } catch (err) {
+      throw new Error(err as string);
+    }
+  }
+
   async getWord(wordId:number) {
     await fetch(`${this.basicURL}words/${wordId}`, {method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       }});
   }
+
   async createUser(body:{name:string, email:string, password: string}) {
     await fetch(`${this.basicURL}users`, {method: 'POST',
-                                                                        headers: {
-                                                                          'Content-Type': 'application/json'
-                                                                        },
-                                                                        body: JSON.stringify(body)});
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)});
   }
+
   async getUser(id:number) {
     await fetch(`${this.basicURL}users/${id}`, {method: 'GET',
       headers: {
