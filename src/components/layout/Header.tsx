@@ -1,4 +1,4 @@
-import {useState, useContext, MouseEvent} from "react";
+import { useState, useContext, MouseEvent } from "react";
 import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -19,16 +19,14 @@ import Brightness7Icon from "@mui/icons-material/Brightness7";
 
 import { ColorModeContext } from "../../app/App";
 
+import "./_header.scss";
+
 const pages = ["Textbook", "Games", "About", "Team"];
 const settings = ["Profile", "Dashboard", "Logout"];
 
 const Header = () => {
-  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(
-    null
-  );
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -58,6 +56,7 @@ const Header = () => {
             noWrap
             component="a"
             href="/home"
+            className="header-logo"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
