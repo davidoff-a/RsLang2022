@@ -3,39 +3,37 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 
-import {MouseEvent, useState} from "react";
+import { MouseEvent, useState } from "react";
 import AdbIcon from "@mui/icons-material/Adb";
 import Button from "@mui/material/Button";
 
-export default function MainMenu(){
-  
+export default function MainMenu() {
   const pages = ["Textbook", "Games", "About", "Team"];
-  
-  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(
-    null
-  );
-  
+
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
-  
+
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
-  
+
   const menuItems = pages.map((page) => (
-      <MenuItem
-        key={page}
-        onClick={handleCloseNavMenu}
-        component={Link}
-        to={`/${page.toLowerCase()}`}>
-        <Typography textAlign="center">{page}</Typography>
-      </MenuItem>
-    ))
-  
+    <MenuItem
+      key={page}
+      onClick={handleCloseNavMenu}
+      component={Link}
+      to={`/${page.toLowerCase()}`}
+    >
+      <Typography textAlign="center">{page}</Typography>
+    </MenuItem>
+  ));
+
   return (
     <>
       <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -67,16 +65,7 @@ export default function MainMenu(){
             display: { xs: "block", md: "none" },
           }}
         >
-          {pages.map((page) => (
-            <MenuItem
-              key={page}
-              onClick={handleCloseNavMenu}
-              component={Link}
-              to={`/${page.toLowerCase()}`}
-            >
-              <Typography textAlign="center">{page}</Typography>
-            </MenuItem>
-          ))}
+          {menuItems}
         </Menu>
       </Box>
       <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
@@ -125,5 +114,5 @@ export default function MainMenu(){
         ))}
       </Box>
     </>
-  )
+  );
 }
