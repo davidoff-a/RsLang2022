@@ -6,9 +6,23 @@ import { UserMenu } from "./headerComponents/userMenu";
 import MainMenu from "./headerComponents/MainMenu";
 
 import "./_header.scss";
+import RegForm from "./headerComponents/RegForm";
+import {useState} from "React";
+import {
+  MouseEvent
+} from "React";
+import React from "React";
 
+export interface regFormCb{
+  opened:(e:MouseEvent)=>void;
+}
 
 const Header = () =>{
+  const [open, setOpen] = React.useState(false);
+
+  const toggleModal = () => {
+    setOpen((open)=>!open);
+  };
 
   return (
     <AppBar position="static">
@@ -17,7 +31,7 @@ const Header = () =>{
           <Logo/>
           <MainMenu/>
           <UserMenu/>
-            className="header-logo"
+          <RegForm toggleModal={toggleModal}/>
         </Toolbar>
       </Container>
     </AppBar>
