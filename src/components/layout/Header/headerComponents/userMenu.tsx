@@ -33,6 +33,17 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
   const settings = ["Profile", "Dashboard", "Logout"];
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
+  const menuItemData: string[] = localStorage.getItem("utoken")
+    ? settings
+    : ["Log In"];
+
+  const addMenuItems = (menuItems: string[]) => {
+    return menuItems.map((item, index) => (
+      <MenuItem key={index} data-item={item} onClick={handleUserMenuItem}>
+        <Typography textAlign="center">{item}</Typography>
+      </MenuItem>
+    ));
+  };
 
   return (
     <Box sx={{ flexGrow: 0 }}>
@@ -68,15 +79,7 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
         open={Boolean(anchorElUser)}
         onClose={handleCloseUserMenu}
       >
-        {settings.map((setting, index) => (
-          <MenuItem
-            key={index}
-            data-item={setting}
-            onClick={handleUserMenuItem}
-          >
-            <Typography textAlign="center">{setting}</Typography>
-          </MenuItem>
-        ))}
+        {addMenuItems(menuItemData)}
       </Menu>
     </Box>
   );
