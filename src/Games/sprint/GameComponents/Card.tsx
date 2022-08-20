@@ -1,21 +1,37 @@
 import React from 'react';
 import '../style.css';
+import SprintBtn from './SprintBtn';
 import CloseBtn from './CloseBtn';
+// import ISprintWords from '../Main';
 
 interface ICard {
-    id: number;
+    wordsArr: ISprintWords[];
+    randomAnswers: string[];
 }
 
-interface ISprintWords {
+export interface ISprintWords {
     id: number;
     word: string;
 }
 
-export default function Card (words: ISprintWords[], id: number = 0) {
+// interface Props {
+//     wordsArr: ICard;
+//     key: number;
+// }
+
+export default function Card ({wordsArr, randomAnswers}: ICard) {
+    const el = wordsArr[0];
     return (
         <div className='sprint-card-item'>
             <CloseBtn />
-            <div data-id={words[id].id}>{words[id].word}</div>
+    <div data-id={el.id}>{el.word} - {randomAnswers[0]}</div>
+            <div className='sprint-btn-block'>
+                <SprintBtn action={'Yes'}/>
+                <SprintBtn action={'No'}/>
+            </div>
+            <div className="sprint-progress-line">
+                
+            </div>
         </div>
     )
 }
