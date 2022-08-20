@@ -1,23 +1,29 @@
 import { Stack, Pagination } from "@mui/material";
 
-export interface Props {
-  // eslint-disable-next-line no-unused-vars
+interface Props {
+  page: number;
+  color: string;
   onClickPage: (id: number) => void;
 }
 
-export function TextbookPagination({ onClickPage }: Props) {
+export function TextbookPagination({ page, color, onClickPage }: Props) {
   const handleChangePage = (_ev: object, pg: number) => {
     onClickPage(pg - 1);
   };
 
   return (
-    <Stack spacing={2}>
+    <Stack
+      sx={{ marginTop: "1rem", alignItems: 'center'}}
+      spacing={2}
+    >
       <Pagination
+        sx={{
+          boxShadow: `0px 4px 2px -2px ${color},0px 2px 2px 0px ${color},0px 2px 6px 0px ${color}`}}
         count={30}
+        page={page + 1}
         variant="outlined"
         shape="rounded"
         onChange={handleChangePage}
-        sx={{marginTop: '10px'}}
       />
     </Stack>
   );
