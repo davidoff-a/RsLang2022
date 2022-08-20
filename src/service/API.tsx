@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
 interface IWord {
   id: string;
   group: number;
@@ -20,7 +18,7 @@ interface IWord {
 class Query {
   constructor(private readonly basicURL: string) {}
   async getWords() {
-    await fetch(`${this.basicURL}words`, {
+    return await fetch(`${this.basicURL}words`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -52,10 +50,8 @@ class Query {
   async createUser(body: { name: string; email: string; password: string }) {
     return await fetch(`${this.basicURL}users`, {
       method: "POST",
-                                                                        headers: {
       headers: {
-        "Content-Type": "application/json",
-                                                                        },
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(body),
     });
@@ -204,7 +200,7 @@ class Query {
     userId: number,
     body: { learnedWords: number; optional: { [key: string]: string } }
   ) {
-    await fetch(`${this.basicURL}users/${userId}/statistics`, {
+    return await fetch(`${this.basicURL}users/${userId}/statistics`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
