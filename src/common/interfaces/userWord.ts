@@ -17,7 +17,7 @@ export interface IUserWord {
   textExampleTranslate: string;
   difficulty: Difficulty;
   goals: number;
- studied: boolean;
+  isUserWord: boolean;
 }
 
 

@@ -20,5 +20,5 @@ export const userWord: IUserWord = {
   wordTranslate: "грубый",
   difficulty: Difficulty.EASY,
   goals: 0,
-  studied: false,
+  isUserWord: true
 };

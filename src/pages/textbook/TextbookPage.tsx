@@ -6,7 +6,7 @@ import { TextbookTabs } from "./TextbookTabs";
 import { TextbookWords } from "./TextbookWords";
 import { WordCard } from "./WordCard";
 import { query as QueryService } from "../../service/API";
-import { wordsAdapter, getWordsForTextbook } from "../../service/wordsAdapter";
+import { wordsAdapter, getWordsForTextbook } from "../../service/APIHelper";
 import { IWord } from "../../common/interfaces/word";
 import { IUserWord } from "../../common/interfaces/userWord";
 import StorageWrapper from "../../components/storageWrapper";
@@ -18,6 +18,7 @@ import {
   blue,
   purple,
   pink,
+  red,
 } from "@mui/material/colors";
 import { Difficulty } from "../../common/enums/difficulty";
 import { IAggregateResult } from "../../common/interfaces/aggregateResult";
@@ -43,17 +44,18 @@ export function TextbookPage() {
     pink[400],
   ];
 
-  const getItems = () => {
-    let queryResult: Promise<
-      [IWord[], IAggregateResult[]] | IAggregateResult[]
-    >;
+  const getItems = (id?: string) => {
+    let queryResult: Promise<[IWord[], IAggregateResult[]] | IAggregateResult[]>;
+    if (!userId) {
+      setGroup(0);
+      setPage(0);
+    }
     if (group < 6) {
-      // queryResult = QueryService.getWordsPage(group, page);
       queryResult = getWordsForTextbook(userId as string, group, page);
     } else {
       queryResult = QueryService.getAggregatedWordsByFilter(
         userId as string,
-        `{userWord.difficulty:${Difficulty.HARD}}`
+        [Difficulty.HARD, Difficulty.HARD, Difficulty.HARD]
       );
     }
 
@@ -63,7 +65,7 @@ export function TextbookPage() {
         setIsLoaded(true);
         setItems(words);
         if (words.length > 0) {
-          setCurrentId(words[0].id);
+          setCurrentId(id ? id : words[0].id);
         }
       },
       (error) => {
@@ -93,6 +95,36 @@ export function TextbookPage() {
     return setCurrentId(id);
   };
 
+  const onClickWordCardButton = (
+    isUserWord: boolean,
+    id: string,
+    difficulty: Difficulty,
+    goals: number
+  ) => {
+    let queryResult: Promise<void>;
+    if (isUserWord) {
+      queryResult = QueryService.updateUserWords(userId as string, id, {
+        difficulty,
+        optional: { goals },
+      });
+    } else {
+      queryResult = QueryService.addUserWords(userId as string, id, {
+        difficulty,
+        optional: { goals },
+      });
+    }
+
+    queryResult.then(
+      () => {
+        return getItems(id);
+      },
+      (error) => {
+        setIsLoaded(true);
+        setError(error as string);
+      }
+    );
+  };
+
   return (
     <Container
       sx={{
@@ -120,15 +152,21 @@ export function TextbookPage() {
           <TextbookWords
             items={items}
             isLoaded={isLoaded}
+            isLogged={userId ? true : false}
             error={error}
             color={groupsColor[group]}
+            colorHard={red[500]}
+            colorStudied={green[500]}
+            isHardWords={group === 6}
             onClickItem={onClickItem}
           />
         </Grid>
         <Grid item xs={6}>
           <WordCard
+            isLogged={userId ? true : false}
             color={groupsColor[group]}
             item={items.find((item) => item.id === currentId) as IUserWord}
+            onClickWordCardButton={onClickWordCardButton}
           />
         </Grid>
       </Grid>

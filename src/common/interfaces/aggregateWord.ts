@@ -19,7 +19,7 @@ export interface IAggregateWord {
     difficulty: Difficulty;
     optional: {
       goals: number;
-      studied: boolean;
+      isUserWord: boolean
     };
   };
 }

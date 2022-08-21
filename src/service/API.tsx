@@ -1,3 +1,4 @@
+import { Difficulty } from "../common/enums/difficulty";
 import { IAggregateResult } from "../common/interfaces/aggregateResult";
 import { IWord } from "../common/interfaces/word";
 import StorageWrapper from "../components/storageWrapper";
@@ -93,15 +94,18 @@ class Query {
   }
 
   async addUserWords(
-    id: number,
-    wordId: number,
-    body: { difficulty: string; optional: { [key: string]: string } }
+    id: string,
+    wordId: string,
+    body: { difficulty: string; optional: { [key: string]: number | string | boolean } }
   ) {
-    await fetch(`${this.basicURL}${id}/words/${wordId}`, {
+    const token: string =
+    this.storage.getSavedToken() as string;
+    await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
       method: "POST",
       body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
   }
@@ -116,24 +120,30 @@ class Query {
   }
 
   async updateUserWords(
-    id: number,
-    wordId: number,
-    body: { difficulty: string; optional: { [key: string]: string } }
+    id: string,
+    wordId: string,
+    body: { difficulty: string; optional: { [key: string]: number | string | boolean} }
   ) {
+    const token: string =
+    this.storage.getSavedToken() as string;
     await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
       method: "PUT",
       body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
   }
 
   async deleteUserWords(id: number, wordId: number) {
+    const token: string =
+    this.storage.getSavedToken() as string;
     await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
   }
@@ -177,16 +187,14 @@ class Query {
 
   async getAggregatedWordsByFilter(
     userId: string,
-    // TODO (преобразование фигурных скобок в URL)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    filter: string
+    difficulty: Difficulty[]
   ): Promise<IAggregateResult[]> {
     try {
       const token: string =
-        this.storage.getSavedToken() as string;
-
+      this.storage.getSavedToken() as string;
       const data = await fetch(
-        `${this.basicURL}users/${userId}/aggregatedWords?filter={"userWord.difficulty":"hard"}`,
+        // eslint-disable-next-line max-len
+        `${this.basicURL}users/${userId}/aggregatedWords?wordsPerPage=3600&filter={"$or":[{"userWord.difficulty":"${difficulty[0]}"},{"userWord.difficulty":"${difficulty[1]}"},{"userWord.difficulty":"${difficulty[2]}"}]}`,
         {
           method: "GET",
           headers: {

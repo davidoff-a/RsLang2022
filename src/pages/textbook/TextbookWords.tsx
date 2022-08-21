@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Unstable_Grid2";
 import BoltIcon from "@mui/icons-material/Bolt";
+import AddReactionIcon from '@mui/icons-material/AddReaction';
 
 import { Spinner } from "../../components/Spinner";
 import { IUserWord } from "../../common/interfaces/userWord";
@@ -20,16 +21,24 @@ const Item = styled(Paper)(({ theme }) => ({
 interface Props {
   items: IUserWord[];
   isLoaded: boolean;
+  isLogged: boolean;
   error: string;
   color: string;
+  colorHard: string;
+  colorStudied: string;
+  isHardWords: boolean;
   onClickItem: (id: string) => void;
 }
 
 export function TextbookWords({
   items,
   isLoaded,
+  isLogged,
   error,
   color,
+  colorHard,
+  colorStudied,
+  isHardWords,
   onClickItem,
 }: Props) {
   if (error) {
@@ -46,14 +55,17 @@ export function TextbookWords({
                 sx={{
                   boxShadow: `0px 4px 2px -2px ${color},0px 2px 2px 0px ${color},0px 2px 6px 0px ${color}`,
                   fontWeight: 500,
-                  fontSize: "0.975rem",
+                  fontSize: "1rem",
                 }}
                 onClick={() => onClickItem(item.id)}
               >
                 {" "}
                 {item.word}             
-                {item.difficulty === Difficulty.HARD &&
-                  <BoltIcon sx={{ color: "red" }} />
+                {isLogged && !isHardWords && item.difficulty === Difficulty.HARD &&
+                  <BoltIcon sx={{ color: colorHard, fontSize: "1rem", }} />
+                }
+                {isLogged && item.difficulty === Difficulty.STUDIED &&
+                  <AddReactionIcon sx={{ color: colorStudied, fontSize: "1rem", }} />
                 }
               </Item>
             </Grid>
