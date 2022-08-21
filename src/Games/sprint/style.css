@@ -11,11 +11,17 @@
 
 .sprint-card-item {
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     width: 600px;
     height: 500px;
     background-color: #ffffff;
     color: #333333;
     border-radius: 30px;
+    padding: 40px;
+    box-sizing: border-box;
 }
 
 .sprint-close-btn {
@@ -28,4 +34,49 @@
 
 .sprint-close-btn:hover {
     fill: #5c5b5b;
+}
+
+.sprint-word {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    align-items: center;
+    color: #333333;
+    font-size: 46px;
+    line-height: 48px;
+    text-transform: capitalize;
+    font-weight: 600;
+}
+
+.sprint-translate {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    align-items: center;
+    color: #333333;
+    font-size: 44px;
+    line-height: 46px;
+    text-transform: capitalize;
+}
+
+.sprint-btn-block {
+    margin-top: 40px;
+    display: flex;
+    gap: 30px;
+}
+
+.sprint-btn {
+    width: 140px;
+    height: 65px;
+    border: none;
+    border-radius: 10px;
+    background-color: #00bcd4;
+    color: #333333;
+    font-size: 26px;
+    line-height: 65px;
+    cursor: pointer;
+}
+
+.sprint-btn:hover {
+    background-color: #03dcf9;
 }

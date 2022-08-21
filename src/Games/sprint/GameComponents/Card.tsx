@@ -24,7 +24,8 @@ export default function Card ({wordsArr, randomAnswers}: ICard) {
     return (
         <div className='sprint-card-item'>
             <CloseBtn />
-    <div data-id={el.id}>{el.word} - {randomAnswers[0]}</div>
+            <div className="sprint-word" data-id={el.id}>{el.word}</div>
+            <div className="sprint-translate"> {randomAnswers[0]}</div>
             <div className='sprint-btn-block'>
                 <SprintBtn action={'Yes'}/>
                 <SprintBtn action={'No'}/>
