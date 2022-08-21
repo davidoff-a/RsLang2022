@@ -6,7 +6,7 @@ import { TextbookTabs } from "./TextbookTabs";
 import { TextbookWords } from "./TextbookWords";
 import { WordCard } from "./WordCard";
 import { query as QueryService } from "../../service/API";
-import { wordsAdapter } from "../../service/wordsAdapter";
+import { wordsAdapter, getWordsForTextbook } from "../../service/wordsAdapter";
 import { IWord } from "../../common/interfaces/word";
 import { IUserWord } from "../../common/interfaces/userWord";
 import StorageWrapper from "../../components/storageWrapper";
@@ -44,9 +44,12 @@ export function TextbookPage() {
   ];
 
   const getItems = () => {
-    let queryResult: Promise<IWord[] | IAggregateResult[]>;
+    let queryResult: Promise<
+      [IWord[], IAggregateResult[]] | IAggregateResult[]
+    >;
     if (group < 6) {
-      queryResult = QueryService.getWordsPage(group, page);
+      // queryResult = QueryService.getWordsPage(group, page);
+      queryResult = getWordsForTextbook(userId as string, group, page);
     } else {
       queryResult = QueryService.getAggregatedWordsByFilter(
         userId as string,

@@ -182,8 +182,8 @@ class Query {
     filter: string
   ): Promise<IAggregateResult[]> {
     try {
-      const refreshToken: string =
-        this.storage.getSavedRefreshToken() as string;
+      const token: string =
+        this.storage.getSavedToken() as string;
 
       const data = await fetch(
         `${this.basicURL}users/${userId}/aggregatedWords?filter={"userWord.difficulty":"hard"}`,
@@ -191,7 +191,7 @@ class Query {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${refreshToken}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );

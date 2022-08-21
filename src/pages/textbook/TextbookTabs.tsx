@@ -10,7 +10,12 @@ interface Props {
   onClickTab: (id: number) => void;
 }
 
-export function TextbookTabs({ initialGroup, groupsColor, isLogged, onClickTab }: Props) {
+export function TextbookTabs({
+  initialGroup,
+  groupsColor,
+  isLogged,
+  onClickTab,
+}: Props) {
   const [value, setValue] = useState(`${initialGroup + 1}`);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
@@ -21,10 +26,10 @@ export function TextbookTabs({ initialGroup, groupsColor, isLogged, onClickTab }
     <Box sx={{ width: "100%" }}>
       <Tabs
         sx={{
-          '& .MuiTabs-flexContainer': {
+          "& .MuiTabs-flexContainer": {
+            padding: "10px",
             columnGap: "10px",
           },
-
         }}
         value={value}
         onChange={handleChange}
@@ -33,18 +38,21 @@ export function TextbookTabs({ initialGroup, groupsColor, isLogged, onClickTab }
         centered={true}
         aria-label="secondary tabs example"
       >
-        {groupsColor.filter((color, id) => isLogged ? true : id !== 6).map((color, id) => (
-          <Tab
-            sx={{
-              backgroundColor: color,
-              borderRadius: "25%",
-            }}
-            key={id}
-            label={`${id === 6 ? 'dificult words' : id + 1}`}
-            value={`${id + 1}`}
-            onClick={() => onClickTab(id)}
-          />
-        ))}
+        {groupsColor
+          .filter((color, id) => (isLogged ? true : id !== 6))
+          .map((color, id) => (
+            <Tab
+              sx={{
+                boxShadow: `0px 4px 2px -2px ${color},0px 2px 2px 0px ${color},0px 2px 6px 0px ${color}`,
+                borderRadius: "50%",
+                minWidth: "48px",
+              }}
+              key={id}
+              label={`${id === 6 ? "hard words" : id + 1}`}
+              value={`${id + 1}`}
+              onClick={() => onClickTab(id)}
+            />
+          ))}
       </Tabs>
     </Box>
   );
