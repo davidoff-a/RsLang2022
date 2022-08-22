@@ -52,14 +52,27 @@ export function FormDialog({
     email: "",
     password: "",
   });
-  addUser = async();
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    res = await query.createUser({
+
+  const res = async () => {
+    return await query.createUser({
       name: credentials.name,
       email: credentials.email,
       password: credentials.password,
     });
+  };
+
+  const answer = async () => {
+    const response = await res().then((res) => {
+      console.log("status", res.status);
+      console.log("result", res.json());
+    });
+    response();
+  };
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    console.log(answer());
   };
 
   return (
@@ -70,7 +83,10 @@ export function FormDialog({
         aria-labelledby="form-dialog-title"
       >
         <DialogTitle id="form-dialog-title">Sign Up</DialogTitle>
-        <form action="#" onSubmit={(e: React.FormEvent) => onSubmit(e)}>
+        <form
+          action="#"
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => onSubmit(e)}
+        >
           <DialogContent>
             <DialogContentText>Enter your credentials</DialogContentText>
             {formFields}

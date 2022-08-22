@@ -1,4 +1,3 @@
-
 interface IWord {
   id: string;
   group: number;
@@ -17,7 +16,10 @@ interface IWord {
 }
 
 class Query {
-  constructor(private readonly basicURL: string) {}
+  constructor(private readonly basicURL: string) {
+    this.basicURL = basicURL;
+  }
+
   async getWords() {
     return await fetch(`${this.basicURL}words`, {
       method: "GET",
@@ -26,15 +28,13 @@ class Query {
       },
     });
   }
-  async getWordsPage(
-    group: number,
-    page: number,
-  ): Promise<IWord[]> {
+
+  async getWordsPage(group: number, page: number): Promise<IWord[]> {
     try {
       const data = await fetch(
-        `${this.basicURL}words?group=${group}&page=${page}`,
+        `${this.basicURL}words?group=${group}&page=${page}`
       );
-      return await data.json() as IWord[];
+      return (await data.json()) as IWord[];
     } catch (err) {
       throw new Error(err as string);
     }
@@ -48,15 +48,17 @@ class Query {
       },
     });
   }
+
   async createUser(body: { name: string; email: string; password: string }) {
     return await fetch(`${this.basicURL}users`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
     });
   }
+
   async getUser(id: number) {
     return await fetch(`${this.basicURL}users/${id}`, {
       method: "GET",
@@ -72,6 +74,7 @@ class Query {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(body),
     });
   }
 
@@ -206,6 +209,7 @@ class Query {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(body),
     });
   }
 
@@ -227,6 +231,7 @@ class Query {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(body),
     });
   }
 }
