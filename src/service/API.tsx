@@ -1,3 +1,4 @@
+
 interface IWord {
   id: string;
   group: number;
