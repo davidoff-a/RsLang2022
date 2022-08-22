@@ -23,11 +23,16 @@ import {
 import { Difficulty } from "../../common/enums/difficulty";
 import { IAggregateResult } from "../../common/interfaces/aggregateResult";
 
+const checkAuthorization = async (id: string) => {
+  return await QueryService.getUser(id);
+};
+
 export function TextbookPage() {
   const storage = StorageWrapper.getInstance();
-  const userId: string | null = storage.getSavedUser();
+  let userId: string | null = storage.getSavedUser();
   const initialGroup: string | null = storage.getSavedGroup();
   const initialPage: string | null = storage.getSavedPage();
+  const [isLogged, setIsLogged] = useState<boolean>(userId ? true : false);
   const [group, setGroup] = useState<number>(initialGroup ? +initialGroup : 0);
   const [page, setPage] = useState<number>(initialPage ? +initialPage : 0);
   const [error, setError] = useState("");
@@ -44,35 +49,41 @@ export function TextbookPage() {
     pink[400],
   ];
 
-  const getItems = (id?: string) => {
-    let queryResult: Promise<[IWord[], IAggregateResult[]] | IAggregateResult[]>;
-    if (!userId) {
-      setGroup(0);
-      setPage(0);
-    }
-    if (group < 6) {
-      queryResult = getWordsForTextbook(userId as string, group, page);
-    } else {
-      queryResult = QueryService.getAggregatedWordsByFilter(
-        userId as string,
-        [Difficulty.HARD, Difficulty.HARD, Difficulty.HARD]
-      );
-    }
-
-    queryResult.then(
-      (result) => {
-        const words = wordsAdapter(result);
-        setIsLoaded(true);
-        setItems(words);
-        if (words.length > 0) {
-          setCurrentId(id ? id : words[0].id);
+  const getItems = (wordId?: string) => {
+    const check = checkAuthorization(userId as string);
+    void check.then((result) => {
+      let queryResult: Promise<IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]>;
+      if (!result.ok) {
+        setGroup(0);
+        setPage(0);
+        userId = null;
+        setIsLogged(false);
+        queryResult = QueryService.getWordsPage(group, page);
+      } else {
+        if (group < 6) {
+          queryResult = getWordsForTextbook(userId as string, group, page);
+        } else {
+          queryResult = QueryService.getAggregatedWordsByFilter(
+            userId as string,
+            [Difficulty.HARD, Difficulty.HARD, Difficulty.HARD]
+          );
         }
-      },
-      (error) => {
-        setIsLoaded(true);
-        setError(error as string);
       }
-    );
+      queryResult.then(
+        (result) => {
+          const words = wordsAdapter(result);
+          setIsLoaded(true);
+          setItems(words);
+          if (words.length > 0) {
+            setCurrentId(wordId ? wordId : words[0].id);
+          }
+        },
+        (error) => {
+          setIsLoaded(true);
+          setError(error as string);
+        }
+      );
+    });
   };
 
   useEffect(() => {
@@ -101,7 +112,7 @@ export function TextbookPage() {
     difficulty: Difficulty,
     goals: number
   ) => {
-    let queryResult: Promise<void>;
+    let queryResult: Promise<Response>;
     if (isUserWord) {
       queryResult = QueryService.updateUserWords(userId as string, id, {
         difficulty,
@@ -116,7 +127,7 @@ export function TextbookPage() {
 
     queryResult.then(
       () => {
-        return getItems(id);
+        return getItems();
       },
       (error) => {
         setIsLoaded(true);
@@ -124,7 +135,7 @@ export function TextbookPage() {
       }
     );
   };
-
+  
   return (
     <Container
       sx={{
@@ -136,7 +147,7 @@ export function TextbookPage() {
       <TextbookTabs
         initialGroup={initialGroup ? +initialGroup : 0}
         groupsColor={groupsColor}
-        isLogged={userId ? true : false}
+        isLogged={isLogged}
         onClickTab={onClickTab}
       />
       <Grid
@@ -152,7 +163,7 @@ export function TextbookPage() {
           <TextbookWords
             items={items}
             isLoaded={isLoaded}
-            isLogged={userId ? true : false}
+            isLogged={isLogged}
             error={error}
             color={groupsColor[group]}
             colorHard={red[500]}
@@ -163,7 +174,7 @@ export function TextbookPage() {
         </Grid>
         <Grid item xs={6}>
           <WordCard
-            isLogged={userId ? true : false}
+            isLogged={isLogged}
             color={groupsColor[group]}
             item={items.find((item) => item.id === currentId) as IUserWord}
             onClickWordCardButton={onClickWordCardButton}

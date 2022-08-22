@@ -6,7 +6,7 @@ import { IWord } from "../common/interfaces/word";
 import { query as QueryService } from "./API";
 
 function instanceofIAggregateResult(
-  object: IAggregateResult[] | [IWord[], IAggregateResult[]]
+  object: IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
 ): object is IAggregateResult[] {
   return (
     Array.isArray(object) &&
@@ -15,8 +15,18 @@ function instanceofIAggregateResult(
   );
 }
 
+function instanceofIWord(
+  object: IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
+): object is IWord[] {
+  return (
+    Array.isArray(object) &&
+    object.length > 0 &&
+    "id" in object[0]
+  );
+}
+
 export function wordsAdapter(
-  inputData: IAggregateResult[] | [IWord[], IAggregateResult[]]
+  inputData: IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
 ): IUserWord[] {
   const data: IUserWord[] = [];
   if (instanceofIAggregateResult(inputData)) {
@@ -28,6 +38,15 @@ export function wordsAdapter(
         difficulty: item.userWord ? item.userWord.difficulty : Difficulty.EASY,
         goals: item.userWord ? item.userWord.optional.goals : 0,
         isUserWord: item.userWord ? true : false,
+      });
+    });
+  } else if (instanceofIWord(inputData)) {
+    inputData.forEach((item) => {
+      data.push({
+        ...item,
+        difficulty: Difficulty.EASY,
+        goals: 0,
+        isUserWord: false,
       });
     });
   } else {

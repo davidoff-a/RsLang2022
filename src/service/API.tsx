@@ -10,7 +10,7 @@ class Query {
   ) {}
 
   async getWords() {
-    await fetch(`${this.basicURL}words`, {
+    return await fetch(`${this.basicURL}words`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -30,7 +30,7 @@ class Query {
   }
 
   async getWord(wordId: number) {
-    await fetch(`${this.basicURL}words/${wordId}`, {
+    return await fetch(`${this.basicURL}words/${wordId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -39,7 +39,7 @@ class Query {
   }
 
   async createUser(body: { name: string; email: string; password: string }) {
-    await fetch(`${this.basicURL}users`, {
+    return await fetch(`${this.basicURL}users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -48,17 +48,19 @@ class Query {
     });
   }
 
-  async getUser(id: number) {
-    await fetch(`${this.basicURL}users/${id}`, {
+  async getUser(id: string) {
+    const token: string = this.storage.getSavedToken() as string;
+    return await fetch(`${this.basicURL}users/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
   }
 
   async updateUser(id: number, body: { email: string; password: string }) {
-    await fetch(`${this.basicURL}users/${id}`, {
+    return await fetch(`${this.basicURL}users/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -67,7 +69,7 @@ class Query {
   }
 
   async deleteUser(id: number) {
-    await fetch(`${this.basicURL}users/${id}`, {
+    return await fetch(`${this.basicURL}users/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -75,17 +77,19 @@ class Query {
     });
   }
 
-  async getUserTokens(id: number) {
-    await fetch(`${this.basicURL}users/${id}/tokens`, {
+  async getUserTokens(id: string) {
+    const token: string = this.storage.getSavedToken() as string;
+    return await fetch(`${this.basicURL}users/${id}/tokens`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
   }
 
   async getUserWords(id: number) {
-    await fetch(`${this.basicURL}users/${id}/words`, {
+    return await fetch(`${this.basicURL}users/${id}/words`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -96,11 +100,13 @@ class Query {
   async addUserWords(
     id: string,
     wordId: string,
-    body: { difficulty: string; optional: { [key: string]: number | string | boolean } }
+    body: {
+      difficulty: string;
+      optional: { [key: string]: number | string | boolean };
+    }
   ) {
-    const token: string =
-    this.storage.getSavedToken() as string;
-    await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
+    const token: string = this.storage.getSavedToken() as string;
+    return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
       method: "POST",
       body: JSON.stringify(body),
       headers: {
@@ -111,7 +117,7 @@ class Query {
   }
 
   async getUserSpecialWords(id: number, wordId: number) {
-    await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
+    return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -122,11 +128,13 @@ class Query {
   async updateUserWords(
     id: string,
     wordId: string,
-    body: { difficulty: string; optional: { [key: string]: number | string | boolean} }
+    body: {
+      difficulty: string;
+      optional: { [key: string]: number | string | boolean };
+    }
   ) {
-    const token: string =
-    this.storage.getSavedToken() as string;
-    await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
+    const token: string = this.storage.getSavedToken() as string;
+    return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
       method: "PUT",
       body: JSON.stringify(body),
       headers: {
@@ -137,9 +145,8 @@ class Query {
   }
 
   async deleteUserWords(id: number, wordId: number) {
-    const token: string =
-    this.storage.getSavedToken() as string;
-    await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
+    const token: string = this.storage.getSavedToken() as string;
+    return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -149,7 +156,7 @@ class Query {
   }
 
   async getAllUserWords(id: number, wordId: number) {
-    await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
+    return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -158,7 +165,7 @@ class Query {
   }
 
   async signIn(userId: number, body: { email: string; password: string }) {
-    await fetch(`${this.basicURL}users/${userId}`, {
+    return await fetch(`${this.basicURL}users/${userId}`, {
       method: "POST",
       body: JSON.stringify(body),
       headers: {
@@ -167,17 +174,20 @@ class Query {
     });
   }
 
-  async getAgregatedWordById(userId: number, wordId: number) {
-    await fetch(`${this.basicURL}users/${userId}/aggregatedWords/${wordId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+  async getAggregatedWordById(userId: number, wordId: number) {
+    return await fetch(
+      `${this.basicURL}users/${userId}/aggregatedWords/${wordId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
 
-  async getAgregatedWords(userId: number) {
-    await fetch(`${this.basicURL}users/${userId}/aggregatedWords`, {
+  async getAggregatedWords(userId: number) {
+    return await fetch(`${this.basicURL}users/${userId}/aggregatedWords`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -190,8 +200,7 @@ class Query {
     difficulty: Difficulty[]
   ): Promise<IAggregateResult[]> {
     try {
-      const token: string =
-      this.storage.getSavedToken() as string;
+      const token: string = this.storage.getSavedToken() as string;
       const data = await fetch(
         // eslint-disable-next-line max-len
         `${this.basicURL}users/${userId}/aggregatedWords?wordsPerPage=3600&filter={"$or":[{"userWord.difficulty":"${difficulty[0]}"},{"userWord.difficulty":"${difficulty[1]}"},{"userWord.difficulty":"${difficulty[2]}"}]}`,
@@ -210,7 +219,7 @@ class Query {
   }
 
   async getUserStats(userId: number) {
-    await fetch(`${this.basicURL}users/${userId}/statistics`, {
+    return await fetch(`${this.basicURL}users/${userId}/statistics`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -222,7 +231,7 @@ class Query {
     userId: number,
     body: { learnedWords: number; optional: { [key: string]: string } }
   ) {
-    await fetch(`${this.basicURL}users/${userId}/statistics`, {
+    return await fetch(`${this.basicURL}users/${userId}/statistics`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -231,7 +240,7 @@ class Query {
   }
 
   async getUserSettings(userId: number) {
-    await fetch(`${this.basicURL}users/${userId}/settings`, {
+    return await fetch(`${this.basicURL}users/${userId}/settings`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -243,7 +252,7 @@ class Query {
     userId: number,
     body: { wordsPerDay: number; optional: { [key: string]: string } }
   ) {
-    await fetch(`${this.basicURL}users/${userId}/statistics`, {
+    return await fetch(`${this.basicURL}users/${userId}/statistics`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
