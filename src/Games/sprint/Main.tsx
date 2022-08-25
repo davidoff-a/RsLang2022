@@ -1,4 +1,5 @@
 import React from 'react';
+import {sprintResults} from './GameComponents/SprintSettings'
 import Card from './GameComponents/Card';
 import './style.css';
 
@@ -25,20 +26,21 @@ const testWords: ISprintWords[]  = [
     }
 ]
 
-const randomAnswers: string[] = [];
 
 function getRandomAnswers (wordsArr: ISprintWords[]) {
+    const randomAnswers: string[] = [];
     wordsArr.map(word => randomAnswers.push(word.wordTranslate));
     randomAnswers.sort(() => Math.random() - 0.5);
+    return randomAnswers;
 }
-getRandomAnswers(testWords);
 
-
+sprintResults.wordsArr = testWords;
+sprintResults.randomAnswers = getRandomAnswers(testWords);
 
 export default function Main() {
     return (
         <div className='sprint-wrapper'>
-            <Card wordsArr={testWords} randomAnswers={randomAnswers}/>
+            <Card />
         </div>
     )
 }
