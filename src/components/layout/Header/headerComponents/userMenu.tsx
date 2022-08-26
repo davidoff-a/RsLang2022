@@ -10,7 +10,6 @@ import Box from "@mui/material/Box";
 import { MouseEvent, useContext, useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { ColorModeContext } from "../../../../app/App";
-// import RegForm from "./RegForm";
 
 export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -22,10 +21,8 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  // const handleOpen = () => setOpen(true);
 
   const handleUserMenuItem = () => {
-    // const target = e.target as HTMLElement;
     toggleModal();
     handleCloseUserMenu();
   };
