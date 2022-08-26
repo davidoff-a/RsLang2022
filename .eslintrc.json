@@ -11,6 +11,7 @@
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true
@@ -21,7 +22,8 @@
     },
     "plugins": [
         "react",
-        "babel"
+        "babel",
+        "@typescript-eslint"
     ],
     "rules": {
         "no-console": "warn",
@@ -71,12 +73,12 @@
                 "props": false
             }
         ],
-        "no-unused-vars": [
-            "error",
-            {
-                "caughtErrorsIgnorePattern": "^ignore"
-            }
-        ],
+        // "no-unused-vars": [
+        //     "error",
+        //     {
+        //         "caughtErrorsIgnorePattern": "^ignore"
+        //     }
+        // ],
         "react/jsx-uses-react": 1,
         "react/jsx-uses-vars": "error",
         // suppress errors for missing 'import React' in files
