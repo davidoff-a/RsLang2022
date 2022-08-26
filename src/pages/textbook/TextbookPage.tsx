@@ -29,16 +29,6 @@ const checkAuthorization = async (id: string) => {
 
 export function TextbookPage() {
   const storage = StorageWrapper.getInstance();
-  let userId: string | null = storage.getSavedUser();
-  const initialGroup: string | null = storage.getSavedGroup();
-  const initialPage: string | null = storage.getSavedPage();
-  const [isLogged, setIsLogged] = useState<boolean>(userId ? true : false);
-  const [group, setGroup] = useState<number>(initialGroup ? +initialGroup : 0);
-  const [page, setPage] = useState<number>(initialPage ? +initialPage : 0);
-  const [error, setError] = useState("");
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [items, setItems] = useState([] as IUserWord[]);
-  const [currentId, setCurrentId] = useState("");
   const groupsColor: string[] = [
     lime[400],
     orange[400],
@@ -49,61 +39,91 @@ export function TextbookPage() {
     pink[400],
   ];
 
-  const getItems = (wordId?: string) => {
-    const check = checkAuthorization(userId as string);
-    void check.then((result) => {
-      let queryResult: Promise<IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]>;
-      if (!result.ok) {
-        setGroup(0);
-        setPage(0);
-        userId = null;
-        setIsLogged(false);
+  const userId: string | null = storage.getSavedUser() as string;
+  const initialGroup: string | null = storage.getSavedGroup() as string;
+  const initialPage: string | null = storage.getSavedPage() as string;
+
+  const [pageState, setPageState] = useState({
+    isLogged: userId ? true : false,
+    group: initialGroup ? +initialGroup : 0,
+    page: initialPage ? +initialPage : 0,
+    error: "",
+    isLoaded: false,
+    items: [] as IUserWord[],
+    currentId: "",
+  });
+
+  const getItems = (group = 0, page = 0, wordId?: string) => {
+    const check = checkAuthorization(userId);
+    void check.then((resultCheck) => {
+      let queryResult: Promise<
+        IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
+      >;
+      if (!resultCheck.ok) {
         queryResult = QueryService.getWordsPage(group, page);
       } else {
-        if (group < 6) {
-          queryResult = getWordsForTextbook(userId as string, group, page);
+        if (pageState.group < 6) {
+          queryResult = getWordsForTextbook(userId, group, page);
         } else {
-          queryResult = QueryService.getAggregatedWordsByFilter(
-            userId as string,
-            [Difficulty.HARD, Difficulty.HARD, Difficulty.HARD]
-          );
+          queryResult = QueryService.getAggregatedWordsByFilter(userId, [
+            Difficulty.HARD,
+            Difficulty.HARD,
+            Difficulty.HARD,
+          ]);
         }
       }
       queryResult.then(
         (result) => {
-          const words = wordsAdapter(result);
-          setIsLoaded(true);
-          setItems(words);
-          if (words.length > 0) {
-            setCurrentId(wordId ? wordId : words[0].id);
+          const items = wordsAdapter(result);
+          if (items.length > 0) {
+            setPageState({
+              ...pageState,
+              isLogged: resultCheck.ok,
+              group,
+              page,
+              isLoaded: true,
+              items,
+              currentId: wordId ? wordId : items[0].id,
+            });
+          } else {
+            setPageState({
+              ...pageState,
+              isLogged: resultCheck.ok,
+              group,
+              page,
+              isLoaded: true,
+              items,
+            });
           }
         },
         (error) => {
-          setIsLoaded(true);
-          setError(error as string);
+          setPageState({
+            ...pageState,
+            isLoaded: true,
+            items: [] as IUserWord[],
+            error: error as string,
+          });
         }
       );
     });
   };
 
   useEffect(() => {
-    getItems();
+    getItems(pageState.group, pageState.page);
   }, []);
 
   const onClickTab = (group: number) => {
-    getItems();
     storage.setSavedGroup(`${group}`);
-    return setGroup(group);
+    return getItems(group, pageState.page);
   };
 
   const onClickPage = (page: number) => {
-    getItems();
     storage.setSavedPage(`${page}`);
-    return setPage(page);
+    return getItems(pageState.group, page);
   };
 
-  const onClickItem = (id: string) => {
-    return setCurrentId(id);
+  const onClickItem = (wordId: string) => {
+    return setPageState({ ...pageState, currentId: wordId });
   };
 
   const onClickWordCardButton = (
@@ -114,12 +134,12 @@ export function TextbookPage() {
   ) => {
     let queryResult: Promise<Response>;
     if (isUserWord) {
-      queryResult = QueryService.updateUserWords(userId as string, id, {
+      queryResult = QueryService.updateUserWords(userId, id, {
         difficulty,
         optional: { goals },
       });
     } else {
-      queryResult = QueryService.addUserWords(userId as string, id, {
+      queryResult = QueryService.addUserWords(userId, id, {
         difficulty,
         optional: { goals },
       });
@@ -130,12 +150,11 @@ export function TextbookPage() {
         return getItems();
       },
       (error) => {
-        setIsLoaded(true);
-        setError(error as string);
+        setPageState({ ...pageState, isLoaded: true, error: error as string });
       }
     );
   };
-  
+
   return (
     <Container
       sx={{
@@ -147,7 +166,7 @@ export function TextbookPage() {
       <TextbookTabs
         initialGroup={initialGroup ? +initialGroup : 0}
         groupsColor={groupsColor}
-        isLogged={isLogged}
+        isLogged={pageState.isLogged}
         onClickTab={onClickTab}
       />
       <Grid
@@ -161,29 +180,33 @@ export function TextbookPage() {
       >
         <Grid item xs={6}>
           <TextbookWords
-            items={items}
-            isLoaded={isLoaded}
-            isLogged={isLogged}
-            error={error}
-            color={groupsColor[group]}
+            items={pageState.items}
+            isLoaded={pageState.isLoaded}
+            isLogged={pageState.isLogged}
+            error={pageState.error}
+            color={groupsColor[pageState.group]}
             colorHard={red[500]}
             colorStudied={green[500]}
-            isHardWords={group === 6}
+            isHardWords={pageState.group === 6}
             onClickItem={onClickItem}
           />
         </Grid>
         <Grid item xs={6}>
           <WordCard
-            isLogged={isLogged}
-            color={groupsColor[group]}
-            item={items.find((item) => item.id === currentId) as IUserWord}
+            isLogged={pageState.isLogged}
+            color={groupsColor[pageState.group]}
+            item={
+              pageState.items.find(
+                (item) => item.id === pageState.currentId
+              ) as IUserWord
+            }
             onClickWordCardButton={onClickWordCardButton}
           />
         </Grid>
       </Grid>
       <TextbookPagination
-        page={page ? +page : 0}
-        color={groupsColor[group]}
+        page={pageState.page}
+        color={groupsColor[pageState.group]}
         onClickPage={onClickPage}
       />
     </Container>
