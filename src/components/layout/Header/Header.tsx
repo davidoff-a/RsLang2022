@@ -8,9 +8,10 @@ import MainMenu from "./headerComponents/MainMenu";
 import "./_header.scss";
 import { FormDialog } from "./headerComponents/RegForm";
 import * as React from "react";
+import { useState } from "react";
 
 const Header = () => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const toggleModal = () => {
     setOpen((open) => !open);

@@ -10,6 +10,7 @@ import Box from "@mui/material/Box";
 import { MouseEvent, useContext, useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { ColorModeContext } from "../../../../app/App";
+import StorageWrapper from "../../../storageWrapper";
 
 export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -30,9 +31,8 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
   const settings = ["Profile", "Dashboard", "Logout"];
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
-  const menuItemData: string[] = localStorage.getItem("utoken")
-    ? settings
-    : ["Log In"];
+  const store = StorageWrapper.getInstance();
+  const menuItemData: string[] = store.getSavedUser() ? settings : ["Войти"];
 
   const addMenuItems = (menuItems: string[]) => {
     return menuItems.map((item, index) => (
