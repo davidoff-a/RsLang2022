@@ -7,9 +7,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    
 }
 
-.sprint-card-item {
+.sprint-card-wrapper {
     position: relative;
     display: flex;
     justify-content: center;
