@@ -20,8 +20,12 @@ class StorageWrapper extends Storage<Locals> {
     return this.get(Locals.USER);
   }
 
-  public setSavedUser(savedItem: string) {
+  public setSavedUserId(savedItem: string) {
     this.set(Locals.USER, savedItem);
+  }
+
+  public setSavedUserName(savedItem: string) {
+    this.set(Locals.USER_NAME, savedItem);
   }
 
   public clearSavedUser() {
