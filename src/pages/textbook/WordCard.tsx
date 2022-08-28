@@ -1,12 +1,16 @@
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import {
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Grid,
+  Button,
+  Typography,
+} from "@mui/material";
 
 import { IUserWord } from "../../common/interfaces/userWord";
 import { Difficulty } from "../../common/enums/difficulty";
+import { Player } from "./Player";
 
 export interface Props {
   isLogged: boolean;
@@ -27,37 +31,82 @@ export function WordCard({
   onClickWordCardButton,
 }: Props) {
   if (!item) {
-    return <div></div>;
+    return <></>;
   } else {
     const isHard: boolean = item.difficulty === Difficulty.HARD;
     const isStudied: boolean = item.difficulty === Difficulty.STUDIED;
     return (
       <Card
         sx={{
-          maxWidth: "22rem",
-          height: "24rem",
+          maxWidth: "40rem",
           boxShadow: `0px 4px 2px -2px ${color},0px 2px 2px 0px ${color},0px 2px 6px 0px ${color}`,
         }}
       >
         <CardMedia
           component="img"
-          height="140"
-          image={`${item.image}`}
+          height="300"
+          image={`${process.env.PUBLIC_URL}${item.image}`}
           alt={`image for "${item.word}"`}
         />
         <CardContent>
-          <Typography gutterBottom variant="h3" component="div">
-            {item.word}
-          </Typography>
-          <Typography gutterBottom variant="h6" component="div">
-            {item.id}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {item.transcription}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {item.wordTranslate}
-          </Typography>
+          <Grid container spacing={2} sx={{ alignItems: "center" }}>
+            <Grid item xs={10}>
+              <Typography
+                gutterBottom
+                variant="h3"
+                component="div"
+                sx={{ marginBottom: "0.25rem", textAlign: "center" }}
+              >
+                {item.word}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Player url={`${process.env.PUBLIC_URL}${item.audio}`}></Player>
+            </Grid>
+            <Grid item xs={5}>
+              {" "}
+              <Typography
+                variant="h6"
+                color="text.secondary"
+                sx={{ textAlign: "right" }}
+              >
+                {item.transcription}
+              </Typography>
+            </Grid>
+            <Grid item xs={5}>
+              <Typography variant="h6" color="text.secondary">
+                {item.wordTranslate}
+              </Typography>
+            </Grid>
+            <Grid item xs={10}>
+              <Typography
+                variant="body1"
+                dangerouslySetInnerHTML={{ __html: item.textMeaning }}
+              />
+              <Typography variant="body2">
+                {item.textMeaningTranslate}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Player
+                url={`${process.env.PUBLIC_URL}${item.audioMeaning}`}
+              ></Player>
+            </Grid>
+            <Grid item xs={10}>
+              <Typography
+                variant="body1"
+                dangerouslySetInnerHTML={{ __html: item.textExample }}
+              />
+              <Typography variant="body2">
+                {item.textExampleTranslate}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Player
+                url={`${process.env.PUBLIC_URL}${item.audioExample}`}
+              ></Player>
+            </Grid>
+          </Grid>
         </CardContent>
         <CardActions>
           {isLogged && (
@@ -93,12 +142,6 @@ export function WordCard({
             </>
           )}
         </CardActions>
-        <Typography variant="body2" color="text.secondary">
-          {item.difficulty}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {item.isUserWord ? "true" : "false"}
-        </Typography>
       </Card>
     );
   }
