@@ -83,6 +83,7 @@ class StorageWrapper extends Storage<Locals> {
   public clear() {
     this.clearItems([
       Locals.USER,
+      Locals.USER_NAME,
       Locals.REFRESHTOKEN,
       Locals.TOKEN,
       Locals.GROUP,

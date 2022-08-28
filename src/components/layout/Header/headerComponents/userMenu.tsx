@@ -11,6 +11,12 @@ import { MouseEvent, useContext, useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { ColorModeContext } from "../../../../app/App";
 import StorageWrapper from "../../../storageWrapper";
+import storageWrapper from "../../../storageWrapper";
+
+export interface userMenuItem {
+  label: string;
+  handler: () => void;
+}
 
 export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -28,16 +34,28 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
     handleCloseUserMenu();
   };
 
-  const settings = ["Profile", "Dashboard", "Logout"];
+  const handleLogout = () => {
+    const store = storageWrapper.getInstance();
+    store.clear();
+    handleCloseUserMenu();
+  };
+
+  const settings = [
+    { label: "Profile", handler: handleCloseUserMenu },
+    { label: "Dashboard", handler: handleCloseUserMenu },
+    { label: "Logout", handler: handleLogout },
+  ];
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
   const store = StorageWrapper.getInstance();
-  const menuItemData: string[] = store.getSavedUser() ? settings : ["Войти"];
+  const menuItemData: userMenuItem[] = store.getSavedUser()
+    ? settings
+    : [{ label: "Войти", handler: () => {} }];
 
-  const addMenuItems = (menuItems: string[]) => {
+  const addMenuItems = (menuItems: userMenuItem[]) => {
     return menuItems.map((item, index) => (
-      <MenuItem key={index} data-item={item} onClick={handleUserMenuItem}>
-        <Typography textAlign="center">{item}</Typography>
+      <MenuItem key={index} data-item={item.label} onClick={item.handler}>
+        <Typography textAlign="center">{item.label}</Typography>
       </MenuItem>
     ));
   };
