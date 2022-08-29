@@ -40,7 +40,7 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
     handleCloseUserMenu();
   };
 
-  const settings = [
+  const settings: userMenuItem[] = [
     { label: "Profile", handler: handleCloseUserMenu },
     { label: "Dashboard", handler: handleCloseUserMenu },
     { label: "Logout", handler: handleLogout },
@@ -48,9 +48,9 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
   const store = StorageWrapper.getInstance();
-  const menuItemData: userMenuItem[] = store.getSavedUser()
+  const menuItemData = store.getSavedUser()
     ? settings
-    : [{ label: "Войти", handler: () => {} }];
+    : [{ label: "Войти", handler: handleUserMenuItem }];
 
   const addMenuItems = (menuItems: userMenuItem[]) => {
     return menuItems.map((item, index) => (
