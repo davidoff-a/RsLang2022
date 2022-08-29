@@ -11,7 +11,6 @@ import {
 import { IUserWord } from "../../common/interfaces/userWord";
 import { Difficulty } from "../../common/enums/difficulty";
 import { Player } from "./Player";
-
 export interface Props {
   isLogged: boolean;
   color: string;
@@ -35,6 +34,7 @@ export function WordCard({
   } else {
     const isHard: boolean = item.difficulty === Difficulty.HARD;
     const isStudied: boolean = item.difficulty === Difficulty.STUDIED;
+    // TODO change links to server from public
     return (
       <Card
         sx={{

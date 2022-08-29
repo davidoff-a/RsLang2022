@@ -1,15 +1,7 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { Grid, Container } from "@mui/material";
-import { TextbookPagination } from "./TextbookPagination";
-import { TextbookTabs } from "./TextbookTabs";
-import { TextbookWords } from "./TextbookWords";
-import { WordCard } from "./WordCard";
-import { query as QueryService } from "../../service/API";
-import { wordsAdapter, getWordsForTextbook } from "../../service/APIHelper";
-import { IWord } from "../../common/interfaces/word";
-import { IUserWord } from "../../common/interfaces/userWord";
-import StorageWrapper from "../../components/storageWrapper";
+import { Grid, Container, Typography } from "@mui/material";
 import {
   lime,
   orange,
@@ -21,8 +13,19 @@ import {
   red,
   yellow,
 } from "@mui/material/colors";
+
+import { TextbookPagination } from "./TextbookPagination";
+import { TextbookTabs } from "./TextbookTabs";
+import { TextbookWords } from "./TextbookWords";
+import { WordCard } from "./WordCard";
+import { query as QueryService } from "../../service/API";
+import { wordsAdapter, getWordsForTextbook } from "../../service/APIHelper";
+import { IWord } from "../../common/interfaces/word";
+import { IUserWord } from "../../common/interfaces/userWord";
+import StorageWrapper from "../../components/storageWrapper";
 import { Difficulty } from "../../common/enums/difficulty";
 import { IAggregateResult } from "../../common/interfaces/aggregateResult";
+import { GameButton } from "./GameButton";
 
 const checkAuthorization = async (id: string) => {
   return await QueryService.getUser(id);
@@ -30,6 +33,7 @@ const checkAuthorization = async (id: string) => {
 
 export function TextbookPage() {
   const storage = StorageWrapper.getInstance();
+  const navigate = useNavigate();
   const groupsColor: string[] = [
     lime[400],
     orange[400],
@@ -53,6 +57,7 @@ export function TextbookPage() {
     isLoaded: false,
     items: [] as IUserWord[],
     currentId: "",
+    isPageStudied: false,
   });
 
   const onError = (error: string): void => {
@@ -100,6 +105,9 @@ export function TextbookPage() {
               isLoaded: true,
               items,
               currentId: wordId ? wordId : items[0].id,
+              isPageStudied:
+                items.every((item) => item.difficulty !== Difficulty.EASY) &&
+                group < 6,
             });
           }
         } else {
@@ -142,6 +150,10 @@ export function TextbookPage() {
 
   const onClickItem = (wordId: string) => {
     return setPageState({ ...pageState, currentId: wordId });
+  };
+
+  const onClickLinkGame = (link: string) => {
+    navigate(`/games/${link}`, { state: { items: pageState.items } });
   };
 
   const onClickWordCardButton = (
@@ -210,6 +222,19 @@ export function TextbookPage() {
         spacing={2}
       >
         <Grid item xs={6}>
+          {pageState.isPageStudied && pageState.group < 7 && (
+            <Typography
+              gutterBottom
+              variant="h4"
+              component="div"
+              sx={{ marginBottom: "1rem", textAlign: "center" }}
+            >
+              Page is studied!
+            </Typography>
+          )}
+          {!pageState.isPageStudied && pageState.group < 7 && (
+            <GameButton onClickLinkGame={onClickLinkGame} />
+          )}
           <TextbookWords
             items={pageState.items}
             isLoaded={pageState.isLoaded}
@@ -238,6 +263,7 @@ export function TextbookPage() {
       </Grid>
       <TextbookPagination
         page={pageState.page}
+        isPageStudied={pageState.isPageStudied}
         color={groupsColor[pageState.group]}
         onClickPage={onClickPage}
       />

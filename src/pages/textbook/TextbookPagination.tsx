@@ -2,14 +2,17 @@ import { Stack, Pagination } from "@mui/material";
 
 interface Props {
   page: number;
+  isPageStudied: boolean;
   color: string;
   onClickPage: (id: number) => void;
 }
 
-export function TextbookPagination({ page, color, onClickPage }: Props) {
+export function TextbookPagination({ page, isPageStudied, color, onClickPage }: Props) {
   const handleChangePage = (_ev: object, pg: number) => {
     onClickPage(pg - 1);
   };
+  console.log("isPageStudied:", isPageStudied);
+  
 
   return (
     <Stack
@@ -23,6 +26,7 @@ export function TextbookPagination({ page, color, onClickPage }: Props) {
         page={page + 1}
         variant="outlined"
         shape="rounded"
+        color={isPageStudied ? "primary" : "standard"}
         onChange={handleChangePage}
       />
     </Stack>

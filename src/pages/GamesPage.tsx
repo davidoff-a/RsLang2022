@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 export function GamesPage() {
   return (
-    <Typography variant="h4" component="h1" gutterBottom>
+    <Typography variant="h3" gutterBottom>
       Games page
       <Outlet />
     </Typography>
