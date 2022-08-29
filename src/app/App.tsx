@@ -6,7 +6,7 @@ import { createTheme, PaletteMode } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 
-import Header from "../components/layout/Header";
+import Header from "../components/layout/Header/Header";
 import Footer from "../components/layout/Footer";
 
 import {AboutPage} from "../pages/AboutPage";

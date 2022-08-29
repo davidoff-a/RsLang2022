@@ -1,6 +1,5 @@
-import { Locals } from '../common/enums/locals';
-import { Storage } from '../common/templates/storage';
-
+import { Locals } from "../common/enums/locals";
+import { Storage } from "../common/templates/storage";
 
 class StorageWrapper extends Storage<Locals> {
   private static instance?: StorageWrapper;
@@ -21,8 +20,12 @@ class StorageWrapper extends Storage<Locals> {
     return this.get(Locals.USER);
   }
 
-  public setSavedUser(savedItem: string) {
+  public setSavedUserId(savedItem: string) {
     this.set(Locals.USER, savedItem);
+  }
+
+  public setSavedUserName(savedItem: string) {
+    this.set(Locals.USER_NAME, savedItem);
   }
 
   public clearSavedUser() {
@@ -78,13 +81,19 @@ class StorageWrapper extends Storage<Locals> {
   }
 
   public clear() {
-    this.clearItems([Locals.USER, Locals.REFRESHTOKEN, Locals.TOKEN, Locals.GROUP, Locals.PAGE]);
+    this.clearItems([
+      Locals.USER,
+      Locals.USER_NAME,
+      Locals.REFRESHTOKEN,
+      Locals.TOKEN,
+      Locals.GROUP,
+      Locals.PAGE,
+    ]);
   }
 
   public clearUserSettings() {
     this.clearItems([Locals.USER, Locals.REFRESHTOKEN, Locals.TOKEN]);
   }
-
 }
 
 export default StorageWrapper;
