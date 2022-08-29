@@ -41,9 +41,9 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
   };
 
   const settings: userMenuItem[] = [
-    { label: "Profile", handler: handleCloseUserMenu },
-    { label: "Dashboard", handler: handleCloseUserMenu },
-    { label: "Logout", handler: handleLogout },
+    { label: "Профиль", handler: handleCloseUserMenu },
+    { label: "Статистика", handler: handleCloseUserMenu },
+    { label: "Выход", handler: handleLogout },
   ];
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
