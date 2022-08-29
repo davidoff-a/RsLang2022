@@ -65,6 +65,7 @@ class Query {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(body),
     });
   }
 
@@ -164,8 +165,8 @@ class Query {
     });
   }
 
-  async signIn(userId: number, body: { email: string; password: string }) {
-    return await fetch(`${this.basicURL}users/${userId}`, {
+  async signIn(body: { email: string; password: string }) {
+    return await fetch(`${this.basicURL}signin`, {
       method: "POST",
       body: JSON.stringify(body),
       headers: {
@@ -236,6 +237,7 @@ class Query {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(body),
     });
   }
 
@@ -257,6 +259,7 @@ class Query {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(body),
     });
   }
 }
