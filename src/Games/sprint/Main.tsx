@@ -70,17 +70,24 @@ interface Props {
 // const randomAnswers = getRandomAnswers(testWords);
 
 export default function Main(props: Props) {
-    const randomAnswers = getRandomAnswers(props.wordsArrMain);
+    // const randomAnswers = getRandomAnswers(props.wordsArrMain);
     const [wordIndx, setWordIndx] = useState(1);
     const [cardData, setCardData] = useState(props.wordsArrMain[0]);
-    const [randomWord, setRandomWord] = useState(randomAnswers[0])
+    // const [randomWord, setRandomWord] = useState(randomAnswers[0])
+        const getRandomIndx = (max: number) => {
+        return Math.floor(Math.random() * max);
+    }
+    let randomIndx = getRandomIndx(props.wordsArrMain.length);
+
     const handleWordIndx = (e: React.MouseEvent<HTMLButtonElement>) => {
         // e.preventDefault();
         checkWord(e.currentTarget);
         setWordIndx(wordIndx+1);
         setCardData(props.wordsArrMain[wordIndx]);
-        setRandomWord(randomAnswers[wordIndx]);
+        randomIndx = getRandomIndx(props.wordsArrMain.length);
+        // setRandomWord(randomAnswers[wordIndx]);
     };
+
 
     const checkWord = (btn: HTMLButtonElement) => {
         switch (btn.innerHTML) {
@@ -121,10 +128,10 @@ export default function Main(props: Props) {
             <div className='sprint-wrapper'>
                 <div className='sprint-card-wrapper'>
                     <CloseBtn />
-                    <Card cardData={cardData} randomWord={randomWord}/>
+                    <Card cardData={cardData} randomWord={props.wordsArrMain[randomIndx].wordTranslate}/>
                     <div className='sprint-btn-block'>
-                            <SprintBtn action={'yes'} handleWordIndx = {handleWordIndx} translate = {cardData.wordTranslate} randomWord={randomWord}/>
-                            <SprintBtn action={'no'} handleWordIndx = {handleWordIndx} translate = {cardData.wordTranslate} randomWord={randomWord}/>
+                            <SprintBtn action={'yes'} handleWordIndx = {handleWordIndx} translate = {cardData.wordTranslate} randomWord={props.wordsArrMain[randomIndx].wordTranslate}/>
+                            <SprintBtn action={'no'} handleWordIndx = {handleWordIndx} translate = {cardData.wordTranslate} randomWord={props.wordsArrMain[randomIndx].wordTranslate}/>
                     </div>  
                 </div>
                 
