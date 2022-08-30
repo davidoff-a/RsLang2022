@@ -4,62 +4,81 @@ import Card from './GameComponents/Card';
 import './style.css';
 import SprintBtn from './GameComponents/SprintBtn';
 import CloseBtn from './GameComponents/CloseBtn';
+import { IUserWord } from '../../common/interfaces/userWord';
 
 
-export interface ISprintWords {
-    id: number;
-    word: string;
-    wordTranslate: string;
-}
+// export interface ISprintWords {
+//     audio: string;
+//     audioExample: string;
+//     audioMeaning: string;
+//     difficulty: Difficulty;
+//     goals: number;
+//     group: number;
+//     id: string;
+//     image: string;
+//     isUserWord: boolean;
+//     page: number;
+//     textExample: string;
+//     textExampleTranslate: string;
+//     textMeaning: string;
+//     textMeaningTranslate: string;
+//     word: string;
+//     wordTranslate: string;
+// }
 
-const testWords: ISprintWords[]  = [
-    {   
-        id: 1,
-        word: "apple",
-        wordTranslate: "яблоко"
-    }, 
-    {
-        id: 2,
-        word: "banana",
-        wordTranslate: "банан"
-    }, 
-    {
-        id: 3,
-        word:"tree",
-        wordTranslate: "дерево"
-    },
-    {
-        id: 4,
-        word:"book",
-        wordTranslate: "книга"
-    },
-    {
-        id: 5,
-        word:"box",
-        wordTranslate: "коробка"
-    }
-]
+// const testWords: ISprintWords[]  = [
+//     {   
+//         id: 1,
+//         word: "apple",
+//         wordTranslate: "яблоко"
+//     }, 
+//     {
+//         id: 2,
+//         word: "banana",
+//         wordTranslate: "банан"
+//     }, 
+//     {
+//         id: 3,
+//         word:"tree",
+//         wordTranslate: "дерево"
+//     },
+//     {
+//         id: 4,
+//         word:"book",
+//         wordTranslate: "книга"
+//     },
+//     {
+//         id: 5,
+//         word:"box",
+//         wordTranslate: "коробка"
+//     }
+// ]
 
 
-function getRandomAnswers (wordsArr: ISprintWords[]) {
+function getRandomAnswers (wordsArr: IUserWord[]) {
     const randomAnswers: string[] = [];
     wordsArr.map(word => randomAnswers.push(word.wordTranslate));
     randomAnswers.sort(() => Math.random() - 0.5);
     return randomAnswers;
 }
 
-sprintResults.wordsArr = testWords;
-const randomAnswers = getRandomAnswers(testWords);
+interface Props {
+    wordsArrMain: IUserWord[];
+}
 
-export default function Main() {
+// sprintResults.wordsArr = testWords;
+// const randomAnswers = getRandomAnswers(testWords);
+
+export default function Main(props: Props) {
+    const randomAnswers = getRandomAnswers(props.wordsArrMain);
     const [wordIndx, setWordIndx] = useState(1);
-    const [cardData, setCardData] = useState(testWords[0]);
+    const [cardData, setCardData] = useState(props.wordsArrMain[0]);
     const [randomWord, setRandomWord] = useState(randomAnswers[0])
     const handleWordIndx = (e: React.MouseEvent<HTMLButtonElement>) => {
         // e.preventDefault();
         checkWord(e.currentTarget);
         setWordIndx(wordIndx+1);
-        setCardData(testWords[wordIndx]);
+        setCardData(props.wordsArrMain[wordIndx]);
         setRandomWord(randomAnswers[wordIndx]);
     };
 
@@ -86,11 +105,15 @@ export default function Main() {
     }
     }
 
-    const wordsArrLength = testWords.length;
+    const wordsArrLength = props.wordsArrMain.length;
     if ( wordIndx > wordsArrLength) {
         return (
             <div className='sprint-wrapper'>
-                <h1>The end</h1>
+                <div className='sprint-card-wrapper'>
+                <CloseBtn />
+                   The end
+                </div>
+                
             </div>
         )
     } else {

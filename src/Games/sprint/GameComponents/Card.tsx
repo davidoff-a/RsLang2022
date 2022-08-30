@@ -1,9 +1,10 @@
 import React from 'react';
 import '../style.css';
-import {ISprintWords} from '../Main';
+// import {ISprintWords} from '../Main';
+import { IUserWord } from '../../../common/interfaces/userWord';
 
 interface Props {
-    cardData: ISprintWords;
+    cardData: IUserWord;
     randomWord: string;
 }
 

@@ -23,6 +23,8 @@
     border-radius: 30px;
     padding: 40px;
     box-sizing: border-box;
+    font-size: 32px;
+    font-weight: 600;
 }
 
 .sprint-close-btn {
