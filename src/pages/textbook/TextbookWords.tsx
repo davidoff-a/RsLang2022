@@ -1,23 +1,12 @@
-import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Unstable_Grid2";
 import BoltIcon from "@mui/icons-material/Bolt";
-import AddReactionIcon from '@mui/icons-material/AddReaction';
+import AddReactionIcon from "@mui/icons-material/AddReaction";
 
 import { Spinner } from "../../components/Spinner";
 import { IUserWord } from "../../common/interfaces/userWord";
 import { Difficulty } from "../../common/enums/difficulty";
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  cursor: "pointer",
-  color: theme.palette.text.secondary,
-}));
-
+import { GridItem as Item } from "../../components/GridItem";
 interface Props {
   items: IUserWord[];
   isLoaded: boolean;
@@ -27,6 +16,7 @@ interface Props {
   colorHard: string;
   colorStudied: string;
   isHardWords: boolean;
+  isStudiedWords: boolean;
   onClickItem: (id: string) => void;
 }
 
@@ -39,6 +29,7 @@ export function TextbookWords({
   colorHard,
   colorStudied,
   isHardWords,
+  isStudiedWords,
   onClickItem,
 }: Props) {
   if (error) {
@@ -56,17 +47,24 @@ export function TextbookWords({
                   boxShadow: `0px 4px 2px -2px ${color},0px 2px 2px 0px ${color},0px 2px 6px 0px ${color}`,
                   fontWeight: 500,
                   fontSize: "1rem",
+                  cursor: "pointer",
                 }}
                 onClick={() => onClickItem(item.id)}
               >
                 {" "}
-                {item.word}             
-                {isLogged && !isHardWords && item.difficulty === Difficulty.HARD &&
-                  <BoltIcon sx={{ color: colorHard, fontSize: "1rem", }} />
-                }
-                {isLogged && item.difficulty === Difficulty.STUDIED &&
-                  <AddReactionIcon sx={{ color: colorStudied, fontSize: "1rem", }} />
-                }
+                {item.word}
+                {isLogged &&
+                  !isHardWords &&
+                  item.difficulty === Difficulty.HARD && (
+                    <BoltIcon sx={{ color: colorHard, fontSize: "1rem" }} />
+                  )}
+                {isLogged &&
+                  !isStudiedWords &&
+                  item.difficulty === Difficulty.STUDIED && (
+                    <AddReactionIcon
+                      sx={{ color: colorStudied, fontSize: "1rem" }}
+                    />
+                  )}
               </Item>
             </Grid>
           ))}
