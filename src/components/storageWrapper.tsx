@@ -1,5 +1,5 @@
-import { Locals } from "../common/enums/locals";
-import { Storage } from "../common/templates/storage";
+import {Locals} from "../common/enums/locals";
+import {Storage} from "../common/templates/storage";
 
 class StorageWrapper extends Storage<Locals> {
   private static instance?: StorageWrapper;
@@ -96,7 +96,7 @@ class StorageWrapper extends Storage<Locals> {
   }
 
   public clearUserSettings() {
-    this.clearItems([Locals.USER, Locals.REFRESHTOKEN, Locals.TOKEN]);
+    this.clearItems([Locals.USER, Locals.REFRESHTOKEN, Locals.TOKEN, Locals.USER_NAME]);
   }
 }
 
