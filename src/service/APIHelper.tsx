@@ -18,11 +18,7 @@ function instanceofIAggregateResult(
 function instanceofIWord(
   object: IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
 ): object is IWord[] {
-  return (
-    Array.isArray(object) &&
-    object.length > 0 &&
-    "id" in object[0]
-  );
+  return Array.isArray(object) && object.length > 0 && "id" in object[0];
 }
 
 export function wordsAdapter(
@@ -78,6 +74,10 @@ export async function getWordsForTextbook(
 ): Promise<[IWord[], IAggregateResult[]]> {
   return await Promise.all([
     QueryService.getWordsPage(group, page),
-    QueryService.getAggregatedWordsByFilter(userId, [Difficulty.HARD, Difficulty.STUDIED, Difficulty.EASY]),
+    QueryService.getAggregatedWordsByFilter(userId, [
+      Difficulty.HARD,
+      Difficulty.STUDIED,
+      Difficulty.EASY,
+    ]),
   ]);
 }

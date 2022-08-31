@@ -3,11 +3,17 @@ import { IAggregateResult } from "../common/interfaces/aggregateResult";
 import { IWord } from "../common/interfaces/word";
 import StorageWrapper from "../components/storageWrapper";
 
+export interface RequestInitAuth extends RequestInit {
+  headers: { Authorization?: string };
+}
 class Query {
+  private tokenLifeTime: number;
   constructor(
     private readonly basicURL: string,
     private readonly storage = StorageWrapper.getInstance()
-  ) {}
+  ) {
+    this.tokenLifeTime = 4 * 60 * 60;
+  }
 
   async getWords() {
     return await fetch(`${this.basicURL}words`, {
@@ -202,9 +208,11 @@ class Query {
   ): Promise<IAggregateResult[]> {
     try {
       const token: string = this.storage.getSavedToken() as string;
+      const urlPart = difficulty
+        .map((dif) => `{"userWord.difficulty":"${dif}`)
+        .join(",");
       const data = await fetch(
-        // eslint-disable-next-line max-len
-        `${this.basicURL}users/${userId}/aggregatedWords?wordsPerPage=3600&filter={"$or":[{"userWord.difficulty":"${difficulty[0]}"},{"userWord.difficulty":"${difficulty[1]}"},{"userWord.difficulty":"${difficulty[2]}"}]}`,
+        `${this.basicURL}users/${userId}/aggregatedWords?wordsPerPage=3600&filter={"$or":[${urlPart}]}`,
         {
           method: "GET",
           headers: {
@@ -261,6 +269,35 @@ class Query {
       },
       body: JSON.stringify(body),
     });
+  }
+
+  async fetchWithAuth(url: string, options: RequestInitAuth) {
+    const loginUrl = "/login";
+    let tokenData = null;
+
+    if (this.storage.getSavedToken()) {
+      tokenData = this.storage.getSavedToken();
+    }
+
+    if (tokenData) {
+      if (Date.now() >= Number(this.storage.getSavedTokenExpires())) {
+        try {
+          const userId = this.storage.getSavedUser() as string;
+          const response = await this.getUserTokens(userId);
+          const newToken = await response.json();
+          console.log(newToken);
+          this.storage.setSavedToken(newToken);
+        } catch (e) {
+          if (e instanceof Error) {
+            throw new Error(e.message);
+          }
+        }
+      }
+
+      options!.headers.Authorization = `Bearer ${this.storage.getSavedToken()}`; // добавляем токен в headers запроса
+    }
+
+    return fetch(url, options); // возвращаем изначальную функцию, но уже с валидным токеном в headers
   }
 }
 

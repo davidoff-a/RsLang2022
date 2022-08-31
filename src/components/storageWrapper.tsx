@@ -32,6 +32,14 @@ class StorageWrapper extends Storage<Locals> {
     return this.get(Locals.USER_NAME);
   }
 
+  public setSavedTokenExpires(savedItem: string) {
+    this.set(Locals.EXPIRES_ON, savedItem);
+  }
+
+  public getSavedTokenExpires() {
+    return this.get(Locals.EXPIRES_ON);
+  }
+
   public clearSavedUser() {
     this.clearItems([Locals.USER]);
   }

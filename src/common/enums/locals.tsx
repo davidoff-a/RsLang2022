@@ -5,4 +5,5 @@ export enum Locals {
   TOKEN = "token",
   GROUP = "group",
   PAGE = "page",
+  EXPIRES_ON = "0",
 }

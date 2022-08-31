@@ -88,6 +88,7 @@ export function FormDialog({
       store.setSavedToken(resp.token);
       store.setSavedRefreshToken(resp.refreshToken);
       store.setSavedUserName(resp.name);
+      store.setSavedTokenExpires(String(Date.now() + 4 * 60 * 60));
     } catch (e) {
       if (e instanceof Error) {
         throw new Error(e.message);
