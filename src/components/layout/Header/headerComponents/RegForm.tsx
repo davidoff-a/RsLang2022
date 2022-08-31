@@ -50,6 +50,7 @@ export function FormDialog({
       email: "",
       password: "",
     });
+    switchForm();
   };
 
   const insertNameField = () => {
