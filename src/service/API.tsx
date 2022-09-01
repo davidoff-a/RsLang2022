@@ -213,8 +213,9 @@ class Query {
     try {
       const token: string = this.storage.getSavedToken() as string;
       const urlPart = difficulty
-        .map((dif) => `{"userWord.difficulty":"${dif}`)
+        .map((dif) => `{"userWord.difficulty":"${dif}"}`)
         .join(",");
+      console.log("#### urlPart=>", urlPart);
       const data = await fetch(
         `${this.basicURL}users/${userId}/aggregatedWords?wordsPerPage=3600&filter={"$or":[${urlPart}]}`,
         {
@@ -275,7 +276,7 @@ class Query {
     });
   }
 
-  async fetchWithAuth(url: string, options: RequestInitAuth) {
+  async addAuthOptions(options: RequestInitAuth) {
     const loginUrl = "/login";
     let tokenData = null;
 
@@ -288,9 +289,9 @@ class Query {
         try {
           const userId = this.storage.getSavedUser() as string;
           const response = await this.getUserTokens(userId);
-          const newToken = await response.json();
+          const newToken = (await response.json()) as signInResponse;
           console.log(newToken);
-          this.storage.setSavedToken(newToken);
+          this.storage.updateUserData(newToken);
         } catch (e) {
           if (e instanceof Error) {
             throw new Error(e.message);
@@ -298,10 +299,12 @@ class Query {
         }
       }
 
-      options!.headers.Authorization = `Bearer ${this.storage.getSavedToken()}`; // добавляем токен в headers запроса
+      options.headers.Authorization = `Bearer ${
+        this.storage.getSavedToken() as string
+      }`; // добавляем токен в headers запроса
     }
 
-    return fetch(url, options); // возвращаем изначальную функцию, но уже с валидным токеном в headers
+    return options; // возвращаем изначальную функцию, но уже с валидным токеном в headers
   }
 }
 
