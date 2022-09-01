@@ -275,7 +275,8 @@ class Query {
     });
   }
 
-  async addAuthOptions(options: RequestInitAuth) {
+  async fetchWithAuth(url: string, options: RequestInitAuth) {
+    const loginUrl = "/login";
     let tokenData = null;
 
     if (this.storage.getSavedToken()) {
@@ -287,8 +288,9 @@ class Query {
         try {
           const userId = this.storage.getSavedUser() as string;
           const response = await this.getUserTokens(userId);
-          const newToken = (await response.json()) as signInResponse;
-          this.storage.updateUserData(newToken);
+          const newToken = await response.json();
+          console.log(newToken);
+          this.storage.setSavedToken(newToken);
         } catch (e) {
           if (e instanceof Error) {
             throw new Error(e.message);
@@ -296,13 +298,10 @@ class Query {
         }
       }
 
-      options.headers.Authorization = `Bearer ${
-        this.storage.getSavedToken() as string
-      }`; // добавляем токен в headers запроса
+      options!.headers.Authorization = `Bearer ${this.storage.getSavedToken()}`; // добавляем токен в headers запроса
     }
 
-    return options;
-    // fetch(url, options); // возвращаем изначальную функцию, но уже с валидным токеном в headers
+    return fetch(url, options); // возвращаем изначальную функцию, но уже с валидным токеном в headers
   }
 }
 
