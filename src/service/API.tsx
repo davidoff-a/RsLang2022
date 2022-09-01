@@ -2,6 +2,7 @@ import { Difficulty } from "../common/enums/difficulty";
 import { IAggregateResult } from "../common/interfaces/aggregateResult";
 import { IWord } from "../common/interfaces/word";
 import StorageWrapper from "../components/storageWrapper";
+import { LoginData, signInResponse } from "../common/interfaces/loginData";
 
 export interface RequestInitAuth extends RequestInit {
   headers: { Authorization?: string };
@@ -171,14 +172,17 @@ class Query {
     });
   }
 
-  async signIn(body: { email: string; password: string }) {
-    return await fetch(`${this.basicURL}signin`, {
+  async signIn(body: LoginData) {
+    const opts = {
       method: "POST",
       body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
+        Authorization: "",
       },
-    });
+    };
+    const reqOptions = await this.addAuthOptions(opts);
+    return await fetch(`${this.basicURL}signin`, reqOptions);
   }
 
   async getAggregatedWordById(userId: number, wordId: number) {
@@ -271,8 +275,7 @@ class Query {
     });
   }
 
-  async fetchWithAuth(url: string, options: RequestInitAuth) {
-    const loginUrl = "/login";
+  async addAuthOptions(options: RequestInitAuth) {
     let tokenData = null;
 
     if (this.storage.getSavedToken()) {
@@ -284,9 +287,8 @@ class Query {
         try {
           const userId = this.storage.getSavedUser() as string;
           const response = await this.getUserTokens(userId);
-          const newToken = await response.json();
-          console.log(newToken);
-          this.storage.setSavedToken(newToken);
+          const newToken = (await response.json()) as signInResponse;
+          this.storage.updateUserData(newToken);
         } catch (e) {
           if (e instanceof Error) {
             throw new Error(e.message);
@@ -294,10 +296,13 @@ class Query {
         }
       }
 
-      options!.headers.Authorization = `Bearer ${this.storage.getSavedToken()}`; // добавляем токен в headers запроса
+      options.headers.Authorization = `Bearer ${
+        this.storage.getSavedToken() as string
+      }`; // добавляем токен в headers запроса
     }
 
-    return fetch(url, options); // возвращаем изначальную функцию, но уже с валидным токеном в headers
+    return options;
+    // fetch(url, options); // возвращаем изначальную функцию, но уже с валидным токеном в headers
   }
 }
 

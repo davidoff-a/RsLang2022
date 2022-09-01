@@ -11,7 +11,6 @@ import { MouseEvent, useContext, useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { ColorModeContext } from "../../../../app/App";
 import StorageWrapper from "../../../storageWrapper";
-import storageWrapper from "../../../storageWrapper";
 import { deepOrange } from "@mui/material/colors";
 import LoginIcon from "@mui/icons-material/Login";
 
@@ -37,8 +36,8 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
   };
 
   const handleLogout = () => {
-    const store = storageWrapper.getInstance();
-    store.clear();
+    // const store = StorageWrapper.getInstance();
+    store.clearUserSettings();
     handleCloseUserMenu();
   };
 
@@ -68,7 +67,7 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
       .split(" ")
       .map((namePart) => handleUserNameToAvatar(namePart))
       .join("");
-    console.log("#### user name => ", userName);
+
     return userName;
   };
 
