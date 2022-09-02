@@ -5,10 +5,11 @@ interface IButton {
     handleWordIndx: React.MouseEventHandler<HTMLButtonElement>;
     translate: string;
     randomWord: string;
+    id: string;
 }
 
 export default function SprintBtn (props: IButton) {
     return (
-    <button className="sprint-btn" data-translate={props.translate} data-random={props.randomWord} onClick={props.handleWordIndx}>{props.action}</button>
+    <button className="sprint-btn" data-id={props.id} data-translate={props.translate} data-random={props.randomWord} onClick={props.handleWordIndx}>{props.action}</button>
     )
 }

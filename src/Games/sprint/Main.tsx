@@ -7,136 +7,94 @@ import CloseBtn from './GameComponents/CloseBtn';
 import { IUserWord } from '../../common/interfaces/userWord';
 
 
-// export interface ISprintWords {
-//     audio: string;
-//     audioExample: string;
-//     audioMeaning: string;
-//     difficulty: Difficulty;
-//     goals: number;
-//     group: number;
-//     id: string;
-//     image: string;
-//     isUserWord: boolean;
-//     page: number;
-//     textExample: string;
-//     textExampleTranslate: string;
-//     textMeaning: string;
-//     textMeaningTranslate: string;
-//     word: string;
-//     wordTranslate: string;
-// }
-
-// const testWords: ISprintWords[]  = [
-//     {   
-//         id: 1,
-//         word: "apple",
-//         wordTranslate: "яблоко"
-//     }, 
-//     {
-//         id: 2,
-//         word: "banana",
-//         wordTranslate: "банан"
-//     }, 
-//     {
-//         id: 3,
-//         word:"tree",
-//         wordTranslate: "дерево"
-//     },
-//     {
-//         id: 4,
-//         word:"book",
-//         wordTranslate: "книга"
-//     },
-//     {
-//         id: 5,
-//         word:"box",
-//         wordTranslate: "коробка"
-//     }
-// ]
-
-
-function getRandomAnswers (wordsArr: IUserWord[]) {
-    const randomAnswers: string[] = [];
-    wordsArr.map(word => randomAnswers.push(word.wordTranslate));
-    randomAnswers.sort(() => Math.random() - 0.5);
-    return randomAnswers;
-}
-
 interface Props {
     wordsArrMain: IUserWord[];
+    handleWordScore: (id:string, resultWord: string) => void;
 }
 
-// sprintResults.wordsArr = testWords;
-// const randomAnswers = getRandomAnswers(testWords);
 
 export default function Main(props: Props) {
-    // const randomAnswers = getRandomAnswers(props.wordsArrMain);
     const [wordIndx, setWordIndx] = useState(1);
     const [cardData, setCardData] = useState(props.wordsArrMain[0]);
-    // const [randomWord, setRandomWord] = useState(randomAnswers[0])
-        const getRandomIndx = (max: number) => {
+    const getRandomIndx = (max: number) => {
         return Math.floor(Math.random() * max);
     }
+    const [gameStatus, setGameStatus] = useState('block');
+    
     let randomIndx = getRandomIndx(props.wordsArrMain.length);
 
     const handleWordIndx = (e: React.MouseEvent<HTMLButtonElement>) => {
-        // e.preventDefault();
         checkWord(e.currentTarget);
         setWordIndx(wordIndx+1);
         setCardData(props.wordsArrMain[wordIndx]);
         randomIndx = getRandomIndx(props.wordsArrMain.length);
-        // setRandomWord(randomAnswers[wordIndx]);
     };
-
+    
+    const handleGameStatus = () => {
+        setGameStatus('none')
+    }
 
     const checkWord = (btn: HTMLButtonElement) => {
         switch (btn.innerHTML) {
         case 'yes':
             if (btn.dataset['translate'] === btn.dataset['random']) {
-                console.log('true');
-                sprintResults.currentWordNumber += 1;
+                if (!btn.dataset['id']) return;
+                props.handleWordScore(btn.dataset['id'],'true');
+                sprintResults.wins += 1;
             } else {
-                console.log('false');
-                sprintResults.currentWordNumber += 1;
+                if (!btn.dataset['id']) return;
+                props.handleWordScore(btn.dataset['id'],'false');
             }
         break;
         case 'no': 
             if (btn.dataset['translate'] !== btn.dataset['random']) {
-                console.log('true');
-                sprintResults.currentWordNumber += 1;
+                if (!btn.dataset['id']) return;
+                props.handleWordScore(btn.dataset['id'],'true');
+                sprintResults.wins += 1; 
             } else {
-                console.log('false');
-                sprintResults.currentWordNumber += 1;
+                if (!btn.dataset['id']) return;
+                props.handleWordScore(btn.dataset['id'],'false');
             }
         break;
     }
     }
 
     const wordsArrLength = props.wordsArrMain.length;
-    if ( wordIndx > wordsArrLength) {
+
+    if (gameStatus == 'none') {
         return (
-            <div className='sprint-wrapper'>
-                <div className='sprint-card-wrapper'>
-                <CloseBtn />
-                   The end
-                </div>
-                
-            </div>
+            <div className='sprint-main-wrapper'>
+                <h3 className='sprint-title'>Game finished. Your Score: {sprintResults.wins} </h3>
+            </div> 
         )
     } else {
-        return (
-            <div className='sprint-wrapper'>
-                <div className='sprint-card-wrapper'>
-                    <CloseBtn />
-                    <Card cardData={cardData} randomWord={props.wordsArrMain[randomIndx].wordTranslate}/>
-                    <div className='sprint-btn-block'>
-                            <SprintBtn action={'yes'} handleWordIndx = {handleWordIndx} translate = {cardData.wordTranslate} randomWord={props.wordsArrMain[randomIndx].wordTranslate}/>
-                            <SprintBtn action={'no'} handleWordIndx = {handleWordIndx} translate = {cardData.wordTranslate} randomWord={props.wordsArrMain[randomIndx].wordTranslate}/>
-                    </div>  
+        if ( wordIndx > wordsArrLength) {
+            return (
+                <div className='sprint-wrapper'>
+                    <div className='sprint-card-wrapper'>
+                    <CloseBtn handleGameStatus={handleGameStatus}/>
+                    The end
+                    </div>
+                    
                 </div>
-                
-            </div>
-        ) 
+            )
+        } else {
+            return (
+                <div className='sprint-wrapper'>
+                    <div className='sprint-card-wrapper'>
+                        <CloseBtn handleGameStatus={handleGameStatus}/>
+                        <Card cardData={cardData} randomWord={props.wordsArrMain[randomIndx].wordTranslate}/>
+                        <div className='sprint-btn-block'>
+                                <SprintBtn action={'yes'} handleWordIndx = {handleWordIndx} id = {cardData.id} translate = {cardData.wordTranslate} randomWord={props.wordsArrMain[randomIndx].wordTranslate}/>
+                                <SprintBtn action={'no'} handleWordIndx = {handleWordIndx} id = {cardData.id} translate = {cardData.wordTranslate} randomWord={props.wordsArrMain[randomIndx].wordTranslate}/>
+                        </div>  
+                    </div>
+                    
+                </div>
+            ) 
+        }
     }
+
+    
   
 }

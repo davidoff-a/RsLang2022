@@ -1,3 +1,12 @@
+.sprint-title {
+    text-align: center;
+    font-size: 32px;
+}
+
+.sprint-main-wrapper {
+    margin-top: 50px;
+}
+
 .sprint-wrapper {
     width: 100%;
     height: 100%;
@@ -35,7 +44,11 @@
     cursor: pointer;
 }
 
-.sprint-close-btn:hover {
+.sprint-close-btn svg {
+    fill: #333333;
+}
+
+.sprint-close-btn:hover svg {
     fill: #5c5b5b;
 }
 
