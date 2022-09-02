@@ -29,11 +29,13 @@ export function FormDialog({
 
   const handleFieldChange = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
-    const propName = target.getAttribute("id") as string;
-
-    if (target.value.length > 0) {
-      setCredentials({ ...credentials, [propName]: target.value });
-    }
+    const propName = target.getAttribute("id") as keyof typeof credentials;
+    setCredentials((credentials) => {
+      if (credentials[propName].length !== target.value.length) {
+        return { ...credentials, [propName]: target.value };
+      }
+      return credentials;
+    });
   };
 
   const [userFormLogin, setUserFormLogin] = useState(true);
@@ -48,6 +50,7 @@ export function FormDialog({
       email: "",
       password: "",
     });
+    setUserFormLogin((userFormLogin) => true);
   };
 
   const insertNameField = () => {
@@ -85,6 +88,7 @@ export function FormDialog({
       store.setSavedToken(resp.token);
       store.setSavedRefreshToken(resp.refreshToken);
       store.setSavedUserName(resp.name);
+      store.setSavedTokenExpires(String(Date.now() + 4 * 60 * 60));
     } catch (e) {
       if (e instanceof Error) {
         throw new Error(e.message);

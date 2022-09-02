@@ -1,5 +1,6 @@
 import {Locals} from "../common/enums/locals";
 import {Storage} from "../common/templates/storage";
+import { signInResponse } from "../common/interfaces/loginData";
 
 class StorageWrapper extends Storage<Locals> {
   private static instance?: StorageWrapper;
@@ -30,6 +31,14 @@ class StorageWrapper extends Storage<Locals> {
 
   public getSavedUserName() {
     return this.get(Locals.USER_NAME);
+  }
+
+  public setSavedTokenExpires(savedItem: string) {
+    this.set(Locals.EXPIRES_ON, savedItem);
+  }
+
+  public getSavedTokenExpires() {
+    return this.get(Locals.EXPIRES_ON);
   }
 
   public clearSavedUser() {
@@ -96,7 +105,23 @@ class StorageWrapper extends Storage<Locals> {
   }
 
   public clearUserSettings() {
-    this.clearItems([Locals.USER, Locals.REFRESHTOKEN, Locals.TOKEN, Locals.USER_NAME]);
+    this.clearItems([
+      Locals.USER,
+      Locals.USER_NAME,
+      Locals.REFRESHTOKEN,
+      Locals.TOKEN,
+    ]);
+  }
+
+  public updateUserData(data: signInResponse) {
+    if (data) {
+      const { userId, token, refreshToken, name } = data;
+      this.set(Locals.USER, userId);
+      this.set(Locals.TOKEN, token);
+      this.set(Locals.REFRESHTOKEN, refreshToken);
+      this.set(Locals.USER_NAME, name);
+      this.set(Locals.EXPIRES_ON, String(Date.now() + 4 * 60 * 60));
+    }
   }
 }
 

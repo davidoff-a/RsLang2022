@@ -14,10 +14,10 @@ import {
   yellow,
 } from "@mui/material/colors";
 
-import { TextbookPagination } from "./TextbookPagination";
-import { TextbookTabs } from "./TextbookTabs";
-import { TextbookWords } from "./TextbookWords";
-import { WordCard } from "./WordCard";
+import { TextbookPagination } from "./textBookComponents/TextbookPagination";
+import { TextbookTabs } from "./textBookComponents/TextbookTabs";
+import { TextbookWords } from "./textBookComponents/TextbookWords";
+import { WordCard } from "./textBookComponents/WordCard";
 import { query as QueryService } from "../../service/API";
 import { wordsAdapter, getWordsForTextbook } from "../../service/APIHelper";
 import { IWord } from "../../common/interfaces/word";
@@ -25,7 +25,7 @@ import { IUserWord } from "../../common/interfaces/userWord";
 import StorageWrapper from "../../components/storageWrapper";
 import { Difficulty } from "../../common/enums/difficulty";
 import { IAggregateResult } from "../../common/interfaces/aggregateResult";
-import { GameButton } from "./GameButton";
+import { GameButton } from "./textBookComponents/GameButton";
 
 const checkAuthorization = async (id: string) => {
   return await QueryService.getUser(id);
@@ -74,17 +74,14 @@ export function TextbookPage() {
     page = 0,
     isLogged = false,
     wordId?: string
-  ): void => {
-    let queryResult: Promise<
-      IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
-    >;
+  ): Promise<IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]> => {
     if (!isLogged) {
-      queryResult = QueryService.getWordsPage(group, page);
+      return QueryService.getWordsPage(group, page);
     } else {
       if (group < 6) {
-        queryResult = getWordsForTextbook(userId, group, page);
+        return getWordsForTextbook(userId, group, page);
       } else {
-        queryResult = QueryService.getAggregatedWordsByFilter(
+        return QueryService.getAggregatedWordsByFilter(
           userId,
           group === 6
             ? [Difficulty.HARD, Difficulty.HARD, Difficulty.HARD]
@@ -92,7 +89,14 @@ export function TextbookPage() {
         );
       }
     }
-    queryResult.then(
+  };
+
+  const queryResult = (
+    request: Promise<
+      IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
+    >
+  ) => {
+    request.then(
       (result) => {
         if (result.length > 0) {
           const items = wordsAdapter(result);
@@ -119,6 +123,7 @@ export function TextbookPage() {
       }
     );
   };
+
   useEffect(() => {
     checkAuthorization(userId)
       .then((resultCheck) => {
@@ -195,6 +200,51 @@ export function TextbookPage() {
     );
   };
 
+  const getTabColor = (isLogged: boolean) => {
+    return groupsColor.filter((color, id) => (isLogged ? true : id < 6));
+  };
+
+  const tabs = () => {
+    return (
+      pageState.isLoaded && (
+        <TextbookTabs
+          initialGroup={pageState.group}
+          groupsColor={getTabColor(pageState.isLogged)}
+          onClickTab={onClickTab}
+        />
+      )
+    );
+  };
+
+  const statusStadied = (isPageStudied: boolean, pageGroup: number) => {
+    if (isPageStudied && pageGroup < 7) {
+      return (
+        <Typography
+          gutterBottom
+          variant="h4"
+          component="div"
+          sx={{ marginBottom: "1rem", textAlign: "center" }}
+        >
+          Page is studied!
+        </Typography>
+      );
+    }
+    return null;
+  };
+
+  const gameBtn = (isPageStudied: boolean, pageGroup: number) => {
+    return (
+      !isPageStudied &&
+      pageGroup < 7 && <GameButton onClickLinkGame={onClickLinkGame} />
+    );
+  };
+
+  const getItem = () => {
+    return pageState.items.find(
+      (item) => item.id === pageState.currentId
+    ) as IUserWord;
+  };
+
   return (
     <Container
       sx={{
@@ -203,15 +253,7 @@ export function TextbookPage() {
       maxWidth="lg"
       disableGutters
     >
-      {pageState.isLoaded && (
-        <TextbookTabs
-          initialGroup={pageState.group}
-          groupsColor={groupsColor.filter((color, id) =>
-            pageState.isLogged ? true : id < 6
-          )}
-          onClickTab={onClickTab}
-        />
-      )}
+      {tabs()}
       <Grid
         sx={{
           marginTop: "1rem",
@@ -222,19 +264,8 @@ export function TextbookPage() {
         spacing={2}
       >
         <Grid item xs={6}>
-          {pageState.isPageStudied && pageState.group < 7 && (
-            <Typography
-              gutterBottom
-              variant="h4"
-              component="div"
-              sx={{ marginBottom: "1rem", textAlign: "center" }}
-            >
-              Page is studied!
-            </Typography>
-          )}
-          {!pageState.isPageStudied && pageState.group < 7 && (
-            <GameButton onClickLinkGame={onClickLinkGame} />
-          )}
+          {statusStadied(pageState.isPageStudied, pageState.group)}
+          {gameBtn(pageState.isPageStudied, pageState.group)}
           <TextbookWords
             items={pageState.items}
             isLoaded={pageState.isLoaded}
@@ -252,11 +283,7 @@ export function TextbookPage() {
           <WordCard
             isLogged={pageState.isLogged}
             color={groupsColor[pageState.group]}
-            item={
-              pageState.items.find(
-                (item) => item.id === pageState.currentId
-              ) as IUserWord
-            }
+            item={getItem()}
             onClickWordCardButton={onClickWordCardButton}
           />
         </Grid>
