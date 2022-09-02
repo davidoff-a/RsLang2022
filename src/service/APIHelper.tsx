@@ -72,6 +72,7 @@ export async function getWordsForTextbook(
   group: number,
   page: number
 ): Promise<[IWord[], IAggregateResult[]]> {
+  console.log("wordsForTextBook");
   return await Promise.all([
     QueryService.getWordsPage(group, page),
     QueryService.getAggregatedWordsByFilter(userId, [

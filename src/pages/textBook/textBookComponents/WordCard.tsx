@@ -8,8 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 
-import { IUserWord } from "../../common/interfaces/userWord";
-import { Difficulty } from "../../common/enums/difficulty";
+import { IUserWord } from "../../../common/interfaces/userWord";
+import { Difficulty } from "../../../common/enums/difficulty";
 import { Player } from "./Player";
 export interface Props {
   isLogged: boolean;
