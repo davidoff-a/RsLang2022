@@ -9,11 +9,12 @@ import { ThemeProvider } from "@mui/material/styles";
 import Header from "../components/layout/Header/Header";
 import Footer from "../components/layout/Footer";
 
-import {AboutPage} from "../pages/AboutPage";
-import {ErrorPage} from "../pages/ErrorPage";
-import {TextbookPage} from "../pages/textbook/TextbookPage";
-import {GamesPage} from "../pages/GamesPage";
-import {GamePage} from "../pages/GamePage";
+import { AboutPage } from "../pages/AboutPage";
+import { ErrorPage } from "../pages/ErrorPage";
+import { TextbookPage } from "../pages/textbook/TextbookPage";
+import { GamesPage } from "../pages/GamesPage";
+import { GamePage } from "../pages/GamePage";
+import { StatisticsPage } from "../pages/statistics/StatisticsPage";
 import { getTheme } from "../shared/getTheme";
 
 export const ColorModeContext = createContext({
@@ -47,6 +48,7 @@ export default function App() {
             <Route path="games" element={<GamesPage />}>
               <Route path=":gameId" element={<GamePage />} />
             </Route>
+            <Route path="statistics" element={<StatisticsPage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>

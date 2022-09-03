@@ -1,5 +1,6 @@
 import { Difficulty } from "../common/enums/difficulty";
 import { IAggregateResult } from "../common/interfaces/aggregateResult";
+import { IStatisticsResult } from "../common/interfaces/statisticsResult";
 import { IWord } from "../common/interfaces/word";
 import StorageWrapper from "../components/storageWrapper";
 
@@ -219,23 +220,29 @@ class Query {
     }
   }
 
-  async getUserStats(userId: number) {
-    return await fetch(`${this.basicURL}users/${userId}/statistics`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+  async getUserStats(userId: string): Promise<IStatisticsResult> {
+    try {
+      const token: string = this.storage.getSavedToken() as string;
+      const data = await fetch(`${this.basicURL}users/${userId}/statistics`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return (await data.json()) as IStatisticsResult;
+    } catch (err) {
+      throw new Error(err as string);
+    }
   }
 
-  async updateUserStats(
-    userId: number,
-    body: { learnedWords: number; optional: { [key: string]: string } }
-  ) {
+  async updateUserStats(userId: string, body: IStatisticsResult) {
+    const token: string = this.storage.getSavedToken() as string;
     return await fetch(`${this.basicURL}users/${userId}/statistics`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
     });
