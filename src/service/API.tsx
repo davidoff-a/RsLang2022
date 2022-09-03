@@ -3,6 +3,7 @@ import { IAggregateResult } from "../common/interfaces/aggregateResult";
 import { IWord } from "../common/interfaces/word";
 import StorageWrapper from "../components/storageWrapper";
 import { LoginData, signInResponse } from "../common/interfaces/loginData";
+import {IAggregateWord} from "../common/interfaces/aggregateWord";
 
 export interface RequestInitAuth extends RequestInit {
   headers: { Authorization?: string };
@@ -17,64 +18,77 @@ class Query {
   }
 
   async getWords() {
-    return await fetch(`${this.basicURL}words`, {
+    const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    }
+    return await fetch(`${this.basicURL}words`, opts);
   }
 
-  async getWordsPage(group: number, page: number): Promise<IWord[]> {
+  async getWordsPage(group: number, page: number): Promise<IAggregateWord[]> {
     try {
       console.log("getWordPage");
+      const opts = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
       const data = await fetch(
-        `${this.basicURL}words?group=${group}&page=${page}`
+        `${this.basicURL}words?group=${group}&page=${page}`,
+          opts
       );
-      return (await data.json()) as IWord[];
+      return (await data.json()) as IAggregateWord[];
     } catch (err) {
       throw new Error(err as string);
     }
   }
 
   async getWord(wordId: number) {
-    return await fetch(`${this.basicURL}words/${wordId}`, {
+    const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    }
+    return await fetch(`${this.basicURL}words/${wordId}`, opts);
   }
 
   async createUser(body: { name: string; email: string; password: string }) {
-    return await fetch(`${this.basicURL}users`, {
+    const opts = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-    });
+    }
+    return await fetch(`${this.basicURL}users`, opts);
   }
 
   async getUser(id: string) {
     const token: string = this.storage.getSavedToken() as string;
-    return await fetch(`${this.basicURL}users/${id}`, {
+    const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: ``,
       },
-    });
+    }
+    const reqOptions = await this.addAuthOptions(opts);
+    return await fetch(`${this.basicURL}users/${id}`, opts);
   }
 
   async updateUser(id: number, body: { email: string; password: string }) {
-    return await fetch(`${this.basicURL}users/${id}`, {
+    const opts = {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-    });
+    }
+    return await fetch(`${this.basicURL}users/${id}`, opts);
   }
 
   async deleteUser(id: number) {
@@ -92,11 +106,10 @@ class Query {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "",
+        Authorization: `Bearer ${token}`,
       },
     };
-    const reqOptions = await this.addAuthOptions(opts);
-    return await fetch(`${this.basicURL}users/${id}/tokens`, reqOptions);
+    return await fetch(`${this.basicURL}users/${id}/tokens`, opts);
   }
 
   async getUserWords(id: number) {
@@ -314,7 +327,7 @@ class Query {
           const userId = this.storage.getSavedUser() as string;
           const response = await this.getUserTokens(userId);
           const newToken = (await response.json()) as signInResponse;
-          console.log(newToken);
+          console.log("#### newToken =>",newToken);
           this.storage.updateUserData(newToken);
         } catch (e) {
           if (e instanceof Error) {
