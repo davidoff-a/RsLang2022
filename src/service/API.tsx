@@ -30,7 +30,7 @@ class Query {
     }
   }
 
-  async getWord(wordId: number) {
+  async getWord (wordId: number) {
     return await fetch(`${this.basicURL}words/${wordId}`, {
       method: "GET",
       headers: {
@@ -60,7 +60,7 @@ class Query {
     });
   }
 
-  async updateUser(id: number, body: { email: string; password: string }) {
+  async updateUser (id: number, body: { email: string; password: string }) {
     return await fetch(`${this.basicURL}users/${id}`, {
       method: "PUT",
       headers: {
@@ -70,7 +70,7 @@ class Query {
     });
   }
 
-  async deleteUser(id: number) {
+  async deleteUser (id: number) {
     return await fetch(`${this.basicURL}users/${id}`, {
       method: "DELETE",
       headers: {
@@ -90,7 +90,7 @@ class Query {
     });
   }
 
-  async getUserWords(id: number) {
+  async getUserWords (id: number) {
     return await fetch(`${this.basicURL}users/${id}/words`, {
       method: "GET",
       headers: {
@@ -118,7 +118,7 @@ class Query {
     });
   }
 
-  async getUserSpecialWords(id: number, wordId: number) {
+  async getUserSpecialWords (id: number, wordId: number) {
     return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
       method: "GET",
       headers: {
@@ -157,7 +157,7 @@ class Query {
     });
   }
 
-  async getAllUserWords(id: number, wordId: number) {
+  async getAllUserWords (id: number, wordId: number) {
     return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
       method: "GET",
       headers: {
@@ -248,7 +248,7 @@ class Query {
     });
   }
 
-  async getUserSettings(userId: number) {
+  async getUserSettings (userId: number) {
     return await fetch(`${this.basicURL}users/${userId}/settings`, {
       method: "GET",
       headers: {
@@ -257,7 +257,7 @@ class Query {
     });
   }
 
-  async updateUserSettings(
+  async updateUserSettings (
     userId: number,
     body: { wordsPerDay: number; optional: { [key: string]: string } }
   ) {

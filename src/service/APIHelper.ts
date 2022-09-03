@@ -87,7 +87,8 @@ export async function getWordsForTextbook(
 export function statisticsAdapter(
   inputData: IStatisticsResult
 ): IUserStatistics[] {
-  return inputData.optional.data.statistics.map((item) => {
+  const arr = inputData.optional.data.statistics;
+  return arr.map((item) => {
     const date = new Date(+item.dateTime);
     return {
       game: item.game,

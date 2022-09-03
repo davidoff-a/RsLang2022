@@ -2,18 +2,18 @@ import { Games } from "../enums/games";
 
 export interface IStatisticsResult {
   id?: string;
-  learnedWords: number;
+  learnedWords: string;
   optional: {
     data: {
       statistics: [
         {
           game: Games;
-          dateTime: number;
-          totalWords: number;
-          learnedWords: number;
-          newWords: number;
-          trueWords: number;
-          longSeries: number;
+          dateTime: string;
+          totalWords: string;
+          learnedWords: string;
+          newWords: string;
+          trueWords: string;
+          longSeries: string;
         }
       ];
     };

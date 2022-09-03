@@ -1,0 +1,98 @@
+.sprint-title {
+    text-align: center;
+    font-size: 32px;
+}
+
+.sprint-main-wrapper {
+    margin-top: 50px;
+}
+
+.sprint-wrapper {
+    width: 100%;
+    height: 100%;
+    padding: 10%;
+    box-sizing: border-box;
+    background-color: #333333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.sprint-card-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 600px;
+    height: 500px;
+    background-color: #ffffff;
+    color: #333333;
+    border-radius: 30px;
+    padding: 40px;
+    box-sizing: border-box;
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.sprint-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    fill: #333333;
+    cursor: pointer;
+}
+
+.sprint-close-btn svg {
+    fill: #333333;
+}
+
+.sprint-close-btn:hover svg {
+    fill: #5c5b5b;
+}
+
+.sprint-word {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    align-items: center;
+    color: #333333;
+    font-size: 46px;
+    line-height: 48px;
+    text-transform: capitalize;
+    font-weight: 600;
+}
+
+.sprint-translate {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+    align-items: center;
+    color: #333333;
+    font-size: 44px;
+    line-height: 46px;
+    text-transform: capitalize;
+}
+
+.sprint-btn-block {
+    margin-top: 40px;
+    display: flex;
+    gap: 30px;
+}
+
+.sprint-btn {
+    width: 140px;
+    height: 65px;
+    border: none;
+    border-radius: 10px;
+    background-color: #00bcd4;
+    color: #333333;
+    font-size: 26px;
+    line-height: 65px;
+    cursor: pointer;
+}
+
+.sprint-btn:hover {
+    background-color: #03dcf9;
+}

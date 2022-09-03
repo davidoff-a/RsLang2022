@@ -29,14 +29,16 @@ export function StatisticsPage() {
     groupStatistics: 0,
     error: "",
     isLoaded: false,
-    statistics: [] as IUserStatistics[],
+    statisticsGames: [] as DataChart[],
+    statisticsWords: [] as DataChart[],
   });
 
   const onError = (error: string): void => {
     setPageState({
       ...pageState,
       isLoaded: true,
-      statistics: [] as IUserStatistics[],
+      statisticsGames: [] as DataChart[],
+      statisticsWords: [] as DataChart[],
       error: error,
     });
   };
@@ -94,7 +96,7 @@ export function StatisticsPage() {
 
   const setDataChart = (statistics: UserStatGame[]): DataChart[] => {
     const result: DataChart[] = [];
-    statistics.map((game) => {
+    statistics.forEach((game) => {
       const arr = Object.keys(game);
       result.push({ title: arr[0].toLocaleUpperCase(), data: data(game) });
     });
@@ -126,9 +128,10 @@ export function StatisticsPage() {
                 item.longSeries
               );
               lastItem.totalWords += item.totalWords;
-              lastItem.totalWords += item.newWords;
+              lastItem.newWords += item.newWords;
+              lastItem.trueWords += item.trueWords;
             } else {
-              element[key].push(item);
+              element[key].push({ ...item });
             }
           }
         });
@@ -149,9 +152,10 @@ export function StatisticsPage() {
         lastItem.learnedWords += item.learnedWords;
         lastItem.longSeries = Math.max(lastItem.longSeries, item.longSeries);
         lastItem.totalWords += item.totalWords;
-        lastItem.totalWords += item.newWords;
+        lastItem.newWords += item.newWords;
+        lastItem.trueWords += item.trueWords;
       } else {
-        result.push(item);
+        result.push({ ...item });
       }
     });
 
@@ -171,15 +175,14 @@ export function StatisticsPage() {
       (result) => {
         if (result) {
           const statistics = statisticsAdapter(result);
-          console.log(statistics);
-
           if (statistics.length > 0) {
             setPageState({
               ...pageState,
               isLogged,
               groupStatistics,
               isLoaded: true,
-              statistics,
+              statisticsGames: setDataChart(statisticForGames(statistics)),
+              statisticsWords: setDataChart(statisticForWords(statistics)),
             });
           }
         } else {
@@ -238,16 +241,12 @@ export function StatisticsPage() {
       >
         <Grid item xs={12}>
           {pageState.groupStatistics === 0 && (
-            <StatisticsChart
-              statistics={setDataChart(statisticForGames(pageState.statistics))}
-            />
+            <StatisticsChart statistics={pageState.statisticsGames} />
           )}
         </Grid>
         <Grid item xs={12}>
           {pageState.groupStatistics === 1 && (
-            <StatisticsChart
-              statistics={setDataChart(statisticForWords(pageState.statistics))}
-            />
+            <StatisticsChart statistics={pageState.statisticsWords} />
           )}
         </Grid>
       </Grid>
