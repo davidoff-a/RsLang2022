@@ -153,7 +153,8 @@ export function TextbookPage() {
   };
 
   const onClickLinkGame = (link: string) => {
-    navigate(`/games/${link}`, { state: { items: pageState.items } });
+    checkWordsList(); //check if there studied words
+    navigate(`/games`, { state: { items: pageState.items} });
   };
 
   const onClickWordCardButton = (
@@ -194,6 +195,52 @@ export function TextbookPage() {
       }
     );
   };
+
+  // Sprint settings
+
+  const checkWordsList = () => {
+    const getWordsFromPrevPage = async (group:number, page:number):Promise<
+    IWord[]> => {
+      return await QueryService.getWordsPage(group, page);
+    }
+
+    if (pageState.isLogged) {
+      const notStudiedWords: IUserWord[] = [];
+      for (let i = 0; i < pageState.items.length; i++) {
+        if (pageState.items[i].difficulty !== 'studied') {
+          notStudiedWords.push(pageState.items[i]);
+        }
+      }
+      console.log('not studied', notStudiedWords);
+      if (notStudiedWords.length < 20) {
+        console.log('not studied less 20', notStudiedWords);
+        console.log('page number', pageState.page);
+        if ((pageState.page - 1) < 0 ) {
+          pageState.items = notStudiedWords;
+        } else {
+          const resp = getWordsFromPrevPage(pageState.group, pageState.page-1);
+          resp.then((response) => {
+            let j = 0;
+            const adaptResponse = wordsAdapter(response);
+            console.log('adaptResponse', adaptResponse);
+            while (notStudiedWords.length < 20) {
+              if (adaptResponse[j] !== undefined) {
+                notStudiedWords.push(adaptResponse[j]);
+              } else {
+                return;
+              }
+              j++;
+            }
+            pageState.items = notStudiedWords;
+          })
+          .catch((error) => {
+            onError(error as string);
+          });
+        }
+      }
+    }
+  }
+  
 
   return (
     <Container

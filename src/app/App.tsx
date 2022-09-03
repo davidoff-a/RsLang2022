@@ -21,6 +21,7 @@ export const ColorModeContext = createContext({
 });
 
 export default function App() {
+
   const [mode, setMode] = useState<PaletteMode>("light");
   const colorMode = useMemo(
     () => ({
@@ -44,7 +45,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<TextbookPage />} />
             <Route path="textbook" element={<TextbookPage />} />
-            <Route path="games" element={<GamesPage />}>
+            <Route path="games" element={<GamesPage sprintSetting={false}/>}>
               <Route path=":gameId" element={<GamePage />} />
             </Route>
             <Route path="about" element={<AboutPage />} />
