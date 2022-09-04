@@ -20,7 +20,11 @@ function instanceofIAggregateResult(
 function instanceofIWord(
   object: IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
 ): object is IWord[] {
-  return Array.isArray(object) && object.length > 0 && "id" in object[0];
+  return (
+    Array.isArray(object) &&
+    object.length > 0 &&
+    "id" in object[0]
+  );
 }
 
 export function wordsAdapter(
@@ -32,7 +36,7 @@ export function wordsAdapter(
     aggregateData.forEach((item) => {
       data.push({
         ...item,
-        id: item._id,
+        id: item.id,
         difficulty: item.userWord ? item.userWord.difficulty : Difficulty.EASY,
         goals: item.userWord ? item.userWord.optional.goals : 0,
         isUserWord: item.userWord ? true : false,
@@ -51,7 +55,7 @@ export function wordsAdapter(
     const words: IWord[] = inputData[0];
     const aggregateWords: IAggregateWord[] = inputData[1][0].paginatedResults;
     words.forEach((item) => {
-      const aggregateWord = aggregateWords.find((elem) => elem._id === item.id);
+      const aggregateWord = aggregateWords.find((elem) => elem.id === item.id);
       data.push({
         ...item,
         difficulty:

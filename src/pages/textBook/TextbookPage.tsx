@@ -14,10 +14,10 @@ import {
   yellow,
 } from "@mui/material/colors";
 
-import { TextbookPagination } from "./TextbookPagination";
-import { TextbookTabs } from "./TextbookTabs";
-import { TextbookWords } from "./TextbookWords";
-import { WordCard } from "./WordCard";
+import { TextbookPagination } from "./textBookComponents/TextbookPagination";
+import { TextbookTabs } from "./textBookComponents/TextbookTabs";
+import { TextbookWords } from "./textBookComponents/TextbookWords";
+import { WordCard } from "./textBookComponents/WordCard";
 import { query as QueryService } from "../../service/API";
 import { wordsAdapter, getWordsForTextbook } from "../../service/APIHelper";
 import { IWord } from "../../common/interfaces/word";
@@ -25,7 +25,7 @@ import { IUserWord } from "../../common/interfaces/userWord";
 import StorageWrapper from "../../components/storageWrapper";
 import { Difficulty } from "../../common/enums/difficulty";
 import { IAggregateResult } from "../../common/interfaces/aggregateResult";
-import { GameButton } from "./GameButton";
+import { GameButton } from "./textBookComponents/GameButton";
 
 const checkAuthorization = async (id: string) => {
   return await QueryService.getUser(id);
@@ -77,7 +77,7 @@ export function TextbookPage() {
   ): void => {
     let queryResult: Promise<
       IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
-    >;
+      >;
     if (!isLogged) {
       queryResult = QueryService.getWordsPage(group, page);
     } else {

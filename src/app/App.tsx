@@ -11,7 +11,7 @@ import Footer from "../components/layout/Footer";
 
 import { AboutPage } from "../pages/AboutPage";
 import { ErrorPage } from "../pages/ErrorPage";
-import { TextbookPage } from "../pages/textbook/TextbookPage";
+import { TextbookPage } from "../pages/textBook/TextbookPage";
 import { GamesPage } from "../pages/GamesPage";
 import { GamePage } from "../pages/GamePage";
 import { StatisticsPage } from "../pages/statistics/StatisticsPage";
