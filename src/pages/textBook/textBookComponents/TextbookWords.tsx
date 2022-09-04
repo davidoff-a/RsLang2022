@@ -62,8 +62,7 @@ export function TextbookWords({
     // return <div key={0}>Error: {error}</div>;
     console.log("#### error =>", error);
   }
-  // else
-  if (!isLoaded) {
+  else if (!isLoaded) {
     return <Spinner />;
   }
   return (

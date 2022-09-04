@@ -122,7 +122,7 @@ class StorageWrapper extends Storage<Locals> {
       this.set(Locals.TOKEN, token);
       this.set(Locals.REFRESHTOKEN, refreshToken);
       this.set(Locals.USER_NAME, name);
-      this.set(Locals.EXPIRES_ON, String(new Date(Date.now() + (4 * 60 * 60))));
+      this.set(Locals.EXPIRES_ON, String(new Date(Date.now() + 14400)));
     }
   }
 }

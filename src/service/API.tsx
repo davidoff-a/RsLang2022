@@ -39,7 +39,7 @@ class Query {
         },
       }
 
-      const reqOptions = this.addAuthOptions(opts);
+      const reqOptions = await this.addAuthOptions(opts);
 
       const data = await fetch(
         `${this.basicURL}words?group=${group}&page=${page}`,
@@ -82,7 +82,7 @@ class Query {
         Authorization: ``,
       },
     }
-    const reqOptions =  this.addAuthOptions(opts);
+    const reqOptions = await this.addAuthOptions(opts);
     return await fetch(`${this.basicURL}users/${id}`, reqOptions);
   }
 
@@ -106,16 +106,15 @@ class Query {
     });
   }
 
-  async getUserTokens(id: string) {
+  async getUserTokens(userId: string) {
     const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: ``,
       },
     };
-    const reqOptions =  this.addAuthOptions(opts)
-    return await fetch(`${this.basicURL}users/${id}/tokens`, reqOptions);
+    console.log("Getting tokens ...")
+    return await fetch(`${this.basicURL}users/${userId}/tokens`, opts);
   }
 
   async getUserWords (id: number) {
@@ -174,7 +173,7 @@ class Query {
         Authorization: `Bearer ${token}`,
       },
     };
-    const reqOptions =  this.addAuthOptions(opts);
+    const reqOptions = await this.addAuthOptions(opts);
     return await fetch(
       `${this.basicURL}users/${id}/words/${wordId}`,
       reqOptions
@@ -190,7 +189,7 @@ class Query {
         Authorization: `Bearer ${token}`,
       },
     };
-    const reqOptions =  this.addAuthOptions(opts);
+    const reqOptions = await this.addAuthOptions(opts);
     return await fetch(
       `${this.basicURL}users/${id}/words/${wordId}`,
       reqOptions
@@ -216,7 +215,7 @@ class Query {
         Authorization: "",
       },
     };
-    const reqOptions = this.addAuthOptions(opts);
+    const reqOptions = await this.addAuthOptions(opts);
     return await fetch(`${this.basicURL}signin`, reqOptions);
   }
 
@@ -244,23 +243,15 @@ class Query {
   }
 
   async getAggregatedWordsByFilter(
-  //   urlParams: {
-  //   userId:string
-  // }, qParams : {
-  //     group: number,
-  //     page: number,
-  //     wordsPerPage: number,
-  //     filter: string,
-  //   }
+
     userId: string,
     difficulty: Difficulty[]
   ) {
     try {
       console.log("getAggregatedWords");
       const urlPart = difficulty
-        .map((dif) => `{"userWord.difficulty":"${dif}"}`)
+        .map((dif) => `{userWord.difficulty:${dif}}`)
         .join(",");
-      // const queryParams =
 
       const opts = {
         method: "GET",
@@ -270,12 +261,10 @@ class Query {
         },
       };
 
-      const reqOptions = this.addAuthOptions(opts);
-
-      const filter = ``
-
+      const reqOptions = await this.addAuthOptions(opts);
+      const filter = '{$or:[{userWord:Difficulty.HARD},{userWord:Difficulty.EASY},{userWord:Difficulty.STUDIED}]}'
       const data = await fetch(
-        `${this.basicURL}users/${userId}/aggregatedWords?wordsPerPage=3600&filter={"$or":[${urlPart}]}`,
+        `${this.basicURL}users/${userId}/aggregatedWords?wordsPerPage=100&filter=${JSON.stringify(filter)}`,
         reqOptions
       );
       const res = await data.json() as IAggregateResult[];
@@ -339,31 +328,33 @@ class Query {
     return await fetch(`${this.basicURL}users/${userId}/statistics`, opts);
   }
 
-  addAuthOptions(options: RequestInitAuth) {
+  async addAuthOptions(options: RequestInitAuth) {
 
     const tokenData = this.storage.getSavedToken() || "" ;
 console.log("#### tokenData =>", tokenData)
-    // if (tokenData) {
-    //   console.log("i have got tokenData")
-    //   console.log("expires on", new Date(Number(this.storage.getSavedTokenExpires())))
-    //   console.log("date", new Date(Date.now()))
-    //   const userId = this.storage.getSavedUser() as string;
-    //   const response = await this.getUserTokens(userId);
-    //       const newToken = (await response.json()) as signInResponse;
-    //   // if (Date.now() >= Number(this.storage.getSavedTokenExpires())) {
-    //   //   try {
-    //   //     const response = await this.getUserTokens(userId);
-    //   //     const newToken = (await response.json()) as signInResponse;
-    //   //     console.log("#### newToken =>", newToken);
-    //   //     this.storage.updateUserData(newToken);
-    //   //     options.headers.Authorization = `Bearer ${ tokenData }`
-    //   //   } catch (e) {
-    //   //     if (e instanceof Error) {
-    //   //       throw new Error(e.message);
-    //   //     }
-    //   //   }
-    //   // }
-    // }
+    if (tokenData) {
+      console.log("i have got tokenData")
+      console.log("expires on", new Date(Number(this.storage.getSavedTokenExpires())))
+      console.log("date", new Date(Date.now()))
+      const userId = this.storage.getSavedUser() as string || "";
+      const expires = +this.storage.getSavedTokenExpires()!;
+
+      if (new Date(Date.now()) <= new Date(expires)) {
+        try {
+          console.log("#### UserId =>", userId)
+          const response = await this.getUserTokens(userId);
+          const newToken = (await response.json()) as signInResponse;
+          console.log("#### newToken =>", newToken);
+          this.storage.updateUserData(newToken);
+          options.headers.Authorization = `Bearer ${ tokenData }`
+        } catch (e) {
+          if (e instanceof Error) {
+            throw new Error(e.message);
+          }
+        }
+      }
+    }
+    options.headers.Authorization = `Bearer ${ tokenData }`
     console.log(options);
     return options; // возвращаем initOptions
   }
