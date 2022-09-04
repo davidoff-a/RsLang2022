@@ -36,7 +36,6 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
   };
 
   const handleLogout = () => {
-    // const store = StorageWrapper.getInstance();
     store.clearUserSettings();
     handleCloseUserMenu();
   };
