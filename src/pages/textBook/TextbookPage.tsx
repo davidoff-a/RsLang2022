@@ -27,9 +27,9 @@ import { Difficulty } from "../../common/enums/difficulty";
 import { IAggregateResult } from "../../common/interfaces/aggregateResult";
 import { GameButton } from "./textBookComponents/GameButton";
 
-const checkAuthorization = async (id: string) => {
-  return await QueryService.getUser(id);
-};
+// const checkAuthorization = async (id: string) => {
+//   return await QueryService.getUser(id);
+// };
 
 export function TextbookPage() {
   const storage = StorageWrapper.getInstance();
@@ -48,9 +48,10 @@ export function TextbookPage() {
   const userId: string | null = storage.getSavedUser() as string;
   const initialGroup: string | null = storage.getSavedGroup() as string;
   const initialPage: string | null = storage.getSavedPage() as string;
+  // const isLogged = !!userId;
 
   const [pageState, setPageState] = useState({
-    isLogged: userId ? true : false,
+    isLogged: !!userId,
     group: initialGroup ? +initialGroup : 0,
     page: initialPage ? +initialPage : 0,
     error: "",
@@ -119,23 +120,23 @@ export function TextbookPage() {
       }
     );
   };
-  useEffect(() => {
-    checkAuthorization(userId)
-      .then((resultCheck) => {
-        if (!resultCheck.ok) {
-          if (pageState.group > 5) {
-            getItems(0, 0, false);
-          } else {
-            getItems(pageState.group, pageState.page, false);
-          }
-        } else {
-          getItems(pageState.group, pageState.page, true);
-        }
-      })
-      .catch((error) => {
-        onError(error as string);
-      });
-  }, []);
+  // useEffect(() => {
+  //   checkAuthorization(userId)
+  //     .then((resultCheck) => {
+  //       if (!resultCheck.ok) {
+  //         if (pageState.group > 5) {
+  //           getItems(0, 0, false);
+  //         } else {
+  //           getItems(pageState.group, pageState.page, false);
+  //         }
+  //       } else {
+  //         getItems(pageState.group, pageState.page, true);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       onError(error as string);
+  //     });
+  // }, []);
 
   const onClickTab = (group: number) => {
     storage.setSavedGroup(`${group}`);
@@ -259,7 +260,7 @@ export function TextbookPage() {
           groupsColor={groupsColor.filter((color, id) =>
             pageState.isLogged ? true : id < 6
           )}
-          onClickTab={onClickTab}
+          onClickTab={()=>onClickTab(pageState.group)}
         />
       )}
       <Grid

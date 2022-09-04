@@ -35,13 +35,19 @@ class Query {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: ''
         },
       }
+
+      const reqOptions = this.addAuthOptions(opts);
+
       const data = await fetch(
         `${this.basicURL}words?group=${group}&page=${page}`,
-          opts
+        reqOptions
       );
-      return (await data.json()) as IAggregateWord[];
+      const res = (await data.json()) as IAggregateWord[];
+      console.log("res =>", res)
+      return res;
     } catch (err) {
       throw new Error(err as string);
     }
@@ -69,7 +75,6 @@ class Query {
   }
 
   async getUser(id: string) {
-    const token: string = this.storage.getSavedToken() as string;
     const opts = {
       method: "GET",
       headers: {
@@ -77,8 +82,8 @@ class Query {
         Authorization: ``,
       },
     }
-    const reqOptions = await this.addAuthOptions(opts);
-    return await fetch(`${this.basicURL}users/${id}`, opts);
+    const reqOptions =  this.addAuthOptions(opts);
+    return await fetch(`${this.basicURL}users/${id}`, reqOptions);
   }
 
   async updateUser (id: number, body: { email: string; password: string }) {
@@ -102,24 +107,26 @@ class Query {
   }
 
   async getUserTokens(id: string) {
-    const token: string = this.storage.getSavedToken() as string;
     const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: ``,
       },
     };
-    return await fetch(`${this.basicURL}users/${id}/tokens`, opts);
+    const reqOptions =  this.addAuthOptions(opts)
+    return await fetch(`${this.basicURL}users/${id}/tokens`, reqOptions);
   }
 
   async getUserWords (id: number) {
-    return await fetch(`${this.basicURL}users/${id}/words`, {
+    const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: ''
       },
-    });
+    }
+    return await fetch(`${this.basicURL}users/${id}/words`, opts);
   }
 
   async addUserWords(
@@ -167,7 +174,7 @@ class Query {
         Authorization: `Bearer ${token}`,
       },
     };
-    const reqOptions = await this.addAuthOptions(opts);
+    const reqOptions =  this.addAuthOptions(opts);
     return await fetch(
       `${this.basicURL}users/${id}/words/${wordId}`,
       reqOptions
@@ -183,7 +190,7 @@ class Query {
         Authorization: `Bearer ${token}`,
       },
     };
-    const reqOptions = await this.addAuthOptions(opts);
+    const reqOptions =  this.addAuthOptions(opts);
     return await fetch(
       `${this.basicURL}users/${id}/words/${wordId}`,
       reqOptions
@@ -209,7 +216,7 @@ class Query {
         Authorization: "",
       },
     };
-    const reqOptions = await this.addAuthOptions(opts);
+    const reqOptions = this.addAuthOptions(opts);
     return await fetch(`${this.basicURL}signin`, reqOptions);
   }
 
@@ -237,15 +244,23 @@ class Query {
   }
 
   async getAggregatedWordsByFilter(
+  //   urlParams: {
+  //   userId:string
+  // }, qParams : {
+  //     group: number,
+  //     page: number,
+  //     wordsPerPage: number,
+  //     filter: string,
+  //   }
     userId: string,
     difficulty: Difficulty[]
-  ): Promise<IAggregateResult[]> {
+  ) {
     try {
       console.log("getAggregatedWords");
-      // const token: string = this.storage.getSavedToken() as string;
       const urlPart = difficulty
         .map((dif) => `{"userWord.difficulty":"${dif}"}`)
         .join(",");
+      // const queryParams =
 
       const opts = {
         method: "GET",
@@ -255,13 +270,17 @@ class Query {
         },
       };
 
-      const reqOptions = await this.addAuthOptions(opts);
+      const reqOptions = this.addAuthOptions(opts);
+
+      const filter = ``
 
       const data = await fetch(
         `${this.basicURL}users/${userId}/aggregatedWords?wordsPerPage=3600&filter={"$or":[${urlPart}]}`,
         reqOptions
       );
-      return (await data.json()) as IAggregateResult[];
+      const res = await data.json() as IAggregateResult[];
+      console.log("####  res =>", res)
+      return (res);
     } catch (err) {
       throw new Error(err as string);
     }
@@ -320,34 +339,33 @@ class Query {
     return await fetch(`${this.basicURL}users/${userId}/statistics`, opts);
   }
 
-  async addAuthOptions(options: RequestInitAuth) {
-    let tokenData = null;
+  addAuthOptions(options: RequestInitAuth) {
 
-    if (this.storage.getSavedToken()) {
-      tokenData = this.storage.getSavedToken();
-    }
-
-    if (tokenData) {
-      if (Date.now() >= Number(this.storage.getSavedTokenExpires())) {
-        try {
-          const userId = this.storage.getSavedUser() as string;
-          const response = await this.getUserTokens(userId);
-          const newToken = (await response.json()) as signInResponse;
-          console.log("#### newToken =>",newToken);
-          this.storage.updateUserData(newToken);
-        } catch (e) {
-          if (e instanceof Error) {
-            throw new Error(e.message);
-          }
-        }
-      }
-
-      options.headers.Authorization = `Bearer ${
-        this.storage.getSavedToken() as string
-      }`; // добавляем токен в headers запроса
-    }
-
-    return options; // возвращаем initOptions с валидным токеном в headers
+    const tokenData = this.storage.getSavedToken() || "" ;
+console.log("#### tokenData =>", tokenData)
+    // if (tokenData) {
+    //   console.log("i have got tokenData")
+    //   console.log("expires on", new Date(Number(this.storage.getSavedTokenExpires())))
+    //   console.log("date", new Date(Date.now()))
+    //   const userId = this.storage.getSavedUser() as string;
+    //   const response = await this.getUserTokens(userId);
+    //       const newToken = (await response.json()) as signInResponse;
+    //   // if (Date.now() >= Number(this.storage.getSavedTokenExpires())) {
+    //   //   try {
+    //   //     const response = await this.getUserTokens(userId);
+    //   //     const newToken = (await response.json()) as signInResponse;
+    //   //     console.log("#### newToken =>", newToken);
+    //   //     this.storage.updateUserData(newToken);
+    //   //     options.headers.Authorization = `Bearer ${ tokenData }`
+    //   //   } catch (e) {
+    //   //     if (e instanceof Error) {
+    //   //       throw new Error(e.message);
+    //   //     }
+    //   //   }
+    //   // }
+    // }
+    console.log(options);
+    return options; // возвращаем initOptions
   }
 }
 

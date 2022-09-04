@@ -59,19 +59,18 @@ export function TextbookWords({
     ));
 
   if (error) {
-    // return <div key={0}>Error: {error.message}</div>;
+    // return <div key={0}>Error: {error}</div>;
     console.log("#### error =>", error);
   }
   // else
   if (!isLoaded) {
     return <Spinner />;
-  } else {
-    return (
-      <Box sx={{ flexGrow: 1 }}>
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          {words(items)}
-        </Grid>
-      </Box>
-    );
   }
-}
+  return (
+  <Box sx={{ flexGrow: 1 }}>
+    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+      {words(items)}
+    </Grid>
+  </Box>
+  );
+  }

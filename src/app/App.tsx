@@ -49,7 +49,6 @@ export default function App() {
             <Route path="games" element={<GamesPage sprintSetting={false}/>}>
               <Route path=":gameId" element={<GamePage />} />
             </Route>
-            <Route path="statistics" element={<StatisticsPage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>

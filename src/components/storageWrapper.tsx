@@ -114,13 +114,15 @@ class StorageWrapper extends Storage<Locals> {
   }
 
   public updateUserData(data: signInResponse) {
+    console.log(data)
     if (data) {
+      console.log("date =>",new Date())
       const { userId, token, refreshToken, name } = data;
       this.set(Locals.USER, userId);
       this.set(Locals.TOKEN, token);
       this.set(Locals.REFRESHTOKEN, refreshToken);
       this.set(Locals.USER_NAME, name);
-      this.set(Locals.EXPIRES_ON, String(Date.now() + 4 * 60 * 60));
+      this.set(Locals.EXPIRES_ON, String(new Date(Date.now() + (4 * 60 * 60))));
     }
   }
 }
