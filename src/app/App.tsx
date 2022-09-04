@@ -9,11 +9,10 @@ import { ThemeProvider } from "@mui/material/styles";
 import Header from "../components/layout/Header/Header";
 import Footer from "../components/layout/Footer";
 
-import {AboutPage} from "../pages/AboutPage";
-import {ErrorPage} from "../pages/ErrorPage";
-import {TextbookPage} from "../pages/textbook/TextbookPage";
-import {GamesPage} from "../pages/GamesPage";
-import {GamePage} from "../pages/GamePage";
+import { AboutPage } from "../pages/AboutPage";
+import { ErrorPage } from "../pages/ErrorPage";
+import { TextbookPage } from "../pages/textbook/TextbookPage";
+import { GamesPage } from "../pages/GamesPage";
 import { getTheme } from "../shared/getTheme";
 
 export const ColorModeContext = createContext({
@@ -21,7 +20,6 @@ export const ColorModeContext = createContext({
 });
 
 export default function App() {
-
   const [mode, setMode] = useState<PaletteMode>("light");
   const colorMode = useMemo(
     () => ({
@@ -45,9 +43,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<TextbookPage />} />
             <Route path="textbook" element={<TextbookPage />} />
-            <Route path="games" element={<GamesPage sprintSetting={false}/>}>
-              <Route path=":gameId" element={<GamePage />} />
-            </Route>
+            <Route path="games" element={<GamesPage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
