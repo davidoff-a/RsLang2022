@@ -17,9 +17,11 @@ import storageWrapper from "../../../storageWrapper";
 export function FormDialog({
   toggleModal,
   open,
+  handleUserAva,
 }: {
   toggleModal: () => void;
   open: boolean;
+  handleUserAva: (userAva: string) => void;
 }) {
   const [credentials, setCredentials] = useState({
     name: "",
@@ -84,11 +86,18 @@ export function FormDialog({
       const signIn = await query.signIn(data);
       const resp = (await signIn.json()) as signInResponse;
       const store = storageWrapper.getInstance();
-      store.setSavedUserId(String(resp.userId));
-      store.setSavedToken(resp.token);
-      store.setSavedRefreshToken(resp.refreshToken);
-      store.setSavedUserName(resp.name);
-      store.setSavedTokenExpires(`${Date.now() + 4 * 60 * 60}`);
+      store.updateUserData(resp);
+
+      const handleUserNameToAvatar = (str: string) =>
+        str.substring(0, 1).toUpperCase();
+
+      const getAvatar = (name: string) => {
+        return name
+          .split(" ")
+          .map((namePart) => handleUserNameToAvatar(namePart))
+          .join("");
+      };
+      handleUserAva(getAvatar(resp.name));
     } catch (e) {
       if (e instanceof Error) {
         throw new Error(e.message);

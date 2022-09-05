@@ -19,7 +19,15 @@ export interface userMenuItem {
   handler: () => void;
 }
 
-export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
+export function UserMenu({
+  toggleModal,
+  userAva,
+  handleUserAva,
+}: {
+  toggleModal: () => void;
+  userAva: string;
+  handleUserAva: (userAva: string) => void;
+}) {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
@@ -37,6 +45,7 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
 
   const handleLogout = () => {
     store.clearUserSettings();
+    handleUserAva("");
     handleCloseUserMenu();
   };
 
@@ -55,26 +64,6 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
   const menuItemData = store.getSavedUser()
     ? settings
     : [{ label: "Войти", handler: handleUserMenuItem }];
-
-  const handleUserNameToAvatar = (str: string) =>
-    str.substring(0, 1).toUpperCase();
-
-  const userName = store.getSavedUserName() as string;
-
-  const getAvatar = (name: string) => {
-    const userName = name
-      .split(" ")
-      .map((namePart) => handleUserNameToAvatar(namePart))
-      .join("");
-
-    return userName;
-  };
-
-  const ava = store.getSavedUser() ? (
-    getAvatar(userName)
-  ) : (
-    <LoginIcon></LoginIcon>
-  );
 
   const addMenuItems = (menuItems: userMenuItem[]) => {
     return menuItems.map((item, index) => (
@@ -104,7 +93,7 @@ export function UserMenu({ toggleModal }: { toggleModal: () => void }) {
             src="/broken-image.jpg"
             sx={{ bgcolor: deepOrange[500] }}
           >
-            {ava}
+            {userAva || <LoginIcon />}
           </Avatar>
         </IconButton>
       </Tooltip>

@@ -12,6 +12,10 @@ import { useState } from "react";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
+  const [userAva, setUserAVA] = useState("");
+  const handleUserAva = (userAvaLabel: string) => {
+    setUserAVA(userAvaLabel);
+  };
 
   const toggleModal = () => {
     setOpen((open) => !open);
@@ -23,8 +27,16 @@ const Header = () => {
         <Toolbar disableGutters>
           <Logo />
           <MainMenu />
-          <UserMenu toggleModal={toggleModal} />
-          <FormDialog toggleModal={toggleModal} open={open} />
+          <UserMenu
+            toggleModal={toggleModal}
+            userAva={userAva}
+            handleUserAva={handleUserAva}
+          />
+          <FormDialog
+            toggleModal={toggleModal}
+            open={open}
+            handleUserAva={handleUserAva}
+          />
         </Toolbar>
       </Container>
     </AppBar>

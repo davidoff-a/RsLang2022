@@ -1,5 +1,5 @@
-import {Locals} from "../common/enums/locals";
-import {Storage} from "../common/templates/storage";
+import { Locals } from "../common/enums/locals";
+import { Storage } from "../common/templates/storage";
 import { signInResponse } from "../common/interfaces/loginData";
 
 class StorageWrapper extends Storage<Locals> {
@@ -114,9 +114,7 @@ class StorageWrapper extends Storage<Locals> {
   }
 
   public updateUserData(data: signInResponse) {
-    console.log(data)
     if (data) {
-      console.log("date =>",new Date())
       const { userId, token, refreshToken, name } = data;
       this.set(Locals.USER, userId);
       this.set(Locals.TOKEN, token);
