@@ -7,6 +7,7 @@ import { Spinner } from "../../../components/Spinner";
 import { IUserWord } from "../../../common/interfaces/userWord";
 import { Difficulty } from "../../../common/enums/difficulty";
 import { GridItem as Item } from "../../../components/GridItem";
+
 interface Props {
   items: IUserWord[];
   isLoaded: boolean;
@@ -47,24 +48,26 @@ export function TextbookWords({
   };
 
   const words = (wordsArr: IUserWord[]) => {
-    return wordsArr.map((word) => (
-      <Grid key={word.id} xs={6}>
-        <Item
-          sx={{
-            boxShadow: `0px 4px 2px -2px ${color},0px 2px 2px 0px ${color},0px 2px 6px 0px ${color}`,
-            fontWeight: 500,
-            fontSize: "1rem",
-            cursor: "pointer",
-          }}
-          onClick={() => onClickItem(word.id)}
-        >
-          {" "}
-          {word.word}
-          {hardWordIcon(word)}
-          {studiedWordIcon(word)}
-        </Item>
-      </Grid>
-    ));
+    return wordsArr.map((word, idx) => {
+      return (
+        <Grid key={idx} xs={6}>
+          <Item
+            sx={{
+              boxShadow: `0px 4px 2px -2px ${color},0px 2px 2px 0px ${color},0px 2px 6px 0px ${color}`,
+              fontWeight: 500,
+              fontSize: "1rem",
+              cursor: "pointer",
+            }}
+            onClick={() => onClickItem(word.id)}
+          >
+            {" "}
+            {word.word}
+            {hardWordIcon(word)}
+            {studiedWordIcon(word)}
+          </Item>
+        </Grid>
+      );
+    });
   };
 
   if (error) {

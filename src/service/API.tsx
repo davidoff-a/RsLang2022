@@ -11,6 +11,7 @@ export interface RequestInitAuth extends RequestInit {
 
 class Query {
   private tokenLifeTime: number;
+
   constructor(
     private readonly basicURL: string,
     private readonly storage = StorageWrapper.getInstance()
@@ -246,14 +247,20 @@ class Query {
     difficulty: Difficulty[]
   ) {
     try {
-      let filter = "";
-      ifdifficulty.length
-        ? difficulty.map((dif) => `{userWord.difficulty:${dif}}`).join(",")
+      const diffLevels = difficulty.length
+        ? JSON.stringify(
+            difficulty.map((dif) => `{userWord.difficulty:${dif}}`).join(",")
+          )
         : "";
-        difficulty.length > 1
-          ? `&filter=${JSON.stringify({ $or: [diffLevels] })}`
-          : "";
-      const qParams = `?group=${group}&page=${page}&wordsPerPage=200${filter}`;
+
+      const filter =
+        difficulty.length === 0
+          ? ""
+          : difficulty.length < 1
+          ? `group = ${group}&page=${page}&wordsPerPage=3600&filter=${diffLevels}`
+          : `group = ${group}&page=${page}&wordsPerPage=3600&filter=${JSON.stringify(
+              `{"$or":[${diffLevels}]}`
+            )}`;
 
       const opts = {
         method: "GET",
@@ -266,7 +273,7 @@ class Query {
       const reqOptions = await this.addAuthOptions(opts);
 
       const data = await fetch(
-        `${this.basicURL}users/${userId}/aggregatedWords${qParams}`,
+        `${this.basicURL}users/${userId}/aggregatedWords${filter}`,
         reqOptions
       );
       return (await data.json()) as IAggregateResult[];
@@ -334,7 +341,7 @@ class Query {
       const userId = (this.storage.getSavedUser() as string) || "";
       const expires = +this.storage.getSavedTokenExpires()!;
 
-      if (new Date(Date.now()) <= new Date(expires)) {
+      if (new Date(Date.now()) >= new Date(expires)) {
         try {
           const response = await this.getUserTokens(userId);
           const newToken = (await response.json()) as signInResponse;

@@ -1,10 +1,13 @@
 // import React, { ChangeEvent } from "react";
-import { Button, TextField } from "@mui/material";
-import { Dialog } from "@mui/material";
-import { DialogContent } from "@mui/material";
-import { DialogContentText } from "@mui/material";
-import { DialogTitle } from "@mui/material";
-import { DialogActions } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { query } from "../../../../service/API";
 import {
@@ -13,6 +16,7 @@ import {
   signInResponse,
 } from "../../../../common/interfaces/loginData";
 import storageWrapper from "../../../storageWrapper";
+import { getAvatar } from "../Header";
 
 export function FormDialog({
   toggleModal,
@@ -88,15 +92,6 @@ export function FormDialog({
       const store = storageWrapper.getInstance();
       store.updateUserData(resp);
 
-      const handleUserNameToAvatar = (str: string) =>
-        str.substring(0, 1).toUpperCase();
-
-      const getAvatar = (name: string) => {
-        return name
-          .split(" ")
-          .map((namePart) => handleUserNameToAvatar(namePart))
-          .join("");
-      };
       handleUserAva(getAvatar(resp.name));
     } catch (e) {
       if (e instanceof Error) {
