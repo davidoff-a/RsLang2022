@@ -6,7 +6,6 @@ import StorageWrapper from '../components/storageWrapper';
 import { IUserWord } from '../common/interfaces/userWord';
 import { TextbookTabs } from './textBook/textBookComponents/TextbookTabs';
 import { getWordsForTextbook, wordsAdapter } from '../service/APIHelper';
-import { IWord } from '../common/interfaces/word';
 import { IAggregateResult } from '../common/interfaces/aggregateResult';
 import { Difficulty } from '../common/enums/difficulty';
 import { query as QueryService } from '../service/API';
@@ -22,6 +21,7 @@ import {
 } from '@mui/material/colors';
 import Main from '../Games/sprint/Main';
 import { sprintResults } from '../Games/sprint/GameComponents/SprintSettings';
+import { IAggregateWord } from '../common/interfaces/aggregateWord';
 
 interface Props {
   sprintSetting: boolean;
@@ -98,9 +98,7 @@ export function GamesPage(props: Props) {
     isLogged = false,
     wordId?: string,
   ): void => {
-    let queryResult: Promise<
-      IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
-    >;
+    let queryResult: Promise<IAggregateResult[] | IAggregateWord[]>;
     if (!isLogged) {
       queryResult = QueryService.getWordsPage(group, page);
     } else {

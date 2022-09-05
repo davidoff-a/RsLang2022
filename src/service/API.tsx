@@ -247,20 +247,27 @@ class Query {
     difficulty: Difficulty[],
   ) {
     try {
-      const diffLevels = difficulty.length
-        ? JSON.stringify(
+      const getFilter = () => {
+        let diffLevels = '';
+        if (difficulty.length) {
+          diffLevels = JSON.stringify(
             difficulty.map(dif => `{userWord.difficulty:${dif}}`).join(','),
-          )
-        : '';
+          );
+        }
+        return diffLevels;
+      };
 
-      const filter =
-        difficulty.length === 0
-          ? ''
-          : difficulty.length < 1
-          ? `group = ${group}&page=${page}&wordsPerPage=3600&filter=${diffLevels}`
-          : `group = ${group}&page=${page}&wordsPerPage=3600&filter=${JSON.stringify(
-              `{"$or":[${diffLevels}]}`,
-            )}`;
+      const getWholeFilterString = () => {
+        if (difficulty.length === 1) {
+          return `?group=${group}&page=${page}&wordsPerPage=3600&filter=${getFilter()}`;
+        } else if (difficulty.length > 1) {
+          return `?group=${group}&page=${page}&wordsPerPage=3600&filter=${JSON.stringify(
+            `{"$or":[${getFilter()}]}`,
+          )}`;
+        } else {
+          return '';
+        }
+      };
 
       const opts = {
         method: 'GET',
@@ -273,7 +280,9 @@ class Query {
       const reqOptions = await this.addAuthOptions(opts);
 
       const data = await fetch(
-        `${this.basicURL}users/${userId}/aggregatedWords${filter}`,
+        `${
+          this.basicURL
+        }users/${userId}/aggregatedWords${getWholeFilterString()}`,
         reqOptions,
       );
       return (await data.json()) as IAggregateResult[];
@@ -339,9 +348,9 @@ class Query {
     const tokenData = this.storage.getSavedToken() || '';
     if (tokenData) {
       const userId = (this.storage.getSavedUser() as string) || '';
-      const expires = +this.storage.getSavedTokenExpires()! || 0;
+      const expires = this.storage.getSavedTokenExpires();
 
-      if (new Date(Date.now()) >= new Date(expires)) {
+      if (new Date(Date.now()) >= new Date(expires || 0)) {
         try {
           const response = await this.getUserTokens(userId);
           const newToken = (await response.json()) as signInResponse;
