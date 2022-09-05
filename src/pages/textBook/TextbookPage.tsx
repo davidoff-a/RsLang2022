@@ -143,8 +143,6 @@ export function TextbookPage() {
   }, []);
 
   const onClickTab = (id: number) => {
-    console.log("#### group =>", pageState.group);
-    console.log("#### ID =>", id);
     storage.setSavedGroup(`${id}`);
     setPageState({ ...pageState, group: id });
 

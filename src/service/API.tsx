@@ -246,12 +246,13 @@ class Query {
     difficulty: Difficulty[]
   ) {
     try {
-      const diffLevels = difficulty.length
+      let filter = "";
+      ifdifficulty.length
         ? difficulty.map((dif) => `{userWord.difficulty:${dif}}`).join(",")
         : "";
-      const filter = diffLevels
-        ? `&filter=${JSON.stringify({ $or: [diffLevels] })}`
-        : "";
+        difficulty.length > 1
+          ? `&filter=${JSON.stringify({ $or: [diffLevels] })}`
+          : "";
       const qParams = `?group=${group}&page=${page}&wordsPerPage=200${filter}`;
 
       const opts = {
