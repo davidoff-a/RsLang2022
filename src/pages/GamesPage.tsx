@@ -174,7 +174,6 @@ export function GamesPage(props: Props) {
   };
 
   const onClickLinkGame = (link: string) => {
-    // navigate(`/games/${link}`, { state: { items: pageState.items} });
     if (link == "sprint") {
       handleGameView("viewSprint");
     }

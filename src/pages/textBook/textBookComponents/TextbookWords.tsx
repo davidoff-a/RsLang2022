@@ -32,8 +32,22 @@ export function TextbookWords({
   isStudiedWords,
   onClickItem,
 }: Props) {
-  const words = (wordsArr: IUserWord[]) =>
-    wordsArr.map((word) => (
+  const hardWordIcon = (word: IUserWord) => {
+    if (isLogged && !isHardWords && word.difficulty === Difficulty.HARD) {
+      return <BoltIcon sx={{ color: colorHard, fontSize: "1rem" }} />;
+    }
+    return null;
+  };
+
+  const studiedWordIcon = (word: IUserWord) => {
+    if (isLogged && !isStudiedWords && word.difficulty === Difficulty.STUDIED) {
+      return <AddReactionIcon sx={{ color: colorStudied, fontSize: "1rem" }} />;
+    }
+    return null;
+  };
+
+  const words = (wordsArr: IUserWord[]) => {
+    return wordsArr.map((word) => (
       <Grid key={word.id} xs={6}>
         <Item
           sx={{
@@ -46,21 +60,15 @@ export function TextbookWords({
         >
           {" "}
           {word.word}
-          {isLogged && !isHardWords && word.difficulty === Difficulty.HARD && (
-            <BoltIcon sx={{ color: colorHard, fontSize: "1rem" }} />
-          )}
-          {isLogged &&
-            !isStudiedWords &&
-            word.difficulty === Difficulty.STUDIED && (
-              <AddReactionIcon sx={{ color: colorStudied, fontSize: "1rem" }} />
-            )}
+          {hardWordIcon(word)}
+          {studiedWordIcon(word)}
         </Item>
       </Grid>
     ));
+  };
 
   if (error) {
     return <div key={0}>Error: {error}</div>;
-    console.log("#### error =>", error);
   } else if (!isLoaded) {
     return <Spinner />;
   }

@@ -28,6 +28,10 @@ import { IAggregateResult } from "../../common/interfaces/aggregateResult";
 import { GameButton } from "./textBookComponents/GameButton";
 import { IAggregateWord } from "../../common/interfaces/aggregateWord";
 
+const checkAuthorization = async (id: string) => {
+  return await QueryService.getUser(id);
+};
+
 export function TextbookPage() {
   const storage = StorageWrapper.getInstance();
   const navigate = useNavigate();
@@ -120,11 +124,22 @@ export function TextbookPage() {
     );
   };
   useEffect(() => {
-    if (pageState.group > 5) {
-      getItems(0, 0, false);
-    } else {
-      getItems(pageState.group, pageState.page, false);
-    }
+    checkAuthorization(userId)
+      .then((resultCheck) => {
+        if (!resultCheck.ok) {
+          if (pageState.group > 5) {
+            console.log("logged FALSE, group>5");
+            getItems(0, 0, false);
+          } else {
+            getItems(pageState.group, pageState.page, false);
+          }
+        } else {
+          getItems(pageState.group, pageState.page, true);
+        }
+      })
+      .catch((error) => {
+        onError(error as string);
+      });
   }, []);
 
   const onClickTab = (id: number) => {
