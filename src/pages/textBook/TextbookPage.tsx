@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Grid, Container, Typography } from "@mui/material";
@@ -19,13 +19,14 @@ import { TextbookTabs } from "./textBookComponents/TextbookTabs";
 import { TextbookWords } from "./textBookComponents/TextbookWords";
 import { WordCard } from "./textBookComponents/WordCard";
 import { query as QueryService } from "../../service/API";
-import { wordsAdapter, getWordsForTextbook } from "../../service/APIHelper";
+import { wordsAdapter } from "../../service/APIHelper";
 import { IWord } from "../../common/interfaces/word";
 import { IUserWord } from "../../common/interfaces/userWord";
 import StorageWrapper from "../../components/storageWrapper";
 import { Difficulty } from "../../common/enums/difficulty";
 import { IAggregateResult } from "../../common/interfaces/aggregateResult";
 import { GameButton } from "./textBookComponents/GameButton";
+import { IAggregateWord } from "../../common/interfaces/aggregateWord";
 
 // const checkAuthorization = async (id: string) => {
 //   return await QueryService.getUser(id);
@@ -76,20 +77,23 @@ export function TextbookPage() {
     isLogged = false,
     wordId?: string
   ): void => {
-    let queryResult: Promise<
-      IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
-      >;
+    let queryResult: Promise<IAggregateWord[] | IAggregateResult[]>;
     if (!isLogged) {
       queryResult = QueryService.getWordsPage(group, page);
     } else {
       if (group < 6) {
-        queryResult = getWordsForTextbook(userId, group, page);
+        queryResult = QueryService.getAggregatedWordsByFilter(
+          userId,
+          group,
+          page,
+          []
+        );
       } else {
         queryResult = QueryService.getAggregatedWordsByFilter(
           userId,
-          group === 6
-            ? [Difficulty.HARD, Difficulty.HARD, Difficulty.HARD]
-            : [Difficulty.STUDIED, Difficulty.STUDIED, Difficulty.STUDIED]
+          group,
+          page,
+          group === 6 ? [Difficulty.HARD] : [Difficulty.STUDIED]
         );
       }
     }
@@ -260,7 +264,7 @@ export function TextbookPage() {
           groupsColor={groupsColor.filter((color, id) =>
             pageState.isLogged ? true : id < 6
           )}
-          onClickTab={()=>onClickTab(pageState.group)}
+          onClickTab={() => onClickTab(pageState.group)}
         />
       )}
       <Grid

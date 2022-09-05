@@ -1,12 +1,11 @@
-import {useEffect, useState} from 'react';
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import { Outlet } from "react-router-dom";
 import { GameButton } from "./textBook/textBookComponents/GameButton";
-import { useNavigate } from "react-router-dom";
 import StorageWrapper from "../components/storageWrapper";
-import {IUserWord} from "../common/interfaces/userWord";
-import { TextbookTabs } from './textBook/textBookComponents/TextbookTabs';
+import { IUserWord } from "../common/interfaces/userWord";
+import { TextbookTabs } from "./textBook/textBookComponents/TextbookTabs";
 import { wordsAdapter, getWordsForTextbook } from "../service/APIHelper";
 import { IWord } from "../common/interfaces/word";
 import { IAggregateResult } from "../common/interfaces/aggregateResult";
@@ -23,9 +22,8 @@ import {
   red,
   yellow,
 } from "@mui/material/colors";
-import { dividerClasses } from '@mui/material';
-import Main from '../Games/sprint/Main';
-import {sprintResults} from '../Games/sprint/GameComponents/SprintSettings';
+import Main from "../Games/sprint/Main";
+import { sprintResults } from "../Games/sprint/GameComponents/SprintSettings";
 
 interface Props {
   sprintSetting: boolean;
@@ -33,14 +31,17 @@ interface Props {
 
 interface LocationParams {
   pathname: string;
-  state: { items: IUserWord[], handle: (id:string, resultWord: string) => void};
+  state: {
+    items: IUserWord[];
+    handle: (id: string, resultWord: string) => void;
+  };
   search: string;
   hash: string;
   key: string;
 }
 
 export function GamesPage(props: Props) {
-  const {state} = useLocation() as LocationParams;
+  const { state } = useLocation() as LocationParams;
 
   const storage = StorageWrapper.getInstance();
 
@@ -62,23 +63,21 @@ export function GamesPage(props: Props) {
   const [sprintSetting, setSprintSetting] = useState(props.sprintSetting);
   const handleSprintSetting = () => {
     setSprintSetting(true);
-  }
+  };
 
-  const handleWordScore = (id:string, resultWord: string) => {
+  const handleWordScore = (id: string, resultWord: string) => {
     pageState.items.forEach((item) => {
       if (item.id === id) {
-        if (resultWord === 'true') {
+        if (resultWord === "true") {
           item.goals += 1;
         } else {
           if (item.goals !== 0) {
             item.goals -= 1;
           }
         }
-        console.log(item)
       }
-    })
-    
-  }
+    });
+  };
 
   const onError = (error: string): void => {
     setPageState({
@@ -112,6 +111,8 @@ export function GamesPage(props: Props) {
       } else {
         queryResult = QueryService.getAggregatedWordsByFilter(
           userId,
+          group,
+          page,
           group === 6
             ? [Difficulty.HARD, Difficulty.HARD, Difficulty.HARD]
             : [Difficulty.STUDIED, Difficulty.STUDIED, Difficulty.STUDIED]
@@ -143,7 +144,6 @@ export function GamesPage(props: Props) {
       (error) => {
         onError(error as string);
       }
-      
     );
   };
 
@@ -158,34 +158,49 @@ export function GamesPage(props: Props) {
     yellow[400],
   ];
 
-  const [gameView, setGameView] = useState(<div className="sprint-main-wrapper">
-</div>);
+  const [gameView, setGameView] = useState(
+    <div className="sprint-main-wrapper"></div>
+  );
 
-const handleGameView = (gameViewStatus: string) => {
+  const handleGameView = (gameViewStatus: string) => {
+    if (gameViewStatus == "viewSprint") {
+      setGameView(
+        <Main
+          wordsArrMain={pageState.items}
+          handleWordScore={handleWordScore}
+        />
+      );
+    }
+  };
 
-  if (gameViewStatus == 'viewSprint') {
-    setGameView(<Main wordsArrMain={pageState.items} handleWordScore={handleWordScore}/>)
-  }
-}
-
-const onClickLinkGame = (link: string) => {
-  // navigate(`/games/${link}`, { state: { items: pageState.items} });
-  if (link == 'sprint') {
-    handleGameView('viewSprint');
-  }
-};
+  const onClickLinkGame = (link: string) => {
+    // navigate(`/games/${link}`, { state: { items: pageState.items} });
+    if (link == "sprint") {
+      handleGameView("viewSprint");
+    }
+  };
 
   let gamesCondition;
 
   if (!sprintSetting) {
-    gamesCondition = <div className="sprint-main-wrapper">
-      <h3 className="sprint-title">Select difficulty level</h3>
-      <TextbookTabs initialGroup={pageState.group} groupsColor={groupsColor.filter((color, id) => pageState.isLogged ? true : id < 6)} onClickTab={onClickTab}/>
-    </div>
+    gamesCondition = (
+      <div className="sprint-main-wrapper">
+        <h3 className="sprint-title">Select difficulty level</h3>
+        <TextbookTabs
+          initialGroup={pageState.group}
+          groupsColor={groupsColor.filter((color, id) =>
+            pageState.isLogged ? true : id < 6
+          )}
+          onClickTab={onClickTab}
+        />
+      </div>
+    );
   } else {
-    gamesCondition = <div className="sprint-main-wrapper">
-      <GameButton onClickLinkGame={onClickLinkGame}/>
-    </div>
+    gamesCondition = (
+      <div className="sprint-main-wrapper">
+        <GameButton onClickLinkGame={onClickLinkGame} />
+      </div>
+    );
   }
 
   if (state) {
@@ -193,24 +208,21 @@ const onClickLinkGame = (link: string) => {
     sprintResults.wins = 0;
     return (
       <Typography variant="h3" gutterBottom>
-      <Main wordsArrMain={pageState.items} handleWordScore={handleWordScore}/>
-      {/* <TextbookTabs initialGroup={pageState.group} groupsColor={groupsColor.filter((color, id) => pageState.isLogged ? true : id < 6)} onClickTab={onClickTab}/>
-      <GameButton onClickLinkGame={onClickLinkGame}/> */}
-      <Outlet />
-    </Typography>
-    )
+        <Main
+          wordsArrMain={pageState.items}
+          handleWordScore={handleWordScore}
+        />
+        <Outlet />
+      </Typography>
+    );
   } else {
     sprintResults.wins = 0;
     return (
       <Typography variant="h3" gutterBottom>
         {gamesCondition}
         {gameView}
-        {/* <TextbookTabs initialGroup={pageState.group} groupsColor={groupsColor.filter((color, id) => pageState.isLogged ? true : id < 6)} onClickTab={onClickTab}/>
-        <GameButton onClickLinkGame={onClickLinkGame}/> */}
         <Outlet />
       </Typography>
     );
   }
-
-  
 }
