@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Grid, Container, Typography } from "@mui/material";
@@ -124,23 +124,13 @@ export function TextbookPage() {
       }
     );
   };
-  // useEffect(() => {
-  //   checkAuthorization(userId)
-  //     .then((resultCheck) => {
-  //       if (!resultCheck.ok) {
-  //         if (pageState.group > 5) {
-  //           getItems(0, 0, false);
-  //         } else {
-  //           getItems(pageState.group, pageState.page, false);
-  //         }
-  //       } else {
-  //         getItems(pageState.group, pageState.page, true);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       onError(error as string);
-  //     });
-  // }, []);
+  useEffect(() => {
+    if (pageState.group > 5) {
+      getItems(0, 0, false);
+    } else {
+      getItems(pageState.group, pageState.page, false);
+    }
+  }, []);
 
   const onClickTab = (group: number) => {
     storage.setSavedGroup(`${group}`);
