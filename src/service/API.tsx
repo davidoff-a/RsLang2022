@@ -339,7 +339,7 @@ class Query {
     const tokenData = this.storage.getSavedToken() || "";
     if (tokenData) {
       const userId = (this.storage.getSavedUser() as string) || "";
-      const expires = +this.storage.getSavedTokenExpires()!;
+      const expires = +this.storage.getSavedTokenExpires()! || 0;
 
       if (new Date(Date.now()) >= new Date(expires)) {
         try {
