@@ -7,16 +7,16 @@ import {
   DialogContentText,
   DialogTitle,
   TextField,
-} from "@mui/material";
-import { ChangeEvent, FormEvent, useState } from "react";
-import { query } from "../../../../service/API";
+} from '@mui/material';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import { query } from '../../../../service/API';
 import {
   LoginData,
   RegData,
   signInResponse,
-} from "../../../../common/interfaces/loginData";
-import storageWrapper from "../../../storageWrapper";
-import { getAvatar } from "../Header";
+} from '../../../../common/interfaces/loginData';
+import storageWrapper from '../../../storageWrapper';
+import { getAvatar } from '../Header';
 
 export function FormDialog({
   toggleModal,
@@ -28,15 +28,15 @@ export function FormDialog({
   handleUserAva: (userAva: string) => void;
 }) {
   const [credentials, setCredentials] = useState({
-    name: "",
-    email: "",
-    password: "",
+    name: '',
+    email: '',
+    password: '',
   } as RegData);
 
   const handleFieldChange = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
-    const propName = target.getAttribute("id") as keyof typeof credentials;
-    setCredentials((credentials) => {
+    const propName = target.getAttribute('id') as keyof typeof credentials;
+    setCredentials(credentials => {
       if (credentials[propName].length !== target.value.length) {
         return { ...credentials, [propName]: target.value };
       }
@@ -47,16 +47,16 @@ export function FormDialog({
   const [userFormLogin, setUserFormLogin] = useState(true);
 
   const switchForm = () => {
-    setUserFormLogin((userFormLogin) => !userFormLogin);
+    setUserFormLogin(userFormLogin => !userFormLogin);
   };
 
   const clearForm = () => {
     setCredentials({
-      name: "",
-      email: "",
-      password: "",
+      name: '',
+      email: '',
+      password: '',
     });
-    setUserFormLogin((userFormLogin) => true);
+    setUserFormLogin(userFormLogin => true);
   };
 
   const insertNameField = () => {
@@ -106,12 +106,12 @@ export function FormDialog({
       const loginBody = { email: email, password: password };
       !userFormLogin
         ? await registerUser(credentials)
-        : await logIn(loginBody).catch((e) => {
+        : await logIn(loginBody).catch(e => {
             if (e instanceof Error) {
               throw new Error(e.message);
             }
           });
-    })().catch((e) => {
+    })().catch(e => {
       if (e instanceof Error) {
         throw new Error(e.message);
       }
@@ -129,7 +129,7 @@ export function FormDialog({
         aria-labelledby="form-dialog-title"
       >
         <DialogTitle id="form-dialog-title">
-          {userFormLogin ? "Вход" : "Регистрация"}
+          {userFormLogin ? 'Вход' : 'Регистрация'}
         </DialogTitle>
         <form action="#" onSubmit={onSubmit}>
           <DialogContent>
@@ -169,7 +169,7 @@ export function FormDialog({
               Отмена
             </Button>
             <Button type="submit" color="primary">
-              {userFormLogin ? "Войти" : "Зарегистрироваться"}
+              {userFormLogin ? 'Войти' : 'Зарегистрироваться'}
             </Button>
           </DialogActions>
         </form>

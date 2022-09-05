@@ -1,9 +1,8 @@
-import { useParams } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from 'react-router-dom';
 
-import Typography from "@mui/material/Typography";
-import { IUserWord } from "../common/interfaces/userWord";
-import Main from "../Games/sprint/Main";
+import Typography from '@mui/material/Typography';
+import { IUserWord } from '../common/interfaces/userWord';
+import Main from '../Games/sprint/Main';
 
 export interface LocationParams {
   pathname: string;

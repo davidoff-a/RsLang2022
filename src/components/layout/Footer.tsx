@@ -1,12 +1,12 @@
-import { Box, Container, Link, Typography } from "@mui/material";
+import { Box, Container, Link, Typography } from '@mui/material';
 
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">
-      {"Copyright © "}
+      {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
         RSS
-      </Link>{" "}
+      </Link>{' '}
       {new Date().getFullYear()}.
     </Typography>
   );
@@ -15,7 +15,7 @@ function Copyright() {
 export default function Footer() {
   return (
     <>
-      {" "}
+      {' '}
       <Container maxWidth="sm">
         <Box sx={{ my: 4 }}>
           <Typography variant="h4" component="h1" gutterBottom>

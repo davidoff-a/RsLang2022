@@ -1,6 +1,6 @@
-import { Locals } from "../common/enums/locals";
-import { Storage } from "../common/templates/storage";
-import { signInResponse } from "../common/interfaces/loginData";
+import { Locals } from '../common/enums/locals';
+import { Storage } from '../common/templates/storage';
+import { signInResponse } from '../common/interfaces/loginData';
 
 class StorageWrapper extends Storage<Locals> {
   private static instance?: StorageWrapper;
@@ -124,9 +124,9 @@ class StorageWrapper extends Storage<Locals> {
         Locals.EXPIRES_ON,
         String(
           new Date(Date.now()).setMinutes(
-            new Date(Date.now()).getMinutes() + 4 * 60
-          )
-        )
+            new Date(Date.now()).getMinutes() + 4 * 60,
+          ),
+        ),
       );
     }
   }

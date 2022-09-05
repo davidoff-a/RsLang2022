@@ -8,4 +8,3 @@ export const GridItem = styled(Paper)(({ theme }) => ({
   textAlign: 'center',
   color: theme.palette.text.secondary,
 }));
-

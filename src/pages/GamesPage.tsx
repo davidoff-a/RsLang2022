@@ -1,29 +1,27 @@
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import Typography from "@mui/material/Typography";
-import { Outlet } from "react-router-dom";
-import { GameButton } from "./textBook/textBookComponents/GameButton";
-import StorageWrapper from "../components/storageWrapper";
-import { IUserWord } from "../common/interfaces/userWord";
-import { TextbookTabs } from "./textBook/textBookComponents/TextbookTabs";
-import { wordsAdapter, getWordsForTextbook } from "../service/APIHelper";
-import { IWord } from "../common/interfaces/word";
-import { IAggregateResult } from "../common/interfaces/aggregateResult";
-import { Difficulty } from "../common/enums/difficulty";
-import { query as QueryService } from "../service/API";
+import { useState } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
+import { GameButton } from './textBook/textBookComponents/GameButton';
+import StorageWrapper from '../components/storageWrapper';
+import { IUserWord } from '../common/interfaces/userWord';
+import { TextbookTabs } from './textBook/textBookComponents/TextbookTabs';
+import { getWordsForTextbook, wordsAdapter } from '../service/APIHelper';
+import { IWord } from '../common/interfaces/word';
+import { IAggregateResult } from '../common/interfaces/aggregateResult';
+import { Difficulty } from '../common/enums/difficulty';
+import { query as QueryService } from '../service/API';
 import {
+  blue,
+  cyan,
+  green,
   lime,
   orange,
-  green,
-  cyan,
-  blue,
-  purple,
   pink,
-  red,
+  purple,
   yellow,
-} from "@mui/material/colors";
-import Main from "../Games/sprint/Main";
-import { sprintResults } from "../Games/sprint/GameComponents/SprintSettings";
+} from '@mui/material/colors';
+import Main from '../Games/sprint/Main';
+import { sprintResults } from '../Games/sprint/GameComponents/SprintSettings';
 
 interface Props {
   sprintSetting: boolean;
@@ -53,10 +51,10 @@ export function GamesPage(props: Props) {
     isLogged: userId ? true : false,
     group: initialGroup ? +initialGroup : 0,
     page: initialPage ? +initialPage : 0,
-    error: "",
+    error: '',
     isLoaded: false,
     items: [] as IUserWord[],
-    currentId: "",
+    currentId: '',
     isPageStudied: false,
   });
 
@@ -66,9 +64,9 @@ export function GamesPage(props: Props) {
   };
 
   const handleWordScore = (id: string, resultWord: string) => {
-    pageState.items.forEach((item) => {
+    pageState.items.forEach(item => {
       if (item.id === id) {
-        if (resultWord === "true") {
+        if (resultWord === 'true') {
           item.goals += 1;
         } else {
           if (item.goals !== 0) {
@@ -98,7 +96,7 @@ export function GamesPage(props: Props) {
     group = 0,
     page = 0,
     isLogged = false,
-    wordId?: string
+    wordId?: string,
   ): void => {
     let queryResult: Promise<
       IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
@@ -115,12 +113,12 @@ export function GamesPage(props: Props) {
           page,
           group === 6
             ? [Difficulty.HARD, Difficulty.HARD, Difficulty.HARD]
-            : [Difficulty.STUDIED, Difficulty.STUDIED, Difficulty.STUDIED]
+            : [Difficulty.STUDIED, Difficulty.STUDIED, Difficulty.STUDIED],
         );
       }
     }
     queryResult.then(
-      (result) => {
+      result => {
         if (result.length > 0) {
           const items = wordsAdapter(result);
           if (items.length > 0) {
@@ -133,17 +131,17 @@ export function GamesPage(props: Props) {
               items,
               currentId: wordId ? wordId : items[0].id,
               isPageStudied:
-                items.every((item) => item.difficulty !== Difficulty.EASY) &&
+                items.every(item => item.difficulty !== Difficulty.EASY) &&
                 group < 6,
             });
           }
         } else {
-          onError("There are not data from server!");
+          onError('There are not data from server!');
         }
       },
-      (error) => {
+      error => {
         onError(error as string);
-      }
+      },
     );
   };
 
@@ -159,23 +157,23 @@ export function GamesPage(props: Props) {
   ];
 
   const [gameView, setGameView] = useState(
-    <div className="sprint-main-wrapper"></div>
+    <div className="sprint-main-wrapper"></div>,
   );
 
   const handleGameView = (gameViewStatus: string) => {
-    if (gameViewStatus == "viewSprint") {
+    if (gameViewStatus == 'viewSprint') {
       setGameView(
         <Main
           wordsArrMain={pageState.items}
           handleWordScore={handleWordScore}
-        />
+        />,
       );
     }
   };
 
   const onClickLinkGame = (link: string) => {
-    if (link == "sprint") {
-      handleGameView("viewSprint");
+    if (link == 'sprint') {
+      handleGameView('viewSprint');
     }
   };
 
@@ -188,7 +186,7 @@ export function GamesPage(props: Props) {
         <TextbookTabs
           initialGroup={pageState.group}
           groupsColor={groupsColor.filter((color, id) =>
-            pageState.isLogged ? true : id < 6
+            pageState.isLogged ? true : id < 6,
           )}
           onClickTab={onClickTab}
         />
