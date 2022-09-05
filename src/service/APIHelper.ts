@@ -1,6 +1,8 @@
 import { Difficulty } from "../common/enums/difficulty";
 import { IAggregateResult } from "../common/interfaces/aggregateResult";
 import { IAggregateWord } from "../common/interfaces/aggregateWord";
+import { IStatisticsResult } from "../common/interfaces/statisticsResult";
+import { IUserStatistics } from "../common/interfaces/userStatistics";
 import { IUserWord } from "../common/interfaces/userWord";
 import { IWord } from "../common/interfaces/word";
 import { query as QueryService } from "./API";
@@ -18,11 +20,7 @@ function instanceofIAggregateResult(
 function instanceofIWord(
   object: IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
 ): object is IWord[] {
-  return (
-    Array.isArray(object) &&
-    object.length > 0 &&
-    "id" in object[0]
-  );
+  return Array.isArray(object) && object.length > 0 && "id" in object[0];
 }
 
 export function wordsAdapter(
@@ -78,6 +76,30 @@ export async function getWordsForTextbook(
 ): Promise<[IWord[], IAggregateResult[]]> {
   return await Promise.all([
     QueryService.getWordsPage(group, page),
-    QueryService.getAggregatedWordsByFilter(userId, [Difficulty.HARD, Difficulty.STUDIED, Difficulty.EASY]),
+    QueryService.getAggregatedWordsByFilter(userId, [
+      Difficulty.HARD,
+      Difficulty.STUDIED,
+      Difficulty.EASY,
+    ]),
   ]);
+}
+
+export function statisticsAdapter(
+  inputData: IStatisticsResult
+): IUserStatistics[] {
+  const arr = inputData.optional.data.statistics;
+  return arr.map((item) => {
+    const date = new Date(+item.dateTime);
+    return {
+      game: item.game,
+      totalWords: Number(item.totalWords),
+      learnedWords: Number(item.learnedWords),
+      newWords: Number(item.newWords),
+      trueWords: Number(item.trueWords),
+      longSeries: Number(item.longSeries),
+      year: date.getFullYear(),
+      month: date.getMonth(),
+      day: date.getDate(),
+    };
+  });
 }

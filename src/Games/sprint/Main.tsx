@@ -1,16 +1,19 @@
 import React, { useState } from "react";
+
 import { sprintResults } from "./GameComponents/SprintSettings";
 import Card from "./GameComponents/Card";
-import "./style.css";
 import SprintBtn from "./GameComponents/SprintBtn";
 import CloseBtn from "./GameComponents/CloseBtn";
 import { IUserWord } from "../../common/interfaces/userWord";
 import { Spinner } from "../../components/Spinner";
 
+import "./style.css";
+
 interface Props {
   wordsArrMain: IUserWord[];
   isLoaded: boolean;
   handleWordScore: (id: string, resultWord: string) => void;
+  gameIsOver: () => void;
 }
 
 export default function Main(props: Props) {
@@ -27,11 +30,15 @@ export default function Main(props: Props) {
     checkWord(e.currentTarget);
     setWordIndx(wordIndx + 1);
     setCardData(props.wordsArrMain[wordIndx]);
-    randomIndx = getRandomIndx(props.wordsArrMain.length);
+    const random = Math.random();
+
+    randomIndx =
+      random < 0.5 ? wordIndx : getRandomIndx(props.wordsArrMain.length);
   };
 
   const handleGameStatus = () => {
     setGameStatus("none");
+    props.gameIsOver();
   };
 
   const checkWord = (btn: HTMLButtonElement) => {

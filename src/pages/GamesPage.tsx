@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import Typography from "@mui/material/Typography";
 import { Outlet } from "react-router-dom";
+
+import Typography from "@mui/material/Typography";
+import { lime, orange, green, cyan, blue, purple } from "@mui/material/colors";
+
 import { GameButton } from "../components/GameButton";
 import StorageWrapper from "../components/storageWrapper";
 import { IUserWord } from "../common/interfaces/userWord";
@@ -11,10 +14,11 @@ import { IWord } from "../common/interfaces/word";
 import { IAggregateResult } from "../common/interfaces/aggregateResult";
 import { Difficulty } from "../common/enums/difficulty";
 import { query as QueryService } from "../service/API";
-import { lime, orange, green, cyan, blue, purple } from "@mui/material/colors";
 import Main from "../Games/sprint/Main";
 import { sprintResults } from "../Games/sprint/GameComponents/SprintSettings";
-
+import { IStatistics } from "../common/interfaces/statistics";
+import { Games } from "../common/enums/games";
+import { IStatisticsResult } from "../common/interfaces/statisticsResult";
 interface LocationParams {
   pathname: string;
   state: {
@@ -42,18 +46,26 @@ export function GamesPage() {
   const { state } = useLocation() as LocationParams;
   const storage = StorageWrapper.getInstance();
   const userId: string | null = storage.getSavedUser() as string;
-
-  console.log(state);
+  const statistics: IStatistics = {
+    game: state ? state.game : "",
+    dateTime: `${new Date().getTime()}`,
+    totalWords: "",
+    learnedWords: "",
+    newWords: "",
+    trueWords: "",
+    longSeries: "",
+  };
 
   const [pageState, setPageState] = useState({
     isLogged: userId ? true : false,
     group: state ? state.group : -1,
     page: state ? state.page : -1,
     error: "",
-    isLoaded: true,
+    isLoaded: false,
     items: state ? state.items : ([] as IUserWord[]),
     gameView: <div className="sprint-main-wrapper"></div>,
     game: state ? state.game : "",
+    limit: 20,
   });
 
   const onError = (error: string): void => {
@@ -65,7 +77,15 @@ export function GamesPage() {
     });
   };
 
-  const getItems = (group = 0, page = 0, isLogged = false): void => {
+  const getItems = (
+    group = 0,
+    page = 0,
+    isLogged = false,
+    notStudiedWords: IUserWord[] | undefined = undefined
+  ): void => {
+    if (notStudiedWords && notStudiedWords.length === pageState.limit) {
+      return;
+    }
     let queryResult: Promise<
       IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
     >;
@@ -79,14 +99,49 @@ export function GamesPage() {
         if (result.length > 0) {
           const items = wordsAdapter(result);
           if (items.length > 0) {
-            setPageState({
-              ...pageState,
-              isLogged,
-              group,
-              page,
-              isLoaded: true,
-              items,
-            });
+            while (
+              notStudiedWords &&
+              notStudiedWords.length < pageState.limit
+            ) {
+              items.forEach((elem) => {
+                if (
+                  elem.difficulty !== Difficulty.STUDIED &&
+                  notStudiedWords.length < pageState.limit
+                ) {
+                  notStudiedWords.push({ ...elem });
+                }
+              });
+              if (notStudiedWords.length < pageState.limit && page > 0) {
+                const queryPage = page - 1;
+                getItems(
+                  pageState.group,
+                  queryPage,
+                  pageState.isLogged,
+                  notStudiedWords
+                );
+              }
+            }
+            if (notStudiedWords) {
+              if (notStudiedWords.length === pageState.limit || page === 0) {
+                setPageState({
+                  ...pageState,
+                  isLogged,
+                  group,
+                  page,
+                  isLoaded: true,
+                  items: notStudiedWords,
+                });
+              }
+            } else {
+              setPageState({
+                ...pageState,
+                isLogged,
+                group,
+                page,
+                isLoaded: true,
+                items,
+              });
+            }
           }
         } else {
           onError("There are not data from server!");
@@ -98,17 +153,29 @@ export function GamesPage() {
     );
   };
 
-  const notStudiedWords = () => {
-    if (pageState.isLogged && state) {
+  const addWordsToLimit = () => {
+    if (pageState.isLogged && state && !pageState.isLoaded) {
       const notStudiedWords: IUserWord[] = [];
       for (let i = 0; i < pageState.items.length; i++) {
         if (pageState.items[i].difficulty !== Difficulty.STUDIED) {
           notStudiedWords.push({ ...pageState.items[i] });
         }
       }
-      return notStudiedWords;
+      if (pageState.items.length < pageState.limit && pageState.page > 0) {
+        const queryPage = pageState.page - 1;
+        getItems(
+          pageState.group,
+          queryPage,
+          pageState.isLogged,
+          notStudiedWords
+        );
+      } else {
+        setPageState({
+          ...pageState,
+          isLoaded: true,
+        });
+      }
     }
-    return pageState.items;
   };
 
   const handleWordScore = (id: string, resultWord: string) => {
@@ -116,30 +183,100 @@ export function GamesPage() {
       if (item.id === id) {
         if (resultWord === "true") {
           item.goals += 1;
+          statistics.longSeries = `${+statistics.longSeries + 1}`;
+          statistics.trueWords = `${+statistics.trueWords + 1}`;
         } else {
           if (item.goals !== 0) {
             item.goals -= 1;
+            statistics.longSeries = `0`;
           }
         }
+        if (!item.isUserWord) {
+          statistics.newWords = `${+statistics.newWords + 1}`;
+        }
+        statistics.totalWords = `${+statistics.totalWords + 1}`;
       }
     });
+  };
+
+  const saveUserWord = (
+    isUserWord: boolean,
+    wordId: string,
+    difficulty: Difficulty,
+    goals: number
+  ) => {
+    let resp: Promise<Response>;
+    if (isUserWord) {
+      resp = QueryService.updateUserWords(userId, wordId, {
+        difficulty,
+        optional: { goals },
+      });
+    } else {
+      resp = QueryService.addUserWords(userId, wordId, {
+        difficulty,
+        optional: { goals },
+      });
+    }
+    resp.catch((error) => {
+      onError(error as string);
+    });
+  };
+
+  const saveStatistics = (): void => {
+    const queryResult: Promise<IStatisticsResult> =
+      QueryService.getUserStats(userId);
+    queryResult.then(
+      (result) => {
+        if (result) {
+          result.optional.data.statistics.push(statistics);
+          const resp: Promise<Response> = QueryService.updateUserStats(
+            userId,
+            result
+          );
+          resp.catch((error) => {
+            onError(error as string);
+          });
+        } else {
+          onError("There are not data from server!");
+        }
+      },
+      (error) => {
+        onError(error as string);
+      }
+    );
+  };
+
+  const gameIsOver = () => {
+    pageState.items.forEach((item) => {
+      if (item.difficulty === Difficulty.HARD && item.goals === 5) {
+        statistics.learnedWords = `${+statistics.learnedWords + 1}`;
+        item.difficulty = Difficulty.STUDIED;
+        item.goals = 0;
+      }
+      if (item.difficulty === Difficulty.EASY && item.goals === 3) {
+        statistics.learnedWords = `${+statistics.learnedWords + 1}`;
+        item.difficulty = Difficulty.STUDIED;
+        item.goals = 0;
+      }
+      if (pageState.isLogged) {
+        const { isUserWord, id, difficulty, goals } = item;
+        saveUserWord(isUserWord, id, difficulty, goals);
+      }
+    });
+    if (pageState.isLogged) {
+      saveStatistics();
+    }
   };
 
   const onClickTab = (group: number) => {
     return getItems(group, 0, pageState.isLogged);
   };
 
-  const onClickLinkGame = (game: string) => {
+  const onClickLinkGame = (game: Games) => {
+    statistics.game = game;
     setPageState({
       ...pageState,
       game,
-      gameView: (
-        <Main
-          wordsArrMain={pageState.items}
-          isLoaded={pageState.isLoaded}
-          handleWordScore={handleWordScore}
-        />
-      ),
     });
   };
 
@@ -164,14 +301,16 @@ export function GamesPage() {
     }
   };
 
-  if (state) {
+  if (pageState.game) {
     sprintResults.wins = 0;
+    addWordsToLimit();
     return (
       <Typography variant="h3" gutterBottom>
         <Main
-          wordsArrMain={notStudiedWords()}
+          wordsArrMain={pageState.items}
           isLoaded={pageState.isLoaded}
           handleWordScore={handleWordScore}
+          gameIsOver={gameIsOver}
         />
         <Outlet />
       </Typography>

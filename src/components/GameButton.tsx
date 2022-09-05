@@ -2,9 +2,10 @@ import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import HeadsetIcon from '@mui/icons-material/Headset';
+import { Games } from "../common/enums/games";
 
 export interface Props {
-  onClickLinkGame: (link: string) => void;
+  onClickLinkGame: (game: Games) => void;
 }
 
 export function GameButton({ onClickLinkGame }: Props) {
@@ -22,7 +23,7 @@ export function GameButton({ onClickLinkGame }: Props) {
         size="medium"
         color="primary"
         aria-label="add"
-        onClick={() => onClickLinkGame("sprint")}
+        onClick={() => onClickLinkGame(Games.SPRINT)}
       >
         <DirectionsRunIcon  color="warning" sx={{ mr: 1 }} />
         sprint
@@ -32,7 +33,7 @@ export function GameButton({ onClickLinkGame }: Props) {
         size="medium"
         color="primary"
         aria-label="add"
-        onClick={() => onClickLinkGame("audiocall")}
+        onClick={() => onClickLinkGame(Games.AUDIOCALL)}
       >
         <HeadsetIcon color="warning" sx={{ mr: 1 }} />
         audiocall
