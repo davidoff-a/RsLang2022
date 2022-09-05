@@ -45,7 +45,7 @@ export function WordCard({
         <CardMedia
           component="img"
           height="300"
-          image={`${process.env.PUBLIC_URL}${item.image}`}
+          image={`https://ts-learn-words.herokuapp.com/${item.image}`}
           alt={`image for "${item.word}"`}
         />
         <CardContent>

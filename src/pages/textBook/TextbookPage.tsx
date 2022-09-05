@@ -28,10 +28,6 @@ import { IAggregateResult } from "../../common/interfaces/aggregateResult";
 import { GameButton } from "./textBookComponents/GameButton";
 import { IAggregateWord } from "../../common/interfaces/aggregateWord";
 
-// const checkAuthorization = async (id: string) => {
-//   return await QueryService.getUser(id);
-// };
-
 export function TextbookPage() {
   const storage = StorageWrapper.getInstance();
   const navigate = useNavigate();
@@ -49,7 +45,6 @@ export function TextbookPage() {
   const userId: string | null = storage.getSavedUser() as string;
   const initialGroup: string | null = storage.getSavedGroup() as string;
   const initialPage: string | null = storage.getSavedPage() as string;
-  // const isLogged = !!userId;
 
   const [pageState, setPageState] = useState({
     isLogged: !!userId,
@@ -132,10 +127,13 @@ export function TextbookPage() {
     }
   }, []);
 
-  const onClickTab = (group: number) => {
-    storage.setSavedGroup(`${group}`);
+  const onClickTab = (id: number) => {
+    console.log("#### group =>", pageState.group);
+    console.log("#### ID =>", id);
+    storage.setSavedGroup(`${id}`);
+    setPageState({ ...pageState, group: id });
 
-    return getItems(group, pageState.page, pageState.isLogged);
+    return getItems(id, pageState.page, pageState.isLogged);
   };
 
   const onClickPage = (page: number) => {
@@ -240,6 +238,29 @@ export function TextbookPage() {
     }
   };
 
+  const textBookLabel = (group: number, state: boolean) => {
+    if (group < 7) {
+      if (state) {
+        return (
+          <Typography
+            gutterBottom
+            variant="h4"
+            component="div"
+            sx={{ marginBottom: "1rem", textAlign: "center" }}
+          >
+            Page is studied!
+          </Typography>
+        );
+      }
+      return <GameButton onClickLinkGame={onClickLinkGame} />;
+    }
+  };
+
+  const getGroupsColor = () => {
+    return groupsColor.filter((color, id) =>
+      pageState.isLogged ? true : id < 6
+    );
+  };
   return (
     <Container
       sx={{
@@ -251,10 +272,8 @@ export function TextbookPage() {
       {pageState.isLoaded && (
         <TextbookTabs
           initialGroup={pageState.group}
-          groupsColor={groupsColor.filter((color, id) =>
-            pageState.isLogged ? true : id < 6
-          )}
-          onClickTab={() => onClickTab(pageState.group)}
+          groupsColor={getGroupsColor()}
+          onClickTab={onClickTab}
         />
       )}
       <Grid
@@ -267,19 +286,7 @@ export function TextbookPage() {
         spacing={2}
       >
         <Grid item xs={6}>
-          {pageState.isPageStudied && pageState.group < 7 && (
-            <Typography
-              gutterBottom
-              variant="h4"
-              component="div"
-              sx={{ marginBottom: "1rem", textAlign: "center" }}
-            >
-              Page is studied!
-            </Typography>
-          )}
-          {!pageState.isPageStudied && pageState.group < 7 && (
-            <GameButton onClickLinkGame={onClickLinkGame} />
-          )}
+          {textBookLabel(pageState.group, pageState.isPageStudied)}
           <TextbookWords
             items={pageState.items}
             isLoaded={pageState.isLoaded}
