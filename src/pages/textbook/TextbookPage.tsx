@@ -26,6 +26,7 @@ import StorageWrapper from "../../components/storageWrapper";
 import { Difficulty } from "../../common/enums/difficulty";
 import { IAggregateResult } from "../../common/interfaces/aggregateResult";
 import { GameButton } from "../../components/GameButton";
+import { Games } from "../../common/enums/games";
 
 const checkAuthorization = async (id: string) => {
   return await QueryService.getUser(id);
@@ -166,13 +167,14 @@ export function TextbookPage() {
     return pageState.items;
   };
 
-  const onClickLinkGame = (link: string) => {
+  const onClickLinkGame = (game: Games) => {
     navigate(`/games`, {
       state: {
         group: pageState.group,
         page: pageState.page,
+        isLogged: pageState.isLogged,
         items: notStudiedWords(),
-        game: link,
+        game,
       },
     });
   };

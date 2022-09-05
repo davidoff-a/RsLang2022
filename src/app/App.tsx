@@ -13,7 +13,9 @@ import { AboutPage } from "../pages/AboutPage";
 import { ErrorPage } from "../pages/ErrorPage";
 import { TextbookPage } from "../pages/textbook/TextbookPage";
 import { GamesPage } from "../pages/GamesPage";
+import { StatisticsPage } from "../pages/statistics/StatisticsPage";
 import { getTheme } from "../shared/getTheme";
+
 
 export const ColorModeContext = createContext({
   toggleColorMode: () => {},
@@ -45,6 +47,7 @@ export default function App() {
             <Route path="textbook" element={<TextbookPage />} />
             <Route path="games" element={<GamesPage />} />
             <Route path="about" element={<AboutPage />} />
+            <Route path="statistics" element={<StatisticsPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
           <Footer></Footer>

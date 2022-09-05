@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "@mui/material";
 
 import { sprintResults } from "./GameComponents/SprintSettings";
 import Card from "./GameComponents/Card";
@@ -14,6 +15,7 @@ interface Props {
   isLoaded: boolean;
   handleWordScore: (id: string, resultWord: string) => void;
   gameIsOver: () => void;
+  onClickRepeatButton: () => void;
 }
 
 export default function Main(props: Props) {
@@ -76,6 +78,17 @@ export default function Main(props: Props) {
         <h3 className="sprint-title">
           Game finished. Your Score: {sprintResults.wins}{" "}
         </h3>
+        <Button
+          sx={{
+            width: "10rem",
+          }}
+          size="large"
+          variant="outlined"
+          color="success"
+          onClick={() => props.onClickRepeatButton()}
+        >
+          {"Repeat game"}
+        </Button>
       </div>
     );
   } else {

@@ -24,8 +24,9 @@ interface LocationParams {
   state: {
     group: number;
     page: number;
+    isLogged: boolean;
     items: IUserWord[];
-    game: string;
+    game: Games;
     handle: (id: string, resultWord: string) => void;
   };
   search: string;
@@ -42,12 +43,16 @@ const groupsColor: string[] = [
   purple[400],
 ];
 
+const checkAuthorization = async (id: string) => {
+  return await QueryService.getUser(id);
+};
+
 export function GamesPage() {
   const { state } = useLocation() as LocationParams;
   const storage = StorageWrapper.getInstance();
   const userId: string | null = storage.getSavedUser() as string;
   const statistics: IStatistics = {
-    game: state ? state.game : "",
+    game: state ? state.game : Games.SPRINT,
     dateTime: `${new Date().getTime()}`,
     totalWords: "",
     learnedWords: "",
@@ -57,7 +62,7 @@ export function GamesPage() {
   };
 
   const [pageState, setPageState] = useState({
-    isLogged: userId ? true : false,
+    isLogged: state ? state.isLogged : userId ? true : false,
     group: state ? state.group : -1,
     page: state ? state.page : -1,
     error: "",
@@ -175,6 +180,11 @@ export function GamesPage() {
           isLoaded: true,
         });
       }
+    } else if (!pageState.isLogged && state && !pageState.isLoaded) {
+      setPageState({
+        ...pageState,
+        isLoaded: true,
+      });
     }
   };
 
@@ -229,9 +239,17 @@ export function GamesPage() {
       (result) => {
         if (result) {
           result.optional.data.statistics.push(statistics);
+          const body: IStatisticsResult = {
+            learnedWords: "0",
+            optional: {
+              data: {
+                statistics: result.optional.data.statistics,
+              },
+            },
+          };
           const resp: Promise<Response> = QueryService.updateUserStats(
             userId,
-            result
+            body
           );
           resp.catch((error) => {
             onError(error as string);
@@ -248,35 +266,67 @@ export function GamesPage() {
 
   const gameIsOver = () => {
     pageState.items.forEach((item) => {
-      if (item.difficulty === Difficulty.HARD && item.goals === 5) {
+      const saveItem = { ...item };
+      if (saveItem.difficulty === Difficulty.HARD && saveItem.goals === 5) {
         statistics.learnedWords = `${+statistics.learnedWords + 1}`;
-        item.difficulty = Difficulty.STUDIED;
-        item.goals = 0;
+        saveItem.difficulty = Difficulty.STUDIED;
+        saveItem.goals = 0;
       }
-      if (item.difficulty === Difficulty.EASY && item.goals === 3) {
+      if (saveItem.difficulty === Difficulty.EASY && saveItem.goals === 3) {
         statistics.learnedWords = `${+statistics.learnedWords + 1}`;
-        item.difficulty = Difficulty.STUDIED;
-        item.goals = 0;
+        saveItem.difficulty = Difficulty.STUDIED;
+        saveItem.goals = 0;
       }
       if (pageState.isLogged) {
-        const { isUserWord, id, difficulty, goals } = item;
+        const { isUserWord, id, difficulty, goals } = saveItem;
         saveUserWord(isUserWord, id, difficulty, goals);
       }
     });
     if (pageState.isLogged) {
+      if (pageState.game === Games.SPRINT) {
+        statistics.game = Games.SPRINT;
+      } else if (pageState.game === Games.AUDIOCALL) {
+        statistics.game = Games.AUDIOCALL;
+      }
       saveStatistics();
     }
   };
 
+  const getRandomPage = () => {
+    const page = Math.floor(Math.random() * 30);
+    return page === 30 ? 29 : page;
+  };
+
   const onClickTab = (group: number) => {
-    return getItems(group, 0, pageState.isLogged);
+    checkAuthorization(userId)
+      .then((resultCheck) => {
+        if (!resultCheck.ok) {
+          getItems(group, getRandomPage(), false);
+        } else {
+          getItems(group, getRandomPage(), true);
+        }
+      })
+      .catch((error) => {
+        onError(error as string);
+      });
   };
 
   const onClickLinkGame = (game: Games) => {
-    statistics.game = game;
     setPageState({
       ...pageState,
       game,
+    });
+  };
+
+  const onClickRepeatButton = () => {
+    setPageState({
+      ...pageState,
+      group: state ? state.group : -1,
+      page: state ? state.page : -1,
+      error: "",
+      isLoaded: false,
+      items: state ? state.items : ([] as IUserWord[]),
+      game: state ? state.game : "",
     });
   };
 
@@ -286,7 +336,7 @@ export function GamesPage() {
         <div className="sprint-main-wrapper">
           <h3 className="sprint-title">Select difficulty level</h3>
           <TextbookTabs
-            initialGroup={pageState.group}
+            initialGroup={0}
             groupsColor={groupsColor}
             onClickTab={onClickTab}
           />
@@ -311,6 +361,7 @@ export function GamesPage() {
           isLoaded={pageState.isLoaded}
           handleWordScore={handleWordScore}
           gameIsOver={gameIsOver}
+          onClickRepeatButton={onClickRepeatButton}
         />
         <Outlet />
       </Typography>

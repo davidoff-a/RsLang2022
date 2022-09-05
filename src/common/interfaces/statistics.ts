@@ -1,7 +1,7 @@
 import { Games } from "../enums/games";
 
 export interface IStatistics {
-  game: Games | string;
+  game: Games;
   dateTime: string;
   totalWords: string;
   learnedWords: string;

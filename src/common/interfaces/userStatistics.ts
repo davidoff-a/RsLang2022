@@ -1,7 +1,7 @@
 import { Games } from "../enums/games";
 
 export interface IUserStatistics {
-  game: Games | string;
+  game: Games;
   totalWords: number;
   learnedWords: number;
   newWords: number;
