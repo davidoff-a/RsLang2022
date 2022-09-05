@@ -128,7 +128,6 @@ export function TextbookPage() {
       .then(resultCheck => {
         if (!resultCheck.ok) {
           if (pageState.group > 5) {
-            console.log('logged FALSE, group>5');
             getItems(0, 0, false);
           } else {
             getItems(pageState.group, pageState.page, false);
@@ -158,7 +157,7 @@ export function TextbookPage() {
     return setPageState({ ...pageState, currentId: wordId });
   };
 
-  const onClickLinkGame = (link: string) => {
+  const onClickLinkGame = () => {
     checkWordsList(); //check if there studied words
     navigate(`/games`, { state: { items: pageState.items } });
   };

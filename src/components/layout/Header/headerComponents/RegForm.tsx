@@ -56,7 +56,7 @@ export function FormDialog({
       email: '',
       password: '',
     });
-    setUserFormLogin(userFormLogin => true);
+    setUserFormLogin(true);
   };
 
   const insertNameField = () => {
@@ -104,15 +104,19 @@ export function FormDialog({
     (async function () {
       const { email, password } = credentials;
       const loginBody = { email: email, password: password };
-      !userFormLogin
-        ? await registerUser(credentials)
-        : await logIn(loginBody).catch(e => {
-            if (e instanceof Error) {
-              throw new Error(e.message);
-            }
-          });
+      if (!userFormLogin) {
+        await registerUser(credentials);
+      } else {
+        await logIn(loginBody).catch(e => {
+          if (!(e instanceof Error)) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
+            throw new Error(e.message);
+          }
+        });
+      }
     })().catch(e => {
-      if (e instanceof Error) {
+      if (!(e instanceof Error)) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
         throw new Error(e.message);
       }
     });

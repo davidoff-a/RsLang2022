@@ -35,7 +35,7 @@ export default function MainMenu() {
   ));
 
   const mainMenuItems = (data: string[]) => {
-    return pages.map(page => (
+    return data.map(page => (
       <Button
         key={page}
         onClick={handleCloseNavMenu}
