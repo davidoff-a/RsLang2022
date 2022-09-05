@@ -1,7 +1,7 @@
-import { SyntheticEvent, useState } from "react";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
+import { SyntheticEvent, useState } from 'react';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
 interface Props {
   initialGroup: number;
   groupsColor: string[];
@@ -15,7 +15,7 @@ export function TextbookTabs({ initialGroup, groupsColor, onClickTab }: Props) {
   };
 
   const getTabLabel = (id: number): string => {
-    return `${id > 5 ? (id === 6 ? "hard words" : "studied words") : id + 1}`;
+    return `${id > 5 ? (id === 6 ? 'hard words' : 'studied words') : id + 1}`;
   };
 
   const tab = (colors: string[]) => {
@@ -24,8 +24,8 @@ export function TextbookTabs({ initialGroup, groupsColor, onClickTab }: Props) {
         <Tab
           sx={{
             boxShadow: `0px 4px 2px -2px ${color},0px 2px 2px 0px ${color},0px 2px 6px 0px ${color}`,
-            borderRadius: "50%",
-            minWidth: "48px",
+            borderRadius: '50%',
+            minWidth: '48px',
           }}
           key={id}
           label={getTabLabel(id)}
@@ -37,12 +37,12 @@ export function TextbookTabs({ initialGroup, groupsColor, onClickTab }: Props) {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: '100%' }}>
       <Tabs
         sx={{
-          "& .MuiTabs-flexContainer": {
-            padding: "10px",
-            columnGap: "10px",
+          '& .MuiTabs-flexContainer': {
+            padding: '10px',
+            columnGap: '10px',
           },
         }}
         value={value}

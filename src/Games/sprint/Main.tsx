@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { sprintResults } from "./GameComponents/SprintSettings";
-import Card from "./GameComponents/Card";
-import "./style.css";
-import SprintBtn from "./GameComponents/SprintBtn";
-import CloseBtn from "./GameComponents/CloseBtn";
-import { IUserWord } from "../../common/interfaces/userWord";
+import React, { useState } from 'react';
+import { sprintResults } from './GameComponents/SprintSettings';
+import Card from './GameComponents/Card';
+import './style.css';
+import SprintBtn from './GameComponents/SprintBtn';
+import CloseBtn from './GameComponents/CloseBtn';
+import { IUserWord } from '../../common/interfaces/userWord';
 
 interface Props {
   wordsArrMain: IUserWord[];
@@ -17,7 +17,7 @@ export default function Main(props: Props) {
   const getRandomIndx = (max: number) => {
     return Math.floor(Math.random() * max);
   };
-  const [gameStatus, setGameStatus] = useState("block");
+  const [gameStatus, setGameStatus] = useState('block');
 
   let randomIndx = getRandomIndx(props.wordsArrMain.length);
 
@@ -29,29 +29,29 @@ export default function Main(props: Props) {
   };
 
   const handleGameStatus = () => {
-    setGameStatus("none");
+    setGameStatus('none');
   };
 
   const checkWord = (btn: HTMLButtonElement) => {
     switch (btn.innerHTML) {
-      case "yes":
-        if (btn.dataset["translate"] === btn.dataset["random"]) {
-          if (!btn.dataset["id"]) return;
-          props.handleWordScore(btn.dataset["id"], "true");
+      case 'yes':
+        if (btn.dataset['translate'] === btn.dataset['random']) {
+          if (!btn.dataset['id']) return;
+          props.handleWordScore(btn.dataset['id'], 'true');
           sprintResults.wins += 1;
         } else {
-          if (!btn.dataset["id"]) return;
-          props.handleWordScore(btn.dataset["id"], "false");
+          if (!btn.dataset['id']) return;
+          props.handleWordScore(btn.dataset['id'], 'false');
         }
         break;
-      case "no":
-        if (btn.dataset["translate"] !== btn.dataset["random"]) {
-          if (!btn.dataset["id"]) return;
-          props.handleWordScore(btn.dataset["id"], "true");
+      case 'no':
+        if (btn.dataset['translate'] !== btn.dataset['random']) {
+          if (!btn.dataset['id']) return;
+          props.handleWordScore(btn.dataset['id'], 'true');
           sprintResults.wins += 1;
         } else {
-          if (!btn.dataset["id"]) return;
-          props.handleWordScore(btn.dataset["id"], "false");
+          if (!btn.dataset['id']) return;
+          props.handleWordScore(btn.dataset['id'], 'false');
         }
         break;
     }
@@ -59,11 +59,11 @@ export default function Main(props: Props) {
 
   const wordsArrLength = props.wordsArrMain.length;
 
-  if (gameStatus == "none") {
+  if (gameStatus == 'none') {
     return (
       <div className="sprint-main-wrapper">
         <h3 className="sprint-title">
-          Game finished. Your Score: {sprintResults.wins}{" "}
+          Game finished. Your Score: {sprintResults.wins}{' '}
         </h3>
       </div>
     );
@@ -88,14 +88,14 @@ export default function Main(props: Props) {
             />
             <div className="sprint-btn-block">
               <SprintBtn
-                action={"yes"}
+                action={'yes'}
                 handleWordIndx={handleWordIndx}
                 id={cardData.id}
                 translate={cardData.wordTranslate}
                 randomWord={props.wordsArrMain[randomIndx].wordTranslate}
               />
               <SprintBtn
-                action={"no"}
+                action={'no'}
                 handleWordIndx={handleWordIndx}
                 id={cardData.id}
                 translate={cardData.wordTranslate}

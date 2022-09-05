@@ -6,11 +6,11 @@ import {
   Grid,
   Button,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 
-import { IUserWord } from "../../../common/interfaces/userWord";
-import { Difficulty } from "../../../common/enums/difficulty";
-import { Player } from "./Player";
+import { IUserWord } from '../../../common/interfaces/userWord';
+import { Difficulty } from '../../../common/enums/difficulty';
+import { Player } from './Player';
 export interface Props {
   isLogged: boolean;
   color: string;
@@ -19,7 +19,7 @@ export interface Props {
     isUserWord: boolean,
     id: string,
     difficulty: Difficulty,
-    goals: number
+    goals: number,
   ) => void;
 }
 
@@ -38,7 +38,7 @@ export function WordCard({
     return (
       <Card
         sx={{
-          maxWidth: "40rem",
+          maxWidth: '40rem',
           boxShadow: `0px 4px 2px -2px ${color},0px 2px 2px 0px ${color},0px 2px 6px 0px ${color}`,
         }}
       >
@@ -49,13 +49,13 @@ export function WordCard({
           alt={`image for "${item.word}"`}
         />
         <CardContent>
-          <Grid container spacing={2} sx={{ alignItems: "center" }}>
+          <Grid container spacing={2} sx={{ alignItems: 'center' }}>
             <Grid item xs={10}>
               <Typography
                 gutterBottom
                 variant="h3"
                 component="div"
-                sx={{ marginBottom: "0.25rem", textAlign: "center" }}
+                sx={{ marginBottom: '0.25rem', textAlign: 'center' }}
               >
                 {item.word}
               </Typography>
@@ -64,11 +64,11 @@ export function WordCard({
               <Player url={`${process.env.PUBLIC_URL}${item.audio}`}></Player>
             </Grid>
             <Grid item xs={5}>
-              {" "}
+              {' '}
               <Typography
                 variant="h6"
                 color="text.secondary"
-                sx={{ textAlign: "right" }}
+                sx={{ textAlign: 'right' }}
               >
                 {item.transcription}
               </Typography>
@@ -119,11 +119,11 @@ export function WordCard({
                       item.isUserWord,
                       item.id,
                       isHard ? Difficulty.EASY : Difficulty.HARD,
-                      item.goals
+                      item.goals,
                     )
                   }
                 >
-                  {isHard ? "Make easy" : "Make hard"}
+                  {isHard ? 'Make easy' : 'Make hard'}
                 </Button>
               )}
               <Button
@@ -133,11 +133,11 @@ export function WordCard({
                     item.isUserWord,
                     item.id,
                     isStudied ? Difficulty.EASY : Difficulty.STUDIED,
-                    item.goals
+                    item.goals,
                   )
                 }
               >
-                {isStudied ? "Study again" : "Make studied"}
+                {isStudied ? 'Study again' : 'Make studied'}
               </Button>
             </>
           )}

@@ -1,6 +1,6 @@
-import React from "react";
-import "../style.css";
-import { IUserWord } from "../../../common/interfaces/userWord";
+import React from 'react';
+import '../style.css';
+import { IUserWord } from '../../../common/interfaces/userWord';
 
 interface Props {
   cardData: IUserWord;
