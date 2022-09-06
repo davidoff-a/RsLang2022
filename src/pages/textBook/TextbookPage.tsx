@@ -1,50 +1,136 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { Grid, Container } from "@mui/material";
-import { TextbookPagination } from "./TextbookPagination";
+import { Container, Grid, Typography } from '@mui/material';
+import { blue, cyan, green, lime, orange, pink, purple, red, yellow } from '@mui/material/colors';
 
-import { TextbookTabs } from "./TextbookTabs";
-import { TextbookWords } from "./TextbookWords";
-import { WordCard } from "./WordCard";
-import { query as QueryService } from "../../service/API";
-import { IWord } from "../../common/interfaces/word";
+import { TextbookPagination } from './textBookComponents/TextbookPagination';
+import { TextbookTabs } from './textBookComponents/TextbookTabs';
+import { TextbookWords } from './textBookComponents/TextbookWords';
+import { WordCard } from './textBookComponents/WordCard';
+import { query as QueryService } from '../../service/API';
+import { wordsAdapter } from '../../service/APIHelper';
+import { IUserWord } from '../../common/interfaces/userWord';
+import StorageWrapper from '../../components/storageWrapper';
+import { Difficulty } from '../../common/enums/difficulty';
+import { IAggregateResult } from '../../common/interfaces/aggregateResult';
+import { GameButton } from './textBookComponents/GameButton';
+import { IAggregateWord } from '../../common/interfaces/aggregateWord';
+
+const checkAuthorization = async (id: string) => {
+  return await QueryService.getUser(id);
+};
 
 export function TextbookPage() {
-  const [group, setGroup] = useState<number>(0);
-  const [page, setPage] = useState<number>(0);
-  const [error, setError] = useState("");
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [items, setItems] = useState([] as IWord[]);
-  const [currentId, setCurrentId] = useState("");
+  const storage = StorageWrapper.getInstance();
+  const groupsColor: string[] = [
+    lime[400],
+    orange[400],
+    green[400],
+    cyan[400],
+    blue[400],
+    purple[400],
+    pink[400],
+    yellow[400],
+  ];
 
-  const getItems = () => {
-    QueryService.getWordsPage(group, page).then(
-      (result) => {
-        setIsLoaded(true);
-        setItems(result);
+  const userId: string | null = storage.getSavedUser() as string;
+  const initialGroup: string | null = storage.getSavedGroup() as string;
+  const initialPage: string | null = storage.getSavedPage() as string;
+
+  const [pageState, setPageState] = useState({
+    isLogged: !!userId,
+    group: initialGroup ? +initialGroup : 0,
+    page: initialPage ? +initialPage : 0,
+    error: '',
+    isLoaded: false,
+    items: [] as IUserWord[],
+    currentId: '',
+    isPageStudied: false,
+  });
+
+  const onError = (error: string): void => {
+    setPageState({
+      ...pageState,
+      isLoaded: true,
+      items: [] as IUserWord[],
+      error: error,
+    });
+  };
+
+  const getItems = (group = 0, page = 0, isLogged = false, wordId?: string): void => {
+    let queryResult: Promise<IAggregateWord[] | IAggregateResult[]>;
+    if (!isLogged) {
+      queryResult = QueryService.getWordsPage(group, page);
+    } else {
+      if (group < 6) {
+        queryResult = QueryService.getAggregatedWordsByFilter(userId, group, page, []);
+      } else {
+        queryResult = QueryService.getAggregatedWordsByFilter(
+          userId,
+          group,
+          page,
+          group === 6 ? [Difficulty.HARD] : [Difficulty.STUDIED],
+        );
+      }
+    }
+    queryResult.then(
+      result => {
         if (result.length > 0) {
-          setCurrentId(result[0].id);
+          const items = wordsAdapter(result);
+          if (items.length > 0) {
+            setPageState({
+              ...pageState,
+              isLogged,
+              group,
+              page,
+              isLoaded: true,
+              items,
+              currentId: wordId ? wordId : items[0].id,
+              isPageStudied: items.every(item => item.difficulty !== Difficulty.EASY) && group < 6,
+            });
+          }
+        } else {
+          onError('There are not data from server!');
         }
       },
-      (error) => {
-        setIsLoaded(true);
-        setError(error as string);
-      }
+      error => {
+        onError(error as string);
+      },
     );
   };
 
   useEffect(() => {
-    getItems();
+    checkAuthorization(userId)
+      .then(resultCheck => {
+        if (!resultCheck.ok) {
+          if (pageState.group > 5) {
+            getItems(0, 0, false);
+          } else {
+            getItems(pageState.group, pageState.page, false);
+          }
+        } else {
+          getItems(pageState.group, pageState.page, true);
+        }
+      })
+      .catch(error => {
+        onError(error as string);
+      });
   }, []);
 
-  const onClickTab = (group: number) => {
-    getItems();
-    return setGroup(group);
+  const onClickTab = (id: number) => {
+    storage.setSavedGroup(`${id}`);
+    setPageState({ ...pageState, group: id });
+
+    return getItems(id, pageState.page, pageState.isLogged);
   };
 
   const onClickPage = (page: number) => {
-    getItems();
-    return setPage(page);
+    storage.setSavedPage(`${page}`);
+    return getItems(pageState.group, page, pageState.isLogged);
+  };
+
+  const onClickItem = (wordId: string) => {
+    return setPageState({ ...pageState, currentId: wordId });
   };
 
   const onClickLinkGame = () => {
@@ -60,17 +146,17 @@ export function TextbookPage() {
     return pageState.items;
   };
 
-  const onClickLinkGame = (game: Games) => {
-    navigate(`/games`, {
-      state: {
-        group: pageState.group,
-        page: pageState.page,
-        isLogged: pageState.isLogged,
-        items: notStudiedWords(),
-        game,
-      },
-    });
-  };
+  // const onClickLinkGame = (game: Games) => {
+  //   navigate(`/games`, {
+  //     state: {
+  //       group: pageState.group,
+  //       page: pageState.page,
+  //       isLogged: pageState.isLogged,
+  //       items: notStudiedWords(),
+  //       game,
+  //     },
+  //   });
+  // };
 
   const onClickWordCardButton = (
     isUserWord: boolean,
@@ -111,11 +197,11 @@ export function TextbookPage() {
     );
   };
 
-      page: number,
-        if (pageState.items[i].difficulty !== 'studied') {
-            pageState.page - 1,
-            .then(response => {
-            .catch(error => {
+  // page: number,
+  //   if (pageState.items[i].difficulty !== 'studied') {
+  //       pageState.page - 1,
+  //       .then(response => {
+  //       .catch(error => {
   const textBookLabel = (group: number, state: boolean) => {
     if (group < 7) {
       if (state) {
@@ -140,24 +226,63 @@ export function TextbookPage() {
     );
   };
   return (
-    <Container maxWidth="sm">
-      <TextbookTabs onClickTab={onClickTab} />
-      <Grid container spacing={2}>
+    <Container
+      sx={{
+        marginTop: '1rem',
+      }}
+      maxWidth="lg"
+      disableGutters
+    >
+      {pageState.isLoaded && (
+        <TextbookTabs
+          initialGroup={pageState.group}
+          groupsColor={getGroupsColor()}
+          onClickTab={onClickTab}
+        />
+      )}
+      <Grid
+        sx={{
+          marginTop: '1rem',
+          alignItems: 'center',
+          marginLeft: 'auto',
+        }}
+        container
+        spacing={2}
+      >
         <Grid item xs={6}>
+          {textBookLabel(pageState.group, pageState.isPageStudied)}
           <TextbookWords
-            items={items}
-            isLoaded={isLoaded}
-            error={error}
+            items={pageState.items}
+            isLoaded={pageState.isLoaded}
+            isLogged={pageState.isLogged}
+            error={pageState.error}
+            color={groupsColor[pageState.group]}
+            colorHard={red[500]}
+            colorStudied={green[500]}
+            isHardWords={pageState.group === 6}
+            isStudiedWords={pageState.group === 7}
             onClickItem={onClickItem}
           />
         </Grid>
         <Grid item xs={6}>
           <WordCard
-            item={items.find((item) => item.id === currentId) as IWord}
+            isLogged={pageState.isLogged}
+            color={groupsColor[pageState.group]}
+            item={
+              pageState.items.find(
+                item => item.id === pageState.currentId,
+              ) as IUserWord
+            }
+            onClickWordCardButton={onClickWordCardButton}
           />
         </Grid>
       </Grid>
-      <TextbookPagination onClickPage={onClickPage} />
+      <TextbookPagination
+        page={pageState.page}
+        isPageStudied={pageState.isPageStudied}
+        color={groupsColor[pageState.group]}
+        onClickPage={onClickPage}
+      />
     </Container>
   );
 }

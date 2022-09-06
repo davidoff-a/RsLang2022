@@ -6,15 +6,15 @@ import { createTheme, PaletteMode } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 
-import Header from "../components/layout/Header";
-import Footer from "../components/layout/Footer";
+import Header from '../components/layout/Header/Header';
+import Footer from '../components/layout/Footer';
 
-import {AboutPage} from "../pages/AboutPage";
-import {ErrorPage} from "../pages/ErrorPage";
-import {TextbookPage} from "../pages/textbook/TextbookPage";
-import {GamesPage} from "../pages/GamesPage";
-import {GamePage} from "../pages/GamePage";
-import { getTheme } from "../shared/getTheme";
+import { AboutPage } from '../pages/AboutPage';
+import { ErrorPage } from '../pages/ErrorPage';
+import { TextbookPage } from '../pages/textBook/TextbookPage';
+import { GamesPage } from '../pages/GamesPage';
+import { getTheme } from '../shared/getTheme';
+import { StatisticsPage } from '../pages/statistics/StatisticsPage';
 
 export const ColorModeContext = createContext({
   toggleColorMode: () => {},
@@ -25,10 +25,12 @@ export default function App() {
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode: PaletteMode) => (prevMode === 'light' ? 'dark' : 'light'));
+        setMode((prevMode: PaletteMode) =>
+          prevMode === "light" ? "dark" : "light"
+        );
       },
     }),
-    [],
+    []
   );
   // Update the theme only if the mode changes
   const theme = useMemo(() => createTheme(getTheme(mode)), [mode]);
@@ -42,10 +44,9 @@ export default function App() {
           <Routes>
             <Route path="/" element={<TextbookPage />} />
             <Route path="textbook" element={<TextbookPage />} />
-            <Route path="games" element={<GamesPage />}>
-              <Route path=":gameId" element={<GamePage />} />
-            </Route>
+            <Route path="games" element={<GamesPage />} />
             <Route path="about" element={<AboutPage />} />
+            <Route path="statistics" element={<StatisticsPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
           <Footer></Footer>
