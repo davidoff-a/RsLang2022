@@ -24,9 +24,7 @@ export default function App() {
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode: PaletteMode) =>
-          prevMode === 'light' ? 'dark' : 'light',
-        );
+        setMode((prevMode: PaletteMode) => (prevMode === 'light' ? 'dark' : 'light'));
       },
     }),
     [],

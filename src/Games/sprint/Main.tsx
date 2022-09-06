@@ -62,9 +62,7 @@ export default function Main(props: Props) {
   if (gameStatus == 'none') {
     return (
       <div className="sprint-main-wrapper">
-        <h3 className="sprint-title">
-          Game finished. Your Score: {sprintResults.wins}{' '}
-        </h3>
+        <h3 className="sprint-title">Game finished. Your Score: {sprintResults.wins} </h3>
       </div>
     );
   } else {
@@ -82,10 +80,7 @@ export default function Main(props: Props) {
         <div className="sprint-wrapper">
           <div className="sprint-card-wrapper">
             <CloseBtn handleGameStatus={handleGameStatus} />
-            <Card
-              cardData={cardData}
-              randomWord={props.wordsArrMain[randomIndx].wordTranslate}
-            />
+            <Card cardData={cardData} randomWord={props.wordsArrMain[randomIndx].wordTranslate} />
             <div className="sprint-btn-block">
               <SprintBtn
                 action={'yes'}

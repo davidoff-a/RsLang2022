@@ -94,23 +94,11 @@ class StorageWrapper extends Storage<Locals> {
   }
 
   public clear() {
-    this.clearItems([
-      Locals.USER,
-      Locals.USER_NAME,
-      Locals.REFRESHTOKEN,
-      Locals.TOKEN,
-      Locals.GROUP,
-      Locals.PAGE,
-    ]);
+    this.clearItems([Locals.USER, Locals.USER_NAME, Locals.REFRESHTOKEN, Locals.TOKEN, Locals.GROUP, Locals.PAGE]);
   }
 
   public clearUserSettings() {
-    this.clearItems([
-      Locals.USER,
-      Locals.USER_NAME,
-      Locals.REFRESHTOKEN,
-      Locals.TOKEN,
-    ]);
+    this.clearItems([Locals.USER, Locals.USER_NAME, Locals.REFRESHTOKEN, Locals.TOKEN]);
   }
 
   public updateUserData(data: signInResponse) {
@@ -120,14 +108,7 @@ class StorageWrapper extends Storage<Locals> {
       this.set(Locals.TOKEN, token);
       this.set(Locals.REFRESHTOKEN, refreshToken);
       this.set(Locals.USER_NAME, name);
-      this.set(
-        Locals.EXPIRES_ON,
-        String(
-          new Date(Date.now()).setMinutes(
-            new Date(Date.now()).getMinutes() + 4 * 60,
-          ),
-        ),
-      );
+      this.set(Locals.EXPIRES_ON, String(new Date(Date.now()).setMinutes(new Date(Date.now()).getMinutes() + 4 * 60)));
     }
   }
 }

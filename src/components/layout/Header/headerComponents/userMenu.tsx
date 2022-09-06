@@ -61,9 +61,7 @@ export function UserMenu({
 
   const store = StorageWrapper.getInstance();
 
-  const menuItemData = store.getSavedUser()
-    ? settings
-    : [{ label: 'Войти', handler: handleUserMenuItem }];
+  const menuItemData = store.getSavedUser() ? settings : [{ label: 'Войти', handler: handleUserMenuItem }];
 
   const addMenuItems = (menuItems: userMenuItem[]) => {
     return menuItems.map((item, index) => (
@@ -75,24 +73,12 @@ export function UserMenu({
 
   return (
     <Box sx={{ flexGrow: 0 }}>
-      <IconButton
-        sx={{ ml: 1 }}
-        onClick={colorMode.toggleColorMode}
-        color="inherit"
-      >
-        {theme.palette.mode === 'dark' ? (
-          <Brightness7Icon />
-        ) : (
-          <Brightness4Icon />
-        )}
+      <IconButton sx={{ ml: 1 }} onClick={colorMode.toggleColorMode} color="inherit">
+        {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
       </IconButton>
       <Tooltip title="Open settings">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar
-            alt="Remy Sharp"
-            src="/broken-image.jpg"
-            sx={{ bgcolor: deepOrange[500] }}
-          >
+          <Avatar alt="Remy Sharp" src="/broken-image.jpg" sx={{ bgcolor: deepOrange[500] }}>
             {userAva || <LoginIcon />}
           </Avatar>
         </IconButton>

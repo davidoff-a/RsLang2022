@@ -11,8 +11,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import StorageWrapper from '../../storageWrapper';
 
-export const handleUserNameToAvatar = (str: string) =>
-  str.substring(0, 1).toUpperCase();
+export const handleUserNameToAvatar = (str: string) => str.substring(0, 1).toUpperCase();
 
 export const getAvatar = (name: string) => {
   return name
@@ -42,16 +41,8 @@ const Header = () => {
         <Toolbar disableGutters>
           <Logo />
           <MainMenu />
-          <UserMenu
-            toggleModal={toggleModal}
-            userAva={userAva}
-            handleUserAva={handleUserAva}
-          />
-          <FormDialog
-            toggleModal={toggleModal}
-            open={open}
-            handleUserAva={handleUserAva}
-          />
+          <UserMenu toggleModal={toggleModal} userAva={userAva} handleUserAva={handleUserAva} />
+          <FormDialog toggleModal={toggleModal} open={open} handleUserAva={handleUserAva} />
         </Toolbar>
       </Container>
     </AppBar>
