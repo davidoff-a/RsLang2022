@@ -1,25 +1,12 @@
-import { useLocation } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
-import Typography from '@mui/material/Typography';
-import { IUserWord } from '../common/interfaces/userWord';
-import Main from '../Games/sprint/Main';
-
-export interface LocationParams {
-  pathname: string;
-  state: {
-    items: IUserWord[];
-    handle: (id: string, resultWord: string) => void;
-  };
-  search: string;
-  hash: string;
-  key: string;
-}
+import Typography from "@mui/material/Typography";
 
 export function GamePage() {
-  const { state } = useLocation() as LocationParams;
+  const params = useParams();
   return (
-    <Typography>
-      <Main wordsArrMain={state.items} handleWordScore={state.handle} />
+    <Typography variant="h4" component="h1" gutterBottom>
+      Game page {params.gameId}
     </Typography>
   );
 }
