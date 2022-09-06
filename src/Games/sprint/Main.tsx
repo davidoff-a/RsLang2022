@@ -26,16 +26,14 @@ export default function Main(props: Props) {
   };
   const [gameStatus, setGameStatus] = useState("block");
 
-  let randomIndx = getRandomIndx(props.wordsArrMain.length);
+  const random = Math.random();
+  const randomIndx =
+    random < 0.5 ? wordIndx - 1 : getRandomIndx(props.wordsArrMain.length);
 
   const handleWordIndx = (e: React.MouseEvent<HTMLButtonElement>) => {
     checkWord(e.currentTarget);
     setWordIndx(wordIndx + 1);
     setCardData(props.wordsArrMain[wordIndx]);
-    const random = Math.random();
-
-    randomIndx =
-      random < 0.5 ? wordIndx : getRandomIndx(props.wordsArrMain.length);
   };
 
   const handleGameStatus = () => {
