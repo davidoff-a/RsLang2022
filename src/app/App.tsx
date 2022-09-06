@@ -9,20 +9,19 @@ import { ThemeProvider } from "@mui/material/styles";
 import Header from "../components/layout/Header/Header";
 import Footer from "../components/layout/Footer";
 
-import { AboutPage } from "../pages/AboutPage";
-import { ErrorPage } from "../pages/ErrorPage";
-import { TextbookPage } from "../pages/textbook/TextbookPage";
-import { GamesPage } from "../pages/GamesPage";
-import { StatisticsPage } from "../pages/statistics/StatisticsPage";
-import { getTheme } from "../shared/getTheme";
-
+import { AboutPage } from '../pages/AboutPage';
+import { ErrorPage } from '../pages/ErrorPage';
+import { TextbookPage } from '../pages/textBook/TextbookPage';
+import { GamesPage } from '../pages/GamesPage';
+import { GamePage } from '../pages/GamePage';
+import { getTheme } from '../shared/getTheme';
 
 export const ColorModeContext = createContext({
   toggleColorMode: () => {},
 });
 
 export default function App() {
-  const [mode, setMode] = useState<PaletteMode>("light");
+  const [mode, setMode] = useState<PaletteMode>('light');
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {

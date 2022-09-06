@@ -1,107 +1,111 @@
 {
-    "env": {
-        "browser": true,
-        "commonjs": true,
-        "es2021": true,
-        "node": true
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:prettier/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
     },
-    "extends": [
-        "eslint:recommended",
-        "plugin:react/recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    "ecmaVersion": 2021,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": [
+    "react",
+    "babel",
+    "@typescript-eslint",
+    "prettier"
+  ],
+  "rules": {
+    "no-console": "warn",
+    "max-len": [
+      "warn",
+      {
+        "code": 120
+      }
     ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 2021,
-        "sourceType": "module",
-        "project": "./tsconfig.json"
-    },
-    "plugins": [
-        "react",
-        "babel",
-        "@typescript-eslint"
+    "class-methods-use-this": [
+      "off"
     ],
-    "rules": {
-        "no-console": "warn",
-        "max-len": [
-            "warn",
-            {
-                "code": 120
-            }
-        ],
-        "class-methods-use-this": [
-            "off"
-        ],
-        "indent": [
-            "warn",
-            2,
-            {
-                "SwitchCase": 1
-            }
-        ],
-        "@typescript-eslint/lines-between-class-members": [
-            "error",
-            "always",
-            {
-                "exceptAfterSingleLine": true
-            }
-        ],
-        "@typescript-eslint/indent": [
-            "warn",
-            2,
-            {
-                "SwitchCase": 1
-            }
-        ],
-        // "@typescript-eslint/no-unused-expressions": ["off"],
-        "@typescript-eslint/no-empty-function": [
-            "error",
-            {
-                "allow": [
-                    "arrowFunctions"
-                ]
-            }
-        ],
-        "import/prefer-default-export": "off",
-        "no-param-reassign": [
-            "error",
-            {
-                "props": false
-            }
-        ],
-        // "no-unused-vars": [
-        //     "error",
-        //     {
-        //         "caughtErrorsIgnorePattern": "^ignore"
-        //     }
-        // ],
-        "react/jsx-uses-react": 1,
-        "react/jsx-uses-vars": "error",
-        // suppress errors for missing 'import React' in files
-        "react/react-in-jsx-scope": "off",
-        // allow jsx syntax in js files (for next.js project)
-        "react/jsx-filename-extension": [
-            1,
-            {
-                "extensions": [
-                    ".js",
-                    ".jsx",
-                    ".tsx",
-                    ".ts"
-                ]
-            }
-        ], //should add ".ts" if typescript project
-        "linebreak-style": 0,
-        "babel/new-cap": 1,
-        "babel/camelcase": 1,
-        "babel/no-invalid-this": 1,
-        "babel/object-curly-spacing": 0,
-        "babel/semi": 1,
-        "babel/no-unused-expressions": 1,
-        "babel/valid-typeof": 1
-    }
+    "indent": [
+      "warn",
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "@typescript-eslint/lines-between-class-members": [
+      "error",
+      "always",
+      {
+        "exceptAfterSingleLine": true
+      }
+    ],
+    "@typescript-eslint/indent": [
+      "warn",
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    // "@typescript-eslint/no-unused-expressions": ["off"],
+    "@typescript-eslint/no-empty-function": [
+      "error",
+      {
+        "allow": [
+          "arrowFunctions"
+        ]
+      }
+    ],
+    "import/prefer-default-export": "off",
+    "no-param-reassign": [
+      "error",
+      {
+        "props": false
+      }
+    ],
+    // "no-unused-vars": [
+    //     "error",
+    //     {
+    //         "caughtErrorsIgnorePattern": "^ignore"
+    //     }
+    // ],
+    "react/jsx-uses-react": 1,
+    "react/jsx-uses-vars": "error",
+    // suppress errors for missing 'import React' in files
+    "react/react-in-jsx-scope": "off",
+    // allow jsx syntax in js files (for next.js project)
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".tsx",
+          ".ts"
+        ]
+      }
+    ],
+    //should add ".ts" if typescript project
+    "linebreak-style": 0,
+    "babel/new-cap": 1,
+    "babel/camelcase": 1,
+    "babel/no-invalid-this": 1,
+    "babel/object-curly-spacing": 0,
+    "babel/semi": 1,
+    "babel/no-unused-expressions": 1,
+    "babel/valid-typeof": 1
+  }
 }

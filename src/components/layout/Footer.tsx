@@ -10,7 +10,7 @@ import {
   AvatarGroup,
   CssBaseline,
   Modal,
-} from "@mui/material";
+} from '@mui/material';
 
 interface Props {
   onOpen: (name: string) => void;
@@ -24,14 +24,14 @@ function Copyright() {
       color="text.secondary"
       align="center"
     >
-      {"Copyright © "}
+      {'Copyright © '}
       <Link color="inherit" href="https://rs.school/js/">
         <img
           height="40"
           src={`${process.env.PUBLIC_URL}rs_school.svg`}
           alt={"RS School"}
         />
-      </Link>{" "}
+      </Link>{' '}
       {new Date().getFullYear()}.
     </Typography>
   );

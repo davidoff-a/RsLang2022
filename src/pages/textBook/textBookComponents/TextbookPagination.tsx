@@ -1,4 +1,4 @@
-import { Stack, Pagination } from "@mui/material";
+import { Stack, Pagination } from '@mui/material';
 
 interface Props {
   page: number;
@@ -18,7 +18,7 @@ export function TextbookPagination({
   };
 
   return (
-    <Stack sx={{ marginTop: "1rem", alignItems: "center" }} spacing={2}>
+    <Stack sx={{ marginTop: '1rem', alignItems: 'center' }} spacing={2}>
       <Pagination
         sx={{
           boxShadow: `0px 4px 2px -2px ${color},0px 2px 2px 0px ${color},0px 2px 6px 0px ${color}`,
@@ -27,7 +27,7 @@ export function TextbookPagination({
         page={page + 1}
         variant="outlined"
         shape="rounded"
-        color={isPageStudied ? "primary" : "standard"}
+        color={isPageStudied ? 'primary' : 'standard'}
         onChange={handleChangePage}
       />
     </Stack>

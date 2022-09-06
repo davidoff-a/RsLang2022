@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-import { IconButton } from "@mui/material";
-import VolumeUpIcon from "@mui/icons-material/VolumeUp";
-import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import { IconButton } from '@mui/material';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 
 const useAudio = (url: string): [boolean, () => void] => {
   const [audio] = useState(new Audio());
@@ -20,9 +20,9 @@ const useAudio = (url: string): [boolean, () => void] => {
   }, [playing]);
 
   useEffect(() => {
-    audio.addEventListener("ended", () => setPlaying(false));
+    audio.addEventListener('ended', () => setPlaying(false));
     return () => {
-      audio.removeEventListener("ended", () => setPlaying(false));
+      audio.removeEventListener('ended', () => setPlaying(false));
     };
   }, []);
 

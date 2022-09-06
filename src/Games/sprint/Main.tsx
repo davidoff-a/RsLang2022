@@ -38,7 +38,7 @@ export default function Main(props: Props) {
 
   const handleGameStatus = () => {
     setGameStatus("none");
-    props.gameIsOver();
+  props.gameIsOver();
   };
 
   const checkWord = (btn: HTMLButtonElement) => {

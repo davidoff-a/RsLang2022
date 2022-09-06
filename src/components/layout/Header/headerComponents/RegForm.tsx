@@ -1,53 +1,62 @@
 // import React, { ChangeEvent } from "react";
-import { Button, TextField } from "@mui/material";
-import { Dialog } from "@mui/material";
-import { DialogContent } from "@mui/material";
-import { DialogContentText } from "@mui/material";
-import { DialogTitle } from "@mui/material";
-import { DialogActions } from "@mui/material";
-import { ChangeEvent, FormEvent, useState } from "react";
-import { query } from "../../../../service/API";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from '@mui/material';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import { query } from '../../../../service/API';
 import {
   LoginData,
   RegData,
   signInResponse,
-} from "../../../../common/interfaces/loginData";
-import storageWrapper from "../../../storageWrapper";
+} from '../../../../common/interfaces/loginData';
+import storageWrapper from '../../../storageWrapper';
+import { getAvatar } from '../Header';
 
 export function FormDialog({
   toggleModal,
   open,
+  handleUserAva,
 }: {
   toggleModal: () => void;
   open: boolean;
+  handleUserAva: (userAva: string) => void;
 }) {
   const [credentials, setCredentials] = useState({
-    name: "",
-    email: "",
-    password: "",
+    name: '',
+    email: '',
+    password: '',
   } as RegData);
 
   const handleFieldChange = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
-    const propName = target.getAttribute("id") as string;
-
-    if (target.value.length > 0) {
-      setCredentials({ ...credentials, [propName]: target.value });
-    }
+    const propName = target.getAttribute('id') as keyof typeof credentials;
+    setCredentials(credentials => {
+      if (credentials[propName].length !== target.value.length) {
+        return { ...credentials, [propName]: target.value };
+      }
+      return credentials;
+    });
   };
 
   const [userFormLogin, setUserFormLogin] = useState(true);
 
   const switchForm = () => {
-    setUserFormLogin((userFormLogin) => !userFormLogin);
+    setUserFormLogin(userFormLogin => !userFormLogin);
   };
 
   const clearForm = () => {
     setCredentials({
-      name: "",
-      email: "",
-      password: "",
+      name: '',
+      email: '',
+      password: '',
     });
+    setUserFormLogin(true);
   };
 
   const insertNameField = () => {
@@ -81,10 +90,9 @@ export function FormDialog({
       const signIn = await query.signIn(data);
       const resp = (await signIn.json()) as signInResponse;
       const store = storageWrapper.getInstance();
-      store.setSavedUserId(String(resp.userId));
-      store.setSavedToken(resp.token);
-      store.setSavedRefreshToken(resp.refreshToken);
-      store.setSavedUserName(resp.name);
+      store.updateUserData(resp);
+
+      handleUserAva(getAvatar(resp.name));
     } catch (e) {
       if (e instanceof Error) {
         throw new Error(e.message);
@@ -96,15 +104,19 @@ export function FormDialog({
     (async function () {
       const { email, password } = credentials;
       const loginBody = { email: email, password: password };
-      !userFormLogin
-        ? await registerUser(credentials)
-        : await logIn(loginBody).catch((e) => {
-            if (e instanceof Error) {
-              throw new Error(e.message);
-            }
-          });
-    })().catch((e) => {
-      if (e instanceof Error) {
+      if (!userFormLogin) {
+        await registerUser(credentials);
+      } else {
+        await logIn(loginBody).catch(e => {
+          if (!(e instanceof Error)) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
+            throw new Error(e.message);
+          }
+        });
+      }
+    })().catch(e => {
+      if (!(e instanceof Error)) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
         throw new Error(e.message);
       }
     });
@@ -121,7 +133,7 @@ export function FormDialog({
         aria-labelledby="form-dialog-title"
       >
         <DialogTitle id="form-dialog-title">
-          {userFormLogin ? "Вход" : "Регистрация"}
+          {userFormLogin ? 'Вход' : 'Регистрация'}
         </DialogTitle>
         <form action="#" onSubmit={onSubmit}>
           <DialogContent>
@@ -161,7 +173,7 @@ export function FormDialog({
               Отмена
             </Button>
             <Button type="submit" color="primary">
-              {userFormLogin ? "Войти" : "Зарегистрироваться"}
+              {userFormLogin ? 'Войти' : 'Зарегистрироваться'}
             </Button>
           </DialogActions>
         </form>
