@@ -1,5 +1,6 @@
 import { Locals } from "../common/enums/locals";
 import { Storage } from "../common/templates/storage";
+import {signInResponse} from "../common/interfaces/loginData";
 
 class StorageWrapper extends Storage<Locals> {
   private static instance?: StorageWrapper;
@@ -18,6 +19,10 @@ class StorageWrapper extends Storage<Locals> {
 
   public getSavedUser() {
     return this.get(Locals.USER);
+  }
+
+  public getSavedUserName() {
+    return this.get(Locals.USER_NAME);
   }
 
   public setSavedUserId(savedItem: string) {
@@ -93,6 +98,21 @@ class StorageWrapper extends Storage<Locals> {
 
   public clearUserSettings() {
     this.clearItems([Locals.USER, Locals.REFRESHTOKEN, Locals.TOKEN]);
+  }
+
+  updateUserData(tokenData: signInResponse) {
+    if (tokenData){
+      const {token, refreshToken, name, userId}=tokenData;
+      this.set(Locals.USER, userId);
+      this.set(Locals.USER_NAME, name);
+      this.set(Locals.TOKEN, token);
+      this.set(Locals.REFRESHTOKEN, refreshToken);
+      this.set(Locals.EXPIRES_ON, String(new Date(Date.now())));
+    }
+  }
+
+  getSavedTokenExpires() {
+    return this.get(Locals.EXPIRES_ON);
   }
 }
 

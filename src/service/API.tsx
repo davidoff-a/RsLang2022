@@ -1,76 +1,103 @@
 import { Difficulty } from "../common/enums/difficulty";
 import { IAggregateResult } from "../common/interfaces/aggregateResult";
 import { IStatisticsResult } from "../common/interfaces/statisticsResult";
-import { IWord } from "../common/interfaces/word";
 import StorageWrapper from "../components/storageWrapper";
+import { LoginData, signInResponse } from "../common/interfaces/loginData";
+import { IAggregateWord } from "../common/interfaces/aggregateWord";
+
+export interface RequestInitAuth extends RequestInit {
+  headers: { Authorization?: string };
+}
+
+export const BASIC_URL = "https://ts-learn-words.herokuapp.com/";
 
 class Query {
-  constructor(
-    private readonly basicURL: string,
-    private readonly storage = StorageWrapper.getInstance()
-  ) {}
+  private tokenLifeTime: number;
+  private storage: StorageWrapper;
+
+  constructor(private readonly basicURL: string) {
+    this.tokenLifeTime = 4 * 60 * 60;
+    this.basicURL = basicURL;
+    this.storage = StorageWrapper.getInstance();
+  }
 
   async getWords() {
-    return await fetch(`${this.basicURL}words`, {
+    const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    };
+    return await fetch(`${this.basicURL}words`, opts);
   }
 
-  async getWordsPage(group: number, page: number): Promise<IWord[]> {
+  async getWordsPage(group: number, page: number): Promise<IAggregateWord[]> {
     try {
+      const opts = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "",
+        },
+      };
+
+      const reqOptions = await this.addAuthOptions(opts);
+
       const data = await fetch(
-        `${this.basicURL}words?group=${group}&page=${page}`
+        `${this.basicURL}words?group=${group}&page=${page}`,
+        reqOptions
       );
-      return (await data.json()) as IWord[];
+      return (await data.json()) as IAggregateWord[];
     } catch (err) {
       throw new Error(err as string);
     }
   }
 
-  async getWord (wordId: number) {
-    return await fetch(`${this.basicURL}words/${wordId}`, {
+  async getWord(wordId: number) {
+    const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    };
+    return await fetch(`${this.basicURL}words/${wordId}`, opts);
   }
 
   async createUser(body: { name: string; email: string; password: string }) {
-    return await fetch(`${this.basicURL}users`, {
+    const opts = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-    });
+    };
+    return await fetch(`${this.basicURL}users`, opts);
   }
 
   async getUser(id: string) {
-    const token: string = this.storage.getSavedToken() as string;
-    return await fetch(`${this.basicURL}users/${id}`, {
+    const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: ``,
       },
-    });
+    };
+    const reqOptions = await this.addAuthOptions(opts);
+    return await fetch(`${this.basicURL}users/${id}`, reqOptions);
   }
 
-  async updateUser (id: number, body: { email: string; password: string }) {
-    return await fetch(`${this.basicURL}users/${id}`, {
+  async updateUser(id: number, body: { email: string; password: string }) {
+    const opts = {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-    });
+    };
+    return await fetch(`${this.basicURL}users/${id}`, opts);
   }
 
-  async deleteUser (id: number) {
+  async deleteUser(id: number) {
     return await fetch(`${this.basicURL}users/${id}`, {
       method: "DELETE",
       headers: {
@@ -79,24 +106,25 @@ class Query {
     });
   }
 
-  async getUserTokens(id: string) {
-    const token: string = this.storage.getSavedToken() as string;
-    return await fetch(`${this.basicURL}users/${id}/tokens`, {
+  async getUserTokens(userId: string) {
+    const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
-    });
+    };
+    return await fetch(`${this.basicURL}users/${userId}/tokens`, opts);
   }
 
-  async getUserWords (id: number) {
-    return await fetch(`${this.basicURL}users/${id}/words`, {
+  async getUserWords(id: number) {
+    const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "",
       },
-    });
+    };
+    return await fetch(`${this.basicURL}users/${id}/words`, opts);
   }
 
   async addUserWords(
@@ -118,7 +146,7 @@ class Query {
     });
   }
 
-  async getUserSpecialWords (id: number, wordId: number) {
+  async getUserSpecialWords(id: number, wordId: number) {
     return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
       method: "GET",
       headers: {
@@ -136,83 +164,127 @@ class Query {
     }
   ) {
     const token: string = this.storage.getSavedToken() as string;
-    return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
+    const opts = {
       method: "PUT",
       body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    });
+    };
+    const reqOptions = await this.addAuthOptions(opts);
+    return await fetch(
+      `${this.basicURL}users/${id}/words/${wordId}`,
+      reqOptions
+    );
   }
 
   async deleteUserWords(id: number, wordId: number) {
     const token: string = this.storage.getSavedToken() as string;
-    return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
+    const opts = {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    });
+    };
+    const reqOptions = await this.addAuthOptions(opts);
+    return await fetch(
+      `${this.basicURL}users/${id}/words/${wordId}`,
+      reqOptions
+    );
   }
 
-  async getAllUserWords (id: number, wordId: number) {
-    return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, {
+  async getAllUserWords(id: number, wordId: number) {
+    const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    };
+    return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, opts);
   }
 
-  async signIn(body: { email: string; password: string }) {
-    return await fetch(`${this.basicURL}signin`, {
+  async signIn(body: LoginData) {
+    const opts = {
       method: "POST",
       body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
+        Authorization: "",
       },
-    });
+    };
+    const reqOptions = await this.addAuthOptions(opts);
+    return await fetch(`${this.basicURL}signin`, reqOptions);
   }
 
   async getAggregatedWordById(userId: number, wordId: number) {
-    return await fetch(
-      `${this.basicURL}users/${userId}/aggregatedWords/${wordId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  }
-
-  async getAggregatedWords(userId: number) {
-    return await fetch(`${this.basicURL}users/${userId}/aggregatedWords`, {
+    const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    };
+    return await fetch(
+      `${this.basicURL}users/${userId}/aggregatedWords/${wordId}`,
+      opts
+    );
+  }
+
+  async getAggregatedWords(userId: number) {
+    const opts = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    return await fetch(`${this.basicURL}users/${userId}/aggregatedWords`, opts);
   }
 
   async getAggregatedWordsByFilter(
     userId: string,
+    page: number,
+    group: number,
     difficulty: Difficulty[]
-  ): Promise<IAggregateResult[]> {
+  ) {
     try {
-      const token: string = this.storage.getSavedToken() as string;
-      const data = await fetch(
-        // eslint-disable-next-line max-len
-        `${this.basicURL}users/${userId}/aggregatedWords?wordsPerPage=3600&filter={"$or":[{"userWord.difficulty":"${difficulty[0]}"},{"userWord.difficulty":"${difficulty[1]}"},{"userWord.difficulty":"${difficulty[2]}"}]}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+      const getFilter = () => {
+        let diffLevels = "";
+        if (difficulty.length) {
+          diffLevels = JSON.stringify(
+            difficulty.map((dif) => `{userWord.difficulty:${dif}}`).join(",")
+          );
         }
+        return diffLevels;
+      };
+
+      const getWholeFilterString = () => {
+        if (difficulty.length === 1) {
+          return `?group=${group}&page=${page}&wordsPerPage=3600&filter=${getFilter()}`;
+        } else if (difficulty.length > 1) {
+          return `?group=${group}&page=${page}&wordsPerPage=3600&filter=${JSON.stringify(
+            `{"$or":[${getFilter()}]}`
+          )}`;
+        } else {
+          return "";
+        }
+      };
+
+      const opts = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "",
+        },
+      };
+
+      const reqOptions = await this.addAuthOptions(opts);
+
+      const data = await fetch(
+        `${
+          this.basicURL
+        }users/${userId}/aggregatedWords${getWholeFilterString()}`,
+        reqOptions
       );
       return (await data.json()) as IAggregateResult[];
     } catch (err) {
@@ -222,7 +294,7 @@ class Query {
 
   async getUserStats(userId: string): Promise<IStatisticsResult> {
     try {
-      const token: string = this.storage.getSavedToken() as string;
+      const token: string = this.storage.getSavedRefreshToken() as string;
       const data = await fetch(`${this.basicURL}users/${userId}/statistics`, {
         method: "GET",
         headers: {
@@ -238,37 +310,63 @@ class Query {
 
   async updateUserStats(userId: string, body: IStatisticsResult) {
     const token: string = this.storage.getSavedToken() as string;
-    return await fetch(`${this.basicURL}users/${userId}/statistics`, {
+    const opts = {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
-    });
+    };
+    return await fetch(`${this.basicURL}users/${userId}/statistics`, opts);
   }
 
-  async getUserSettings (userId: number) {
-    return await fetch(`${this.basicURL}users/${userId}/settings`, {
+  async getUserSettings(userId: number) {
+    const opts = {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-    });
+    };
+    return await fetch(`${this.basicURL}users/${userId}/settings`, opts);
   }
 
-  async updateUserSettings (
+  async updateUserSettings(
     userId: number,
     body: { wordsPerDay: number; optional: { [key: string]: string } }
   ) {
-    return await fetch(`${this.basicURL}users/${userId}/statistics`, {
+    const opts = {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
-    });
+    };
+    return await fetch(`${this.basicURL}users/${userId}/statistics`, opts);
+  }
+
+  async addAuthOptions(options: RequestInitAuth) {
+    const tokenData = this.storage.getSavedToken() || "";
+    if (tokenData) {
+      const userId = (this.storage.getSavedUser() as string) || "";
+      const expires = this.storage.getSavedTokenExpires() || 0;
+
+      if (new Date(Date.now()) >= new Date(expires)) {
+        try {
+          const response = await this.getUserTokens(userId);
+          const newToken = (await response.json()) as signInResponse;
+          this.storage.updateUserData(newToken);
+          options.headers.Authorization = `Bearer ${tokenData}`;
+        } catch (e) {
+          if (e instanceof Error) {
+            throw new Error(e.message);
+          }
+        }
+      }
+    }
+    options.headers.Authorization = `Bearer ${tokenData}`;
+    return options; // возвращаем initOptions
   }
 }
 
-export const query = new Query("https://ts-learn-words.herokuapp.com/");
+export const query = new Query(BASIC_URL);

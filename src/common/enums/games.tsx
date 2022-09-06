@@ -1,4 +1,4 @@
 export enum Games {
-  SPRINT = "sprint",
-  AUDIOCALL = "audiocall",
+  SPRINT = 'sprint',
+  AUDIOCALL = 'audiocall',
 }

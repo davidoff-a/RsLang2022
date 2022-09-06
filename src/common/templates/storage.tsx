@@ -1,4 +1,4 @@
-import { IStorage } from "../interfaces/storage";
+import { IStorage } from '../interfaces/storage';
 
 export abstract class Storage<T extends string> {
   private readonly storage: IStorage;
@@ -20,6 +20,6 @@ export abstract class Storage<T extends string> {
   }
 
   protected clearItems(keys: T[]): void {
-    keys.forEach((key) => this.clearItem(key));
+    keys.forEach(key => this.clearItem(key));
   }
 }

@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { Button } from "@mui/material";
+import React, { useState } from 'react';
+import { Button } from '@mui/material';
 
-import { sprintResults } from "./GameComponents/SprintSettings";
-import Card from "./GameComponents/Card";
-import SprintBtn from "./GameComponents/SprintBtn";
-import CloseBtn from "./GameComponents/CloseBtn";
-import { IUserWord } from "../../common/interfaces/userWord";
-import { Spinner } from "../../components/Spinner";
+import { sprintResults } from './GameComponents/SprintSettings';
+import Card from './GameComponents/Card';
+import SprintBtn from './GameComponents/SprintBtn';
+import CloseBtn from './GameComponents/CloseBtn';
+import { IUserWord } from '../../common/interfaces/userWord';
+import { Spinner } from '../../components/Spinner';
 
-import "./style.css";
+import './style.css';
 
 interface Props {
   wordsArrMain: IUserWord[];
@@ -24,11 +24,10 @@ export default function Main(props: Props) {
   const getRandomIndx = (max: number) => {
     return Math.floor(Math.random() * max);
   };
-  const [gameStatus, setGameStatus] = useState("block");
+  const [gameStatus, setGameStatus] = useState('block');
 
   const random = Math.random();
-  const randomIndx =
-    random < 0.5 ? wordIndx - 1 : getRandomIndx(props.wordsArrMain.length);
+  const randomIndx = random < 0.5 ? wordIndx - 1 : getRandomIndx(props.wordsArrMain.length);
 
   const handleWordIndx = (e: React.MouseEvent<HTMLButtonElement>) => {
     checkWord(e.currentTarget);
@@ -37,30 +36,30 @@ export default function Main(props: Props) {
   };
 
   const handleGameStatus = () => {
-    setGameStatus("none");
+    setGameStatus('none');
     props.gameIsOver();
   };
 
   const checkWord = (btn: HTMLButtonElement) => {
     switch (btn.innerHTML) {
-      case "yes":
-        if (btn.dataset["translate"] === btn.dataset["random"]) {
-          if (!btn.dataset["id"]) return;
-          props.handleWordScore(btn.dataset["id"], "true");
+      case 'yes':
+        if (btn.dataset['translate'] === btn.dataset['random']) {
+          if (!btn.dataset['id']) return;
+          props.handleWordScore(btn.dataset['id'], 'true');
           sprintResults.wins += 1;
         } else {
-          if (!btn.dataset["id"]) return;
-          props.handleWordScore(btn.dataset["id"], "false");
+          if (!btn.dataset['id']) return;
+          props.handleWordScore(btn.dataset['id'], 'false');
         }
         break;
-      case "no":
-        if (btn.dataset["translate"] !== btn.dataset["random"]) {
-          if (!btn.dataset["id"]) return;
-          props.handleWordScore(btn.dataset["id"], "true");
+      case 'no':
+        if (btn.dataset['translate'] !== btn.dataset['random']) {
+          if (!btn.dataset['id']) return;
+          props.handleWordScore(btn.dataset['id'], 'true');
           sprintResults.wins += 1;
         } else {
-          if (!btn.dataset["id"]) return;
-          props.handleWordScore(btn.dataset["id"], "false");
+          if (!btn.dataset['id']) return;
+          props.handleWordScore(btn.dataset['id'], 'false');
         }
         break;
     }
@@ -70,22 +69,20 @@ export default function Main(props: Props) {
 
   if (!props.isLoaded) {
     return <Spinner />;
-  } else if (gameStatus == "none") {
+  } else if (gameStatus == 'none') {
     return (
       <div className="sprint-main-wrapper">
-        <h3 className="sprint-title">
-          Game finished. Your Score: {sprintResults.wins}{" "}
-        </h3>
+        <h3 className="sprint-title">Game finished. Your Score: {sprintResults.wins} </h3>
         <Button
           sx={{
-            width: "10rem",
+            width: '10rem',
           }}
           size="large"
           variant="outlined"
           color="success"
           onClick={() => props.onClickRepeatButton()}
         >
-          {"Repeat game"}
+          {'Repeat game'}
         </Button>
       </div>
     );
@@ -104,20 +101,17 @@ export default function Main(props: Props) {
         <div className="sprint-wrapper">
           <div className="sprint-card-wrapper">
             <CloseBtn handleGameStatus={handleGameStatus} />
-            <Card
-              cardData={cardData}
-              randomWord={props.wordsArrMain[randomIndx].wordTranslate}
-            />
+            <Card cardData={cardData} randomWord={props.wordsArrMain[randomIndx].wordTranslate} />
             <div className="sprint-btn-block">
               <SprintBtn
-                action={"yes"}
+                action={'yes'}
                 handleWordIndx={handleWordIndx}
                 id={cardData.id}
                 translate={cardData.wordTranslate}
                 randomWord={props.wordsArrMain[randomIndx].wordTranslate}
               />
               <SprintBtn
-                action={"no"}
+                action={'no'}
                 handleWordIndx={handleWordIndx}
                 id={cardData.id}
                 translate={cardData.wordTranslate}

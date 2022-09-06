@@ -1,4 +1,4 @@
-import { IStatistics } from "./statistics";
+import { IStatistics } from './statistics';
 
 export interface IStatisticsResult {
   id?: string;

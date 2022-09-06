@@ -25,7 +25,7 @@ export function StatisticsPage() {
   const userId: string | null = storage.getSavedUser() as string;
 
   const [pageState, setPageState] = useState({
-    isLogged: userId ? true : false,
+    isLogged: !!userId,
     groupStatistics: 0,
     error: "",
     isLoaded: false,
@@ -78,16 +78,27 @@ export function StatisticsPage() {
         stack: "Stack 1",
       },
     ];
-    game[arr[0]].forEach((item) => {
-      labels.push(`${item.day}.${item.month}.${item.year}`);
-      datasets[0].data.push(item.newWords);
-      datasets[1].data.push(item.learnedWords);
-      datasets[2].data.push(item.trueWords);
-      datasets[3].data.push(item.longSeries);
-      datasets[4].data.push(
-        Math.round((item.trueWords / item.totalWords) * 100)
-      );
-    });
+    game[arr[0]].forEach(
+      (item: {
+        day: number;
+        month: number;
+        year: number;
+        newWords: number;
+        learnedWords: number;
+        trueWords: number;
+        longSeries: number;
+        totalWords: number;
+      }) => {
+        labels.push(`${item.day}.${item.month}.${item.year}`);
+        datasets[0].data.push(item.newWords);
+        datasets[1].data.push(item.learnedWords);
+        datasets[2].data.push(item.trueWords);
+        datasets[3].data.push(item.longSeries);
+        datasets[4].data.push(
+          Math.round((item.trueWords / item.totalWords) * 100)
+        );
+      }
+    );
     return {
       labels,
       datasets,
@@ -115,7 +126,12 @@ export function StatisticsPage() {
           if (item.game === key) {
             const { game, year, month, day } = item;
             const lastItem = element[key].find(
-              (elem) =>
+              (elem: {
+                game: Games;
+                year: number;
+                month: number;
+                day: number;
+              }) =>
                 elem.game === game &&
                 elem.year === year &&
                 elem.month === month &&
