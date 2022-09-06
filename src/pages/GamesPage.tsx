@@ -8,7 +8,7 @@ import { lime, orange, green, cyan, blue, purple } from '@mui/material/colors';
 import { GameButton } from '../components/GameButton';
 import StorageWrapper from '../components/storageWrapper';
 import { IUserWord } from '../common/interfaces/userWord';
-import { TextbookTabs } from './textBook/textBookComponents/TextbookTabs';
+import { TextbookTabs } from './textBook/TextbookTabs';
 import { wordsAdapter, getWordsForTextbook } from '../service/APIHelper';
 import { IWord } from '../common/interfaces/word';
 import { IAggregateResult } from '../common/interfaces/aggregateResult';

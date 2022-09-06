@@ -4,8 +4,8 @@ import { Container, Grid, Typography } from '@mui/material';
 import { blue, cyan, green, lime, orange, pink, purple, red, yellow } from '@mui/material/colors';
 
 import { TextbookPagination } from './textBookComponents/TextbookPagination';
-import { TextbookTabs } from './textBookComponents/TextbookTabs';
-import { TextbookWords } from './textBookComponents/TextbookWords';
+import { TextbookTabs } from './TextbookTabs';
+import { TextbookWords } from './TextbookWords';
 import { WordCard } from './textBookComponents/WordCard';
 import { query as QueryService } from '../../service/API';
 import { wordsAdapter } from '../../service/APIHelper';
@@ -86,7 +86,11 @@ export function TextbookPage() {
               isLoaded: true,
               items,
               currentId: wordId ? wordId : items[0].id,
-              isPageStudied: items.every(item => item.difficulty !== Difficulty.EASY) && group < 6,
+              isPageStudied:
+                items.every(
+                  (item: { difficulty: Difficulty }) =>
+                    item.difficulty !== Difficulty.EASY
+                ) && group < 6,
             });
           }
         } else {
