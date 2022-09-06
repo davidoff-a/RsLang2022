@@ -1,20 +1,8 @@
 // import React, { ChangeEvent } from "react";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  TextField,
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { query } from '../../../../service/API';
-import {
-  LoginData,
-  RegData,
-  signInResponse,
-} from '../../../../common/interfaces/loginData';
+import { LoginData, RegData, signInResponse } from '../../../../common/interfaces/loginData';
 import storageWrapper from '../../../storageWrapper';
 import { getAvatar } from '../Header';
 
@@ -127,14 +115,8 @@ export function FormDialog({
   const { email, password } = credentials;
   return (
     <>
-      <Dialog
-        open={open}
-        onClose={toggleModal}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogTitle id="form-dialog-title">
-          {userFormLogin ? 'Вход' : 'Регистрация'}
-        </DialogTitle>
+      <Dialog open={open} onClose={toggleModal} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">{userFormLogin ? 'Вход' : 'Регистрация'}</DialogTitle>
         <form action="#" onSubmit={onSubmit}>
           <DialogContent>
             <DialogContentText>Введите Ваши данные</DialogContentText>
@@ -161,11 +143,7 @@ export function FormDialog({
               onChange={(e: ChangeEvent) => handleFieldChange(e)}
               value={password}
             />
-            <input
-              type="checkbox"
-              id="formSwitcher"
-              onChange={() => switchForm()}
-            />
+            <input type="checkbox" id="formSwitcher" onChange={() => switchForm()} />
             <label htmlFor="formSwitcher">Нет логина? Зарегистрируйтейсь</label>
           </DialogContent>
           <DialogActions>

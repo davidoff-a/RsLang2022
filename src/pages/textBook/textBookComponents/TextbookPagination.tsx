@@ -7,12 +7,7 @@ interface Props {
   onClickPage: (id: number) => void;
 }
 
-export function TextbookPagination({
-  page,
-  isPageStudied,
-  color,
-  onClickPage,
-}: Props) {
+export function TextbookPagination({ page, isPageStudied, color, onClickPage }: Props) {
   const handleChangePage = (_ev: object, pg: number) => {
     onClickPage(pg - 1);
   };

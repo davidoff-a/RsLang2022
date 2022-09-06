@@ -1,4 +1,4 @@
-import { Games } from "../enums/games";
+import { IStatistics } from './statistics';
 
 export interface IStatisticsResult {
   id?: string;

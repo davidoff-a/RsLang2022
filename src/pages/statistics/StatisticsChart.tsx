@@ -1,24 +1,9 @@
-import { Card, CardContent, Typography } from "@mui/material";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Bar } from "react-chartjs-2";
-import { DataChart } from "../../common/types/chartTypes";
+import { Card, CardContent, Typography } from '@mui/material';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import { DataChart } from '../../common/types/chartTypes';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 ChartJS.defaults.font.size = 24;
 
@@ -39,7 +24,7 @@ const options = (game: string) => {
     },
     responsive: true,
     interaction: {
-      mode: "index" as const,
+      mode: 'index' as const,
       intersect: false,
     },
     scales: {
@@ -59,12 +44,7 @@ export function StatisticsChart({ statistics }: Props) {
       {statistics.map((game, id) => (
         <Card key={id}>
           <CardContent>
-            <Typography
-              gutterBottom
-              variant="h3"
-              component="div"
-              sx={{ marginBottom: "0.25rem", textAlign: "center" }}
-            >
+            <Typography gutterBottom variant="h3" component="div" sx={{ marginBottom: '0.25rem', textAlign: 'center' }}>
               <Bar options={options(game.title)} data={game.data} />
             </Typography>
           </CardContent>

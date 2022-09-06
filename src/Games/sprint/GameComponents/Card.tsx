@@ -1,5 +1,5 @@
-import "../style.css";
-import { IUserWord } from "../../../common/interfaces/userWord";
+import '../style.css';
+import { IUserWord } from '../../../common/interfaces/userWord';
 
 interface Props {
   cardData: IUserWord;

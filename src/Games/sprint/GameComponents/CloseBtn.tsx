@@ -1,4 +1,7 @@
-import "../style.css";
+import '../style.css';
+import CloseIcon from '@mui/icons-material/Close';
+import React from 'react';
+
 interface Props {
   handleGameStatus: React.MouseEventHandler<HTMLDivElement>;
 }

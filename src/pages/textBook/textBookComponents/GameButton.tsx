@@ -17,13 +17,7 @@ export function GameButton({ onClickLinkGame }: Props) {
         justifyContent: 'center',
       }}
     >
-      <Fab
-        variant="extended"
-        size="medium"
-        color="primary"
-        aria-label="add"
-        onClick={() => onClickLinkGame('sprint')}
-      >
+      <Fab variant="extended" size="medium" color="primary" aria-label="add" onClick={() => onClickLinkGame('sprint')}>
         <DirectionsRunIcon color="warning" sx={{ mr: 1 }} />
         sprint
       </Fab>

@@ -37,11 +37,7 @@ export const Player = ({ url }: Props) => {
   const [playing, toggle] = useAudio(url);
   return (
     <IconButton aria-label="play/pause" onClick={() => toggle()}>
-      {playing ? (
-        <VolumeOffIcon sx={{ height: 38, width: 38 }} />
-      ) : (
-        <VolumeUpIcon sx={{ height: 38, width: 38 }} />
-      )}
+      {playing ? <VolumeOffIcon sx={{ height: 38, width: 38 }} /> : <VolumeUpIcon sx={{ height: 38, width: 38 }} />}
     </IconButton>
   );
 };

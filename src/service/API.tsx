@@ -12,10 +12,7 @@ export interface RequestInitAuth extends RequestInit {
 class Query {
   private tokenLifeTime: number;
 
-  constructor(
-    private readonly basicURL: string,
-    private readonly storage = StorageWrapper.getInstance(),
-  ) {
+  constructor(private readonly basicURL: string, private readonly storage = StorageWrapper.getInstance()) {
     this.tokenLifeTime = 4 * 60 * 60;
   }
 
@@ -41,10 +38,7 @@ class Query {
 
       const reqOptions = await this.addAuthOptions(opts);
 
-      const data = await fetch(
-        `${this.basicURL}words?group=${group}&page=${page}`,
-        reqOptions,
-      );
+      const data = await fetch(`${this.basicURL}words?group=${group}&page=${page}`, reqOptions);
       const res = (await data.json()) as IAggregateWord[];
       return res;
     } catch (err) {
@@ -172,10 +166,7 @@ class Query {
       },
     };
     const reqOptions = await this.addAuthOptions(opts);
-    return await fetch(
-      `${this.basicURL}users/${id}/words/${wordId}`,
-      reqOptions,
-    );
+    return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, reqOptions);
   }
 
   async deleteUserWords(id: number, wordId: number) {
@@ -188,10 +179,7 @@ class Query {
       },
     };
     const reqOptions = await this.addAuthOptions(opts);
-    return await fetch(
-      `${this.basicURL}users/${id}/words/${wordId}`,
-      reqOptions,
-    );
+    return await fetch(`${this.basicURL}users/${id}/words/${wordId}`, reqOptions);
   }
 
   async getAllUserWords(id: number, wordId: number) {
@@ -224,10 +212,7 @@ class Query {
         'Content-Type': 'application/json',
       },
     };
-    return await fetch(
-      `${this.basicURL}users/${userId}/aggregatedWords/${wordId}`,
-      opts,
-    );
+    return await fetch(`${this.basicURL}users/${userId}/aggregatedWords/${wordId}`, opts);
   }
 
   async getAggregatedWords(userId: number) {
@@ -240,19 +225,12 @@ class Query {
     return await fetch(`${this.basicURL}users/${userId}/aggregatedWords`, opts);
   }
 
-  async getAggregatedWordsByFilter(
-    userId: string,
-    page: number,
-    group: number,
-    difficulty: Difficulty[],
-  ) {
+  async getAggregatedWordsByFilter(userId: string, page: number, group: number, difficulty: Difficulty[]) {
     try {
       const getFilter = () => {
         let diffLevels = '';
         if (difficulty.length) {
-          diffLevels = JSON.stringify(
-            difficulty.map(dif => `{userWord.difficulty:${dif}}`).join(','),
-          );
+          diffLevels = JSON.stringify(difficulty.map(dif => `{userWord.difficulty:${dif}}`).join(','));
         }
         return diffLevels;
       };
@@ -261,9 +239,7 @@ class Query {
         if (difficulty.length === 1) {
           return `?group=${group}&page=${page}&wordsPerPage=3600&filter=${getFilter()}`;
         } else if (difficulty.length > 1) {
-          return `?group=${group}&page=${page}&wordsPerPage=3600&filter=${JSON.stringify(
-            `{"$or":[${getFilter()}]}`,
-          )}`;
+          return `?group=${group}&page=${page}&wordsPerPage=3600&filter=${JSON.stringify(`{"$or":[${getFilter()}]}`)}`;
         } else {
           return '';
         }
@@ -279,12 +255,7 @@ class Query {
 
       const reqOptions = await this.addAuthOptions(opts);
 
-      const data = await fetch(
-        `${
-          this.basicURL
-        }users/${userId}/aggregatedWords${getWholeFilterString()}`,
-        reqOptions,
-      );
+      const data = await fetch(`${this.basicURL}users/${userId}/aggregatedWords${getWholeFilterString()}`, reqOptions);
       return (await data.json()) as IAggregateResult[];
     } catch (err) {
       throw new Error(err as string);
@@ -330,10 +301,7 @@ class Query {
     return await fetch(`${this.basicURL}users/${userId}/settings`, opts);
   }
 
-  async updateUserSettings(
-    userId: number,
-    body: { wordsPerDay: number; optional: { [key: string]: string } },
-  ) {
+  async updateUserSettings(userId: number, body: { wordsPerDay: number; optional: { [key: string]: string } }) {
     const opts = {
       method: 'PUT',
       headers: {

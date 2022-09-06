@@ -1,4 +1,3 @@
-
 interface ISprintWords {
   id: number;
   word: string;

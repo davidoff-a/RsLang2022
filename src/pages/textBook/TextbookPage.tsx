@@ -1,18 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { Container, Grid, Typography } from '@mui/material';
-import {
-  blue,
-  cyan,
-  green,
-  lime,
-  orange,
-  pink,
-  purple,
-  red,
-  yellow,
-} from '@mui/material/colors';
+import { blue, cyan, green, lime, orange, pink, purple, red, yellow } from '@mui/material/colors';
 
 import { TextbookPagination } from './textBookComponents/TextbookPagination';
 import { TextbookTabs } from './textBookComponents/TextbookTabs';
@@ -20,7 +9,6 @@ import { TextbookWords } from './textBookComponents/TextbookWords';
 import { WordCard } from './textBookComponents/WordCard';
 import { query as QueryService } from '../../service/API';
 import { wordsAdapter } from '../../service/APIHelper';
-import { IWord } from '../../common/interfaces/word';
 import { IUserWord } from '../../common/interfaces/userWord';
 import StorageWrapper from '../../components/storageWrapper';
 import { Difficulty } from '../../common/enums/difficulty';
@@ -34,7 +22,6 @@ const checkAuthorization = async (id: string) => {
 
 export function TextbookPage() {
   const storage = StorageWrapper.getInstance();
-  const navigate = useNavigate();
   const groupsColor: string[] = [
     lime[400],
     orange[400],
@@ -70,23 +57,13 @@ export function TextbookPage() {
     });
   };
 
-  const getItems = (
-    group = 0,
-    page = 0,
-    isLogged = false,
-    wordId?: string,
-  ): void => {
+  const getItems = (group = 0, page = 0, isLogged = false, wordId?: string): void => {
     let queryResult: Promise<IAggregateWord[] | IAggregateResult[]>;
     if (!isLogged) {
       queryResult = QueryService.getWordsPage(group, page);
     } else {
       if (group < 6) {
-        queryResult = QueryService.getAggregatedWordsByFilter(
-          userId,
-          group,
-          page,
-          [],
-        );
+        queryResult = QueryService.getAggregatedWordsByFilter(userId, group, page, []);
       } else {
         queryResult = QueryService.getAggregatedWordsByFilter(
           userId,
@@ -109,9 +86,7 @@ export function TextbookPage() {
               isLoaded: true,
               items,
               currentId: wordId ? wordId : items[0].id,
-              isPageStudied:
-                items.every(item => item.difficulty !== Difficulty.EASY) &&
-                group < 6,
+              isPageStudied: items.every(item => item.difficulty !== Difficulty.EASY) && group < 6,
             });
           }
         } else {
@@ -171,24 +146,19 @@ export function TextbookPage() {
     return pageState.items;
   };
 
-  const onClickLinkGame = (game: Games) => {
-    navigate(`/games`, {
-      state: {
-        group: pageState.group,
-        page: pageState.page,
-        isLogged: pageState.isLogged,
-        items: notStudiedWords(),
-        game,
-      },
-    });
-  };
+  // const onClickLinkGame = (game: Games) => {
+  //   navigate(`/games`, {
+  //     state: {
+  //       group: pageState.group,
+  //       page: pageState.page,
+  //       isLogged: pageState.isLogged,
+  //       items: notStudiedWords(),
+  //       game,
+  //     },
+  //   });
+  // };
 
-  const onClickWordCardButton = (
-    isUserWord: boolean,
-    wordId: string,
-    difficulty: Difficulty,
-    goals: number,
-  ) => {
+  const onClickWordCardButton = (isUserWord: boolean, wordId: string, difficulty: Difficulty, goals: number) => {
     let queryResult: Promise<Response>;
     if (isUserWord) {
       queryResult = QueryService.updateUserWords(userId, wordId, {
@@ -209,12 +179,7 @@ export function TextbookPage() {
 
     queryResult.then(
       () => {
-        return getItems(
-          pageState.group,
-          pageState.page,
-          pageState.isLogged,
-          newWordId,
-        );
+        return getItems(pageState.group, pageState.page, pageState.isLogged, newWordId);
       },
       error => {
         onError(error as string);
@@ -222,21 +187,16 @@ export function TextbookPage() {
     );
   };
 
-      page: number,
-        if (pageState.items[i].difficulty !== 'studied') {
-            pageState.page - 1,
-            .then(response => {
-            .catch(error => {
+  // page: number,
+  //   if (pageState.items[i].difficulty !== 'studied') {
+  //       pageState.page - 1,
+  //       .then(response => {
+  //       .catch(error => {
   const textBookLabel = (group: number, state: boolean) => {
     if (group < 7) {
       if (state) {
         return (
-          <Typography
-            gutterBottom
-            variant="h4"
-            component="div"
-            sx={{ marginBottom: '1rem', textAlign: 'center' }}
-          >
+          <Typography gutterBottom variant="h4" component="div" sx={{ marginBottom: '1rem', textAlign: 'center' }}>
             Page is studied!
           </Typography>
         );
@@ -246,9 +206,7 @@ export function TextbookPage() {
   };
 
   const getGroupsColor = () => {
-    return groupsColor.filter((color, id) =>
-      pageState.isLogged ? true : id < 6,
-    );
+    return groupsColor.filter((color, id) => (pageState.isLogged ? true : id < 6));
   };
   return (
     <Container
@@ -259,11 +217,7 @@ export function TextbookPage() {
       disableGutters
     >
       {pageState.isLoaded && (
-        <TextbookTabs
-          initialGroup={pageState.group}
-          groupsColor={getGroupsColor()}
-          onClickTab={onClickTab}
-        />
+        <TextbookTabs initialGroup={pageState.group} groupsColor={getGroupsColor()} onClickTab={onClickTab} />
       )}
       <Grid
         sx={{
@@ -293,11 +247,7 @@ export function TextbookPage() {
           <WordCard
             isLogged={pageState.isLogged}
             color={groupsColor[pageState.group]}
-            item={
-              pageState.items.find(
-                item => item.id === pageState.currentId,
-              ) as IUserWord
-            }
+            item={pageState.items.find(item => item.id === pageState.currentId) as IUserWord}
             onClickWordCardButton={onClickWordCardButton}
           />
         </Grid>

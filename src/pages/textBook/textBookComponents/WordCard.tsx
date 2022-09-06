@@ -1,12 +1,4 @@
-import {
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Grid,
-  Button,
-  Typography,
-} from '@mui/material';
+import { Card, CardActions, CardContent, CardMedia, Grid, Button, Typography } from '@mui/material';
 
 import { IUserWord } from '../../../common/interfaces/userWord';
 import { Difficulty } from '../../../common/enums/difficulty';
@@ -15,20 +7,10 @@ export interface Props {
   isLogged: boolean;
   color: string;
   item: IUserWord;
-  onClickWordCardButton: (
-    isUserWord: boolean,
-    id: string,
-    difficulty: Difficulty,
-    goals: number,
-  ) => void;
+  onClickWordCardButton: (isUserWord: boolean, id: string, difficulty: Difficulty, goals: number) => void;
 }
 
-export function WordCard({
-  isLogged,
-  color,
-  item,
-  onClickWordCardButton,
-}: Props) {
+export function WordCard({ isLogged, color, item, onClickWordCardButton }: Props) {
   if (!item) {
     return <></>;
   } else {
@@ -65,11 +47,7 @@ export function WordCard({
             </Grid>
             <Grid item xs={5}>
               {' '}
-              <Typography
-                variant="h6"
-                color="text.secondary"
-                sx={{ textAlign: 'right' }}
-              >
+              <Typography variant="h6" color="text.secondary" sx={{ textAlign: 'right' }}>
                 {item.transcription}
               </Typography>
             </Grid>
@@ -79,32 +57,18 @@ export function WordCard({
               </Typography>
             </Grid>
             <Grid item xs={10}>
-              <Typography
-                variant="body1"
-                dangerouslySetInnerHTML={{ __html: item.textMeaning }}
-              />
-              <Typography variant="body2">
-                {item.textMeaningTranslate}
-              </Typography>
+              <Typography variant="body1" dangerouslySetInnerHTML={{ __html: item.textMeaning }} />
+              <Typography variant="body2">{item.textMeaningTranslate}</Typography>
             </Grid>
             <Grid item xs={2}>
-              <Player
-                url={`${process.env.PUBLIC_URL}${item.audioMeaning}`}
-              ></Player>
+              <Player url={`${process.env.PUBLIC_URL}${item.audioMeaning}`}></Player>
             </Grid>
             <Grid item xs={10}>
-              <Typography
-                variant="body1"
-                dangerouslySetInnerHTML={{ __html: item.textExample }}
-              />
-              <Typography variant="body2">
-                {item.textExampleTranslate}
-              </Typography>
+              <Typography variant="body1" dangerouslySetInnerHTML={{ __html: item.textExample }} />
+              <Typography variant="body2">{item.textExampleTranslate}</Typography>
             </Grid>
             <Grid item xs={2}>
-              <Player
-                url={`${process.env.PUBLIC_URL}${item.audioExample}`}
-              ></Player>
+              <Player url={`${process.env.PUBLIC_URL}${item.audioExample}`}></Player>
             </Grid>
           </Grid>
         </CardContent>
