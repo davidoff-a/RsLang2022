@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 interface Props {
   initialGroup: number;
   groupsColor: string[];
-  onClickTab: (id: number) => void;
+  onClickTab: (id:number) => void;
 }
 
 export function TextbookTabs({ initialGroup, groupsColor, onClickTab }: Props) {

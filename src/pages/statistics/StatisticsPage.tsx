@@ -80,13 +80,13 @@ export function StatisticsPage() {
     ];
     game[arr[0]].forEach(
       (item: {
-        day: any;
-        month: any;
-        year: any;
-        newWords: any;
-        learnedWords: any;
+        day: number;
+        month: number;
+        year: number;
+        newWords: number;
+        learnedWords: number;
         trueWords: number;
-        longSeries: any;
+        longSeries: number;
         totalWords: number;
       }) => {
         labels.push(`${item.day}.${item.month}.${item.year}`);

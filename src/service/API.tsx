@@ -13,10 +13,12 @@ export const BASIC_URL = "https://ts-learn-words.herokuapp.com/";
 
 class Query {
   private tokenLifeTime: number;
+  private storage: StorageWrapper;
 
-  constructor(private readonly basicURL: string, private readonly storage= StorageWrapper.getInstance()) {
+  constructor(private readonly basicURL: string) {
     this.tokenLifeTime = 4 * 60 * 60;
     this.basicURL = basicURL;
+    this.storage = StorageWrapper.getInstance();
   }
 
   async getWords() {
@@ -349,7 +351,7 @@ class Query {
       const userId = (this.storage.getSavedUser() as string) || "";
       const expires = this.storage.getSavedTokenExpires() || 0;
 
-      if (new Date(Date.now()) >= new Date(expires )) {
+      if (new Date(Date.now()) >= new Date(expires)) {
         try {
           const response = await this.getUserTokens(userId);
           const newToken = (await response.json()) as signInResponse;

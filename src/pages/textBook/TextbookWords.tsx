@@ -18,7 +18,7 @@ interface Props {
   colorStudied: string;
   isHardWords: boolean;
   isStudiedWords: boolean;
-  onClickItem: (id: string) => void;
+  onClickItem: (id:string) => void;
 }
 
 export function TextbookWords({

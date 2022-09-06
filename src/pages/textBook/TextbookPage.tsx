@@ -285,7 +285,7 @@ export function TextbookPage() {
         page={pageState.page}
         isPageStudied={pageState.isPageStudied}
         color={groupsColor[pageState.group]}
-        onClickPage={onClickPage}
+        onClickPage={()=>onClickPage(pageState.page)}
       />
     </Container>
   );

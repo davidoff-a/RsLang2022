@@ -4,7 +4,7 @@ import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import HeadsetIcon from '@mui/icons-material/Headset';
 
 export interface Props {
-  onClickLinkGame: (link: string) => void;
+  onClickLinkGame: (link:string) => void;
 }
 
 export function GameButton({ onClickLinkGame }: Props) {

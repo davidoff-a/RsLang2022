@@ -4,7 +4,7 @@ interface Props {
   page: number;
   isPageStudied: boolean;
   color: string;
-  onClickPage: (id: number) => void;
+  onClickPage: (pageNum:number) => void;
 }
 
 export function TextbookPagination({

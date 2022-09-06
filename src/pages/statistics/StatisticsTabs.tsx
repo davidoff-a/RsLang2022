@@ -4,7 +4,7 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 interface Props {
   statisticsTubs: string[];
-  onClickTab: (id: number) => void;
+  onClickTab: (idTab:number) => void;
 }
 
 export function StatisticsTabs({ statisticsTubs, onClickTab }: Props) {
