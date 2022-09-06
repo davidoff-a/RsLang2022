@@ -21,16 +21,14 @@ export const ColorModeContext = createContext({
 });
 
 export default function App() {
-  const [mode, setMode] = useState<PaletteMode>("light");
+  const [mode, setMode] = useState<PaletteMode>('light');
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode: PaletteMode) =>
-          prevMode === "light" ? "dark" : "light"
-        );
+        setMode((prevMode: PaletteMode) => (prevMode === 'light' ? 'dark' : 'light'));
       },
     }),
-    []
+    [],
   );
   // Update the theme only if the mode changes
   const theme = useMemo(() => createTheme(getTheme(mode)), [mode]);

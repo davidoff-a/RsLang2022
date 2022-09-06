@@ -47,10 +47,98 @@ export function TextbookPage() {
     return setPage(page);
   };
 
-  const onClickItem = (id: string) => {
-    return setCurrentId(id);
+  const onClickLinkGame = () => {
+    if (pageState.isLogged) {
+      const notStudiedWords: IUserWord[] = [];
+      for (let i = 0; i < pageState.items.length; i++) {
+        if (pageState.items[i].difficulty !== Difficulty.STUDIED) {
+          notStudiedWords.push({ ...pageState.items[i] });
+        }
+      }
+      return notStudiedWords;
+    }
+    return pageState.items;
   };
 
+  const onClickLinkGame = (game: Games) => {
+    navigate(`/games`, {
+      state: {
+        group: pageState.group,
+        page: pageState.page,
+        isLogged: pageState.isLogged,
+        items: notStudiedWords(),
+        game,
+      },
+    });
+  };
+
+  const onClickWordCardButton = (
+    isUserWord: boolean,
+    wordId: string,
+    difficulty: Difficulty,
+    goals: number,
+  ) => {
+    let queryResult: Promise<Response>;
+    if (isUserWord) {
+      queryResult = QueryService.updateUserWords(userId, wordId, {
+        difficulty,
+        optional: { goals },
+      });
+    } else {
+      queryResult = QueryService.addUserWords(userId, wordId, {
+        difficulty,
+        optional: { goals },
+      });
+    }
+    let newWordId = wordId;
+
+    if (pageState.group > 5) {
+      newWordId = '';
+    }
+
+    queryResult.then(
+      () => {
+        return getItems(
+          pageState.group,
+          pageState.page,
+          pageState.isLogged,
+          newWordId,
+        );
+      },
+      error => {
+        onError(error as string);
+      },
+    );
+  };
+
+      page: number,
+        if (pageState.items[i].difficulty !== 'studied') {
+            pageState.page - 1,
+            .then(response => {
+            .catch(error => {
+  const textBookLabel = (group: number, state: boolean) => {
+    if (group < 7) {
+      if (state) {
+        return (
+          <Typography
+            gutterBottom
+            variant="h4"
+            component="div"
+            sx={{ marginBottom: '1rem', textAlign: 'center' }}
+          >
+            Page is studied!
+          </Typography>
+        );
+      }
+      return <GameButton onClickLinkGame={onClickLinkGame} />;
+    }
+  };
+
+  const getGroupsColor = () => {
+    return groupsColor.filter((color, id) =>
+      pageState.isLogged ? true : id < 6,
+    );
+  };
   return (
     <Container maxWidth="sm">
       <TextbookTabs onClickTab={onClickTab} />
