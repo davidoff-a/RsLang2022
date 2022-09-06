@@ -1,18 +1,10 @@
-import {
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Grid,
-  Button,
-  Typography,
-} from "@mui/material";
+import { Card, CardActions, CardContent, CardMedia, Grid, Button, Typography } from '@mui/material';
 
-import { IUserWord } from "../../../common/interfaces/userWord";
-import { Difficulty } from "../../../common/enums/difficulty";
-import { Player } from "./Player";
-import {BASIC_URL} from "../../../service/API";
-export type cardButtonHandler = (isUserWord: boolean, id: string, difficulty: Difficulty, goals: number) => void
+import { IUserWord } from '../../../common/interfaces/userWord';
+import { Difficulty } from '../../../common/enums/difficulty';
+import { Player } from './Player';
+import { BASIC_URL } from '../../../service/API';
+export type cardButtonHandler = (isUserWord: boolean, id: string, difficulty: Difficulty, goals: number) => void;
 export interface Props {
   isLogged: boolean;
   color: string;
@@ -20,12 +12,7 @@ export interface Props {
   onClickWordCardButton: cardButtonHandler;
 }
 
-export function WordCard({
-  isLogged,
-  color,
-  item,
-  onClickWordCardButton,
-}: Props) {
+export function WordCard({ isLogged, color, item, onClickWordCardButton }: Props) {
   if (!item) {
     return <></>;
   } else {
@@ -34,24 +21,19 @@ export function WordCard({
     return (
       <Card
         sx={{
-          maxWidth: "40rem",
+          maxWidth: '40rem',
           boxShadow: `0px 4px 2px -2px ${color},0px 2px 2px 0px ${color},0px 2px 6px 0px ${color}`,
         }}
       >
-        <CardMedia
-          component="img"
-          height="300"
-          image={`${BASIC_URL}${item.image}`}
-          alt={`image for "${item.word}"`}
-        />
+        <CardMedia component="img" height="300" image={`${BASIC_URL}${item.image}`} alt={`image for "${item.word}"`} />
         <CardContent>
-          <Grid container spacing={2} sx={{ alignItems: "center" }}>
+          <Grid container spacing={2} sx={{ alignItems: 'center' }}>
             <Grid item xs={10}>
               <Typography
                 gutterBottom
                 variant="h3"
                 component="div"
-                sx={{ marginBottom: "0.25rem", textAlign: "center" }}
+                sx={{ marginBottom: '0.25rem', textAlign: 'center' }}
               >
                 {item.word}
               </Typography>
@@ -60,12 +42,8 @@ export function WordCard({
               <Player url={`${BASIC_URL}${item.audio}`}></Player>
             </Grid>
             <Grid item xs={5}>
-              {" "}
-              <Typography
-                variant="h6"
-                color="text.secondary"
-                sx={{ textAlign: "right" }}
-              >
+              {' '}
+              <Typography variant="h6" color="text.secondary" sx={{ textAlign: 'right' }}>
                 {item.transcription}
               </Typography>
             </Grid>
@@ -75,32 +53,18 @@ export function WordCard({
               </Typography>
             </Grid>
             <Grid item xs={10}>
-              <Typography
-                variant="body1"
-                dangerouslySetInnerHTML={{ __html: item.textMeaning }}
-              />
-              <Typography variant="body2">
-                {item.textMeaningTranslate}
-              </Typography>
+              <Typography variant="body1" dangerouslySetInnerHTML={{ __html: item.textMeaning }} />
+              <Typography variant="body2">{item.textMeaningTranslate}</Typography>
             </Grid>
             <Grid item xs={2}>
-              <Player
-                url={`${BASIC_URL}${item.audioMeaning}`}
-              ></Player>
+              <Player url={`${BASIC_URL}${item.audioMeaning}`}></Player>
             </Grid>
             <Grid item xs={10}>
-              <Typography
-                variant="body1"
-                dangerouslySetInnerHTML={{ __html: item.textExample }}
-              />
-              <Typography variant="body2">
-                {item.textExampleTranslate}
-              </Typography>
+              <Typography variant="body1" dangerouslySetInnerHTML={{ __html: item.textExample }} />
+              <Typography variant="body2">{item.textExampleTranslate}</Typography>
             </Grid>
             <Grid item xs={2}>
-              <Player
-                url={`$${BASIC_URL}${item.audioExample}`}
-              ></Player>
+              <Player url={`$${BASIC_URL}${item.audioExample}`}></Player>
             </Grid>
           </Grid>
         </CardContent>
@@ -119,7 +83,7 @@ export function WordCard({
                     )
                   }
                 >
-                  {isHard ? "Make easy" : "Make hard"}
+                  {isHard ? 'Make easy' : 'Make hard'}
                 </Button>
               )}
               <Button
@@ -133,7 +97,7 @@ export function WordCard({
                   )
                 }
               >
-                {isStudied ? "Study again" : "Make studied"}
+                {isStudied ? 'Study again' : 'Make studied'}
               </Button>
             </>
           )}

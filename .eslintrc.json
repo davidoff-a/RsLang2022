@@ -56,7 +56,7 @@
                 "SwitchCase": 1
             }
         ],
-        // "@typescript-eslint/no-unused-expressions": ["off"],
+        "@typescript-eslint/no-unused-expressions": ["off"],
         "@typescript-eslint/no-empty-function": [
             "error",
             {
