@@ -29,7 +29,7 @@ export function wordsAdapter(
         id: item._id,
         difficulty: item.userWord ? item.userWord.difficulty : Difficulty.EASY,
         goals: item.userWord ? item.userWord.optional.goals : 0,
-        isUserWord: item.userWord ? true : false,
+        isUserWord: !!item.userWord,
       });
     });
   } else if (instanceofIWord(inputData)) {
@@ -56,7 +56,7 @@ export function wordsAdapter(
           aggregateWord && aggregateWord.userWord
             ? aggregateWord.userWord.optional.goals
             : 0,
-        isUserWord: aggregateWord && aggregateWord.userWord ? true : false,
+        isUserWord: !!(aggregateWord && aggregateWord.userWord),
       });
     });
   }

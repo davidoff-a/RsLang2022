@@ -97,7 +97,7 @@ class StorageWrapper extends Storage<Locals> {
   }
 
   public clearUserSettings() {
-    this.clearItems([Locals.USER, Locals.REFRESHTOKEN, Locals.TOKEN]);
+    this.clearItems([Locals.USER, Locals.USER_NAME, Locals.REFRESHTOKEN, Locals.TOKEN, Locals.EXPIRES_ON]);
   }
 
   updateUserData(tokenData: signInResponse) {
@@ -107,7 +107,7 @@ class StorageWrapper extends Storage<Locals> {
       this.set(Locals.USER_NAME, name);
       this.set(Locals.TOKEN, token);
       this.set(Locals.REFRESHTOKEN, refreshToken);
-      // this.set(Locals.EXPIRES_ON, String(new Date(Date.now())));
+      this.set(Locals.EXPIRES_ON, String(new Date(Date.now())));
     }
   }
 
