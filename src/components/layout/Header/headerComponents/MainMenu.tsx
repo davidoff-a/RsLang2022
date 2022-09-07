@@ -11,7 +11,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import Button from '@mui/material/Button';
 
 export default function MainMenu() {
-  const pages = ['Textbook', 'Games', 'About', 'Statistics', 'Team'];
+  const pages = ['Textbook', 'Games', 'Statistics', 'About',];
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
 

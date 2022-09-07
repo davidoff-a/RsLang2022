@@ -1,11 +1,11 @@
 import Typography from '@mui/material/Typography';
-import AdbIcon from '@mui/icons-material/Adb';
+import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import '../_header.scss';
 
 export default function Logo() {
   return (
     <>
-      <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+      <AutoStoriesIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
       <Typography
         className={'header-logo'}
         variant="h6"

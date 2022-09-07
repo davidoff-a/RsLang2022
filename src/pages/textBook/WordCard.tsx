@@ -11,6 +11,7 @@ import {
 import { IUserWord } from "../../common/interfaces/userWord";
 import { Difficulty } from "../../common/enums/difficulty";
 import { Player } from "../../components/Player";
+import { BASIC_URL } from '../../service/API';
 export interface Props {
   isLogged: boolean;
   color: string;
@@ -34,7 +35,6 @@ export function WordCard({
   } else {
     const isHard: boolean = item.difficulty === Difficulty.HARD;
     const isStudied: boolean = item.difficulty === Difficulty.STUDIED;
-    // TODO change links to server from public
     return (
       <Card
         sx={{
@@ -45,7 +45,7 @@ export function WordCard({
         <CardMedia
           component="img"
           height="300"
-          image={`${process.env.PUBLIC_URL}${item.image}`}
+          image={`${BASIC_URL}${item.image}`}
           alt={`image for "${item.word}"`}
         />
         <CardContent>
@@ -61,7 +61,7 @@ export function WordCard({
               </Typography>
             </Grid>
             <Grid item xs={2}>
-              <Player url={`${process.env.PUBLIC_URL}${item.audio}`}></Player>
+              <Player url={`${BASIC_URL}${item.audio}`}></Player>
             </Grid>
             <Grid item xs={5}>
               {" "}
@@ -89,7 +89,7 @@ export function WordCard({
             </Grid>
             <Grid item xs={2}>
               <Player
-                url={`${process.env.PUBLIC_URL}${item.audioMeaning}`}
+                url={`${BASIC_URL}${item.audioMeaning}`}
               ></Player>
             </Grid>
             <Grid item xs={10}>
@@ -103,7 +103,7 @@ export function WordCard({
             </Grid>
             <Grid item xs={2}>
               <Player
-                url={`${process.env.PUBLIC_URL}${item.audioExample}`}
+                url={`${BASIC_URL}${item.audioExample}`}
               ></Player>
             </Grid>
           </Grid>

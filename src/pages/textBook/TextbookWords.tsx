@@ -71,7 +71,7 @@ export function TextbookWords({
     });
   };
 
-  if (error || items.length === 0) {
+  if (error) {
     return <ErrorPage error={error} />;
   } else if (!isLoaded) {
     return <Spinner />;
