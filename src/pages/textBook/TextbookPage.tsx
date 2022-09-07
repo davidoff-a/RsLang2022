@@ -51,7 +51,7 @@ export function TextbookPage() {
   const initialPage: string | null = storage.getSavedPage() as string;
 
   const [pageState, setPageState] = useState({
-    isLogged: userId ? true : false,
+    isLogged: !!userId,
     group: initialGroup ? +initialGroup : 0,
     page: initialPage ? +initialPage : 0,
     error: "",
@@ -76,9 +76,7 @@ export function TextbookPage() {
     isLogged = false,
     wordId?: string
   ): void => {
-    let queryResult: Promise<
-      IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
-    >;
+    let queryResult: Promise<IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]>;
     if (!isLogged) {
       queryResult = QueryService.getWordsPage(group, page);
     } else {
@@ -122,21 +120,25 @@ export function TextbookPage() {
   };
 
   useEffect(() => {
-    checkAuthorization(userId)
-      .then((resultCheck) => {
-        if (!resultCheck.ok) {
-          if (pageState.group > 5) {
-            getItems(0, 0, false);
+    if (userId) {
+      checkAuthorization(userId)
+        .then((resultCheck) => {
+          if (!resultCheck.ok) {
+            if (pageState.group > 5) {
+              getItems(0, 0, false);
+            } else {
+              getItems(pageState.group, pageState.page, false);
+            }
           } else {
-            getItems(pageState.group, pageState.page, false);
+            getItems(pageState.group, pageState.page, true);
           }
-        } else {
-          getItems(pageState.group, pageState.page, true);
-        }
-      })
-      .catch((error) => {
-        onError(error as string);
-      });
+        })
+        .catch((error) => {
+          onError(error as string);
+        });
+    } else {
+      getItems();
+    }
   }, []);
 
   const onClickTab = (group: number) => {
