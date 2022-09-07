@@ -7,7 +7,7 @@ import { Spinner } from '../../components/Spinner';
 import { IUserWord } from '../../common/interfaces/userWord';
 import { Difficulty } from '../../common/enums/difficulty';
 import { GridItem as Item } from '../../components/GridItem';
-
+import { ErrorPage } from '../ErrorPage';
 interface Props {
   items: IUserWord[];
   isLoaded: boolean;
@@ -18,7 +18,7 @@ interface Props {
   colorStudied: string;
   isHardWords: boolean;
   isStudiedWords: boolean;
-  onClickItem: (id:string) => void;
+  onClickItem: (id: string) => void;
 }
 
 export function TextbookWords({
@@ -33,6 +33,7 @@ export function TextbookWords({
   isStudiedWords,
   onClickItem,
 }: Props) {
+
   const hardWordIcon = (word: IUserWord) => {
     if (isLogged && !isHardWords && word.difficulty === Difficulty.HARD) {
       return <BoltIcon sx={{ color: colorHard, fontSize: '1rem' }} />;
@@ -71,7 +72,7 @@ export function TextbookWords({
   };
 
   if (error) {
-    return <div key={0}>Error: {error}</div>;
+    return <ErrorPage error={error} />;
   } else if (!isLoaded) {
     return <Spinner />;
   }

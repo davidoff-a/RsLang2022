@@ -17,21 +17,23 @@ function instanceofIWord(object: IWord[] | IAggregateResult[] | [IWord[], IAggre
   return Array.isArray(object) && object.length > 0 && 'id' in object[0];
 }
 
-export function wordsAdapter(inputData: IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]): IUserWord[] {
+export function wordsAdapter(
+  inputData: IWord[] | IAggregateResult[] | [IWord[], IAggregateResult[]]
+): IUserWord[] {
   const data: IUserWord[] = [];
   if (instanceofIAggregateResult(inputData)) {
     const aggregateData: IAggregateWord[] = inputData[0].paginatedResults;
-    aggregateData.forEach(item => {
+    aggregateData.forEach((item) => {
       data.push({
         ...item,
-        id: item.id,
+        id: item._id,
         difficulty: item.userWord ? item.userWord.difficulty : Difficulty.EASY,
         goals: item.userWord ? item.userWord.optional.goals : 0,
-        isUserWord: !!item.userWord,
+        isUserWord: item.userWord ? true : false,
       });
     });
   } else if (instanceofIWord(inputData)) {
-    inputData.forEach(item => {
+    inputData.forEach((item) => {
       data.push({
         ...item,
         difficulty: Difficulty.EASY,
@@ -42,24 +44,37 @@ export function wordsAdapter(inputData: IWord[] | IAggregateResult[] | [IWord[],
   } else {
     const words: IWord[] = inputData[0];
     const aggregateWords: IAggregateWord[] = inputData[1][0].paginatedResults;
-    words.forEach(item => {
-      const aggregateWord = aggregateWords.find(elem => elem.id === item.id);
+    words.forEach((item) => {
+      const aggregateWord = aggregateWords.find((elem) => elem._id === item.id);
       data.push({
         ...item,
-        difficulty: aggregateWord && aggregateWord.userWord ? aggregateWord.userWord.difficulty : Difficulty.EASY,
-        goals: aggregateWord && aggregateWord.userWord ? aggregateWord.userWord.optional.goals : 0,
-        isUserWord: !!(aggregateWord && aggregateWord.userWord),
+        difficulty:
+          aggregateWord && aggregateWord.userWord
+            ? aggregateWord.userWord.difficulty
+            : Difficulty.EASY,
+        goals:
+          aggregateWord && aggregateWord.userWord
+            ? aggregateWord.userWord.optional.goals
+            : 0,
+        isUserWord: aggregateWord && aggregateWord.userWord ? true : false,
       });
     });
   }
   return data;
 }
 
-export async function getWordsForTextbook(userId: string, group: number, page: number): Promise<IAggregateResult[]> {
-  return QueryService.getAggregatedWordsByFilter(userId, group, page, [
-    Difficulty.HARD,
-    Difficulty.STUDIED,
-    Difficulty.EASY,
+export async function getWordsForTextbook(
+  userId: string,
+  group: number,
+  page: number
+): Promise<[IWord[], IAggregateResult[]]> {
+  return await Promise.all([
+    QueryService.getWordsPage(group, page),
+    QueryService.getAggregatedWordsByFilterOld(userId, [
+      Difficulty.HARD,
+      Difficulty.STUDIED,
+      Difficulty.EASY,
+    ]),
   ]);
 }
 

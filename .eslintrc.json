@@ -72,12 +72,12 @@
                 "props": false
             }
         ],
-        "no-unused-vars": [
-            "error",
-            {
-                "caughtErrorsIgnorePattern": "^ignore"
-            }
-        ],
+        // "no-unused-vars": [
+        //     "error",
+        //     {
+        //         "caughtErrorsIgnorePattern": "^ignore"
+        //     }
+        // ],
         "react/jsx-uses-react": 1,
         "react/jsx-uses-vars": "error",
         // suppress errors for missing 'import React' in files

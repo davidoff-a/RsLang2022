@@ -51,7 +51,6 @@ export function UserMenu({
 
   const settings: userMenuItem[] = [
     { label: 'Профиль', handler: handleCloseUserMenu },
-    { label: 'Статистика', handler: handleCloseUserMenu },
     { label: 'Выход', handler: handleLogout },
   ];
 
