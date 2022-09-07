@@ -1,20 +1,22 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 import { Container, Grid, Typography } from '@mui/material';
 import { blue, cyan, green, lime, orange, pink, purple, red, yellow } from '@mui/material/colors';
 
-import { TextbookPagination } from './textBookComponents/TextbookPagination';
+import { TextbookPagination } from './TextbookPagination';
 import { TextbookTabs } from './TextbookTabs';
 import { TextbookWords } from './TextbookWords';
-import { WordCard } from './textBookComponents/WordCard';
+import { WordCard } from './WordCard';
 import { query as QueryService } from '../../service/API';
-import { wordsAdapter } from '../../service/APIHelper';
+import { wordsAdapter, getWordsForTextbook } from "../../service/APIHelper";
+import { IWord } from "../../common/interfaces/word";
 import { IUserWord } from '../../common/interfaces/userWord';
 import StorageWrapper from '../../components/storageWrapper';
 import { Difficulty } from '../../common/enums/difficulty';
 import { IAggregateResult } from '../../common/interfaces/aggregateResult';
-import { GameButton } from './textBookComponents/GameButton';
-import { IAggregateWord } from '../../common/interfaces/aggregateWord';
+import { GameButton } from "../../components/GameButton";
+import { Games } from "../../common/enums/games";
 
 const checkAuthorization = async (id: string) => {
   return await QueryService.getUser(id);
@@ -22,6 +24,7 @@ const checkAuthorization = async (id: string) => {
 
 export function TextbookPage() {
   const storage = StorageWrapper.getInstance();
+  const navigate = useNavigate();
   const groupsColor: string[] = [
     lime[400],
     orange[400],
@@ -58,12 +61,12 @@ export function TextbookPage() {
   };
 
   const getItems = (group = 0, page = 0, isLogged = false, wordId?: string): void => {
-    let queryResult: Promise<IAggregateWord[] | IAggregateResult[]>;
+    let queryResult: Promise<IWord[] | IAggregateResult[]  | [IWord[], IAggregateResult[]]>;
     if (!isLogged) {
       queryResult = QueryService.getWordsPage(group, page);
     } else {
       if (group < 6) {
-        queryResult = QueryService.getAggregatedWordsByFilter(userId, group, page, []);
+        queryResult = getWordsForTextbook(userId, group, page);
       } else {
         queryResult = QueryService.getAggregatedWordsByFilter(
           userId,
@@ -75,8 +78,11 @@ export function TextbookPage() {
     }
     queryResult.then(
       result => {
+
         if (result.length > 0) {
           const items = wordsAdapter(result);
+
+          
           if (items.length > 0) {
             setPageState({
               ...pageState,
@@ -137,7 +143,7 @@ export function TextbookPage() {
     return setPageState({ ...pageState, currentId: wordId });
   };
 
-  const onClickLinkGame = () => {
+  const notStudiedWords = () => {
     if (pageState.isLogged) {
       const notStudiedWords: IUserWord[] = [];
       for (let i = 0; i < pageState.items.length; i++) {
@@ -150,17 +156,17 @@ export function TextbookPage() {
     return pageState.items;
   };
 
-  // const onClickLinkGame = (game: Games) => {
-  //   navigate(`/games`, {
-  //     state: {
-  //       group: pageState.group,
-  //       page: pageState.page,
-  //       isLogged: pageState.isLogged,
-  //       items: notStudiedWords(),
-  //       game,
-  //     },
-  //   });
-  // };
+  const onClickLinkGame = (game: Games) => {
+    navigate(`/games`, {
+      state: {
+        group: pageState.group,
+        page: pageState.page,
+        isLogged: pageState.isLogged,
+        items: notStudiedWords(),
+        game,
+      },
+    });
+  };
 
   const onClickWordCardButton = (
     isUserWord: boolean,
